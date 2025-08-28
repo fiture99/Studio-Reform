@@ -105,7 +105,7 @@ const Chatbot: React.FC = () => {
       {/* Chat Bubble */}
       <motion.button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 bg-yellow-600 text-black p-4 rounded-full shadow-lg hover:bg-yellow-500 transition-colors z-40 ${isOpen ? 'hidden' : 'block'}`}
+        className={`fixed bottom-6 right-6 bg-[#8b987b] text-black p-4 rounded-full shadow-lg hover:bg-yellow-500 transition-colors z-40 ${isOpen ? 'hidden' : 'block'}`}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
       >
