@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
           {/* Studio Info */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <Dumbbell className="h-8 w-8 text-yellow-600" />
+              <Dumbbell className="h-8 w-8 text-[#8b987b]" />
               <span className="font-bold text-xl">Studio Reform</span>
             </div>
             <p className="text-gray-300 mb-6 max-w-md">
@@ -18,9 +18,9 @@ const Footer: React.FC = () => {
               world-class training programs designed to help you achieve your goals.
             </p>
             <div className="flex space-x-4">
-              <Facebook className="h-6 w-6 text-gray-400 hover:text-yellow-600 cursor-pointer transition-colors" />
-              <Instagram className="h-6 w-6 text-gray-400 hover:text-yellow-600 cursor-pointer transition-colors" />
-              <Twitter className="h-6 w-6 text-gray-400 hover:text-yellow-600 cursor-pointer transition-colors" />
+              <Facebook className="h-6 w-6 text-gray-400 hover:text-[#8b987b] cursor-pointer transition-colors" />
+              <Instagram className="h-6 w-6 text-gray-400 hover:text-[#8b987b] cursor-pointer transition-colors" />
+              <Twitter className="h-6 w-6 text-gray-400 hover:text-[#8b987b] cursor-pointer transition-colors" />
             </div>
           </div>
 
@@ -28,10 +28,10 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="font-semibold text-lg mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              <li><Link to="/about" className="text-gray-300 hover:text-yellow-600 transition-colors">About Us</Link></li>
-              <li><Link to="/classes" className="text-gray-300 hover:text-yellow-600 transition-colors">Classes</Link></li>
-              <li><Link to="/membership" className="text-gray-300 hover:text-yellow-600 transition-colors">Membership</Link></li>
-              <li><Link to="/contact" className="text-gray-300 hover:text-yellow-600 transition-colors">Contact</Link></li>
+              <li><Link to="/about" className="text-gray-300 hover:text-[#8b987b] transition-colors">About Us</Link></li>
+              <li><Link to="/classes" className="text-gray-300 hover:text-[#8b987b] transition-colors">Classes</Link></li>
+              <li><Link to="/membership" className="text-gray-300 hover:text-[#8b987b] transition-colors">Membership</Link></li>
+              <li><Link to="/contact" className="text-gray-300 hover:text-[#8b987b] transition-colors">Contact</Link></li>
             </ul>
           </div>
 
@@ -40,15 +40,15 @@ const Footer: React.FC = () => {
             <h3 className="font-semibold text-lg mb-4">Contact Info</h3>
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
-                <MapPin className="h-4 w-4 text-yellow-600" />
+                <MapPin className="h-4 w-4 text-[#8b987b]" />
                 <span className="text-gray-300">123 Fitness St, City, State 12345</span>
               </div>
               <div className="flex items-center space-x-2">
-                <Phone className="h-4 w-4 text-yellow-600" />
+                <Phone className="h-4 w-4 text-[#8b987b]" />
                 <span className="text-gray-300">(555) 123-4567</span>
               </div>
               <div className="flex items-center space-x-2">
-                <Mail className="h-4 w-4 text-yellow-600" />
+                <Mail className="h-4 w-4 text-[#8b987b]" />
                 <span className="text-gray-300">info@studioreform.com</span>
               </div>
             </div>

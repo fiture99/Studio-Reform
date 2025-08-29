@@ -211,7 +211,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-yellow-600 text-black px-6 py-3 rounded-md font-semibold hover:bg-yellow-500 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#8b987b] text-black px-6 py-3 rounded-md font-semibold hover:bg-yellow-500 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div>
@@ -229,7 +229,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
                 Already have an account?{' '}
                 <button
                   onClick={onSwitchToLogin}
-                  className="text-yellow-600 hover:text-yellow-500 font-medium"
+                  className="text-[#8b987b] hover:text-yellow-500 font-medium"
                 >
                   Sign in here
                 </button>

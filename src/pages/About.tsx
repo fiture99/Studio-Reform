@@ -48,7 +48,7 @@ const About: React.FC = () => {
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+      <section className="py-20 bg-[#f5efe5] from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
@@ -66,7 +66,7 @@ const About: React.FC = () => {
       </section>
 
       {/* Philosophy Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-[#8b987b]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -75,16 +75,16 @@ const About: React.FC = () => {
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-4xl font-bold text-black mb-6">Our Philosophy</h2>
-              <p className="text-lg text-gray-600 mb-6">
+              <h2 className="text-4xl font-bold text-[#f5efe5] mb-6">Our Philosophy</h2>
+              <p className="text-lg text-[#f5efe5] mb-6">
                 At Studio Reform, we believe that fitness is not just about building muscle or losing weight. 
                 It's about creating a sustainable lifestyle that nourishes your entire being.
               </p>
-              <p className="text-lg text-gray-600 mb-6">
+              <p className="text-lg text-[#f5efe5] mb-6">
                 Our approach combines cutting-edge fitness techniques with mindfulness practices, 
                 creating a holistic experience that transforms not just your body, but your relationship with health and wellness.
               </p>
-              <p className="text-lg text-gray-600">
+              <p className="text-lg text-[#f5efe5]">
                 Every program is designed to challenge you appropriately, support your goals, 
                 and help you discover strength you never knew you had.
               </p>
@@ -108,7 +108,7 @@ const About: React.FC = () => {
       </section>
 
       {/* Trainers Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-[#f5efe5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
@@ -118,7 +118,7 @@ const About: React.FC = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-black mb-4">Meet Our Expert Trainers</h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-[#f5efe5]">
               Our certified professionals are passionate about helping you achieve your goals
             </p>
           </motion.div>
@@ -131,7 +131,7 @@ const About: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                className="bg-[#8b987b] rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
               >
                 <img 
                   src={trainer.image} 
@@ -140,8 +140,8 @@ const About: React.FC = () => {
                 />
                 <div className="p-6">
                   <h3 className="text-xl font-semibold text-black mb-2">{trainer.name}</h3>
-                  <p className="text-yellow-600 font-medium mb-3">{trainer.specialty}</p>
-                  <p className="text-gray-600 text-sm">{trainer.credentials}</p>
+                  <p className="text-[#f5efe5] font-medium mb-3">{trainer.specialty}</p>
+                  <p className="text-[#f5efe5] text-sm">{trainer.credentials}</p>
                 </div>
               </motion.div>
             ))}
@@ -150,7 +150,7 @@ const About: React.FC = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-black text-white">
+      <section className="py-20 bg-black text-[#f5efe5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
@@ -160,7 +160,7 @@ const About: React.FC = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold mb-4">What Our Members Say</h2>
-            <p className="text-xl text-gray-300">
+            <p className="text-xl text-[#f5efe5]">
               Real stories from real people who transformed their lives at Studio Reform
             </p>
           </motion.div>
@@ -175,7 +175,7 @@ const About: React.FC = () => {
                 viewport={{ once: true }}
                 className="bg-gray-900 rounded-lg p-8 relative"
               >
-                <Quote className="h-8 w-8 text-yellow-600 mb-4" />
+                <Quote className="h-8 w-8 text-[#8b987b] mb-4" />
                 <p className="text-gray-300 mb-6 italic">"{testimonial.text}"</p>
                 <div className="flex items-center">
                   <img 
@@ -185,7 +185,7 @@ const About: React.FC = () => {
                   />
                   <div>
                     <p className="font-semibold">{testimonial.name}</p>
-                    <p className="text-gray-400 text-sm">{testimonial.role}</p>
+                    <p className="text[#f5efe5] text-sm">{testimonial.role}</p>
                   </div>
                 </div>
               </motion.div>

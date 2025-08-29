@@ -36,7 +36,7 @@ const Membership: React.FC = () => {
         'Guest passes (2/month)'
       ],
       popular: true,
-      color: 'border-yellow-600'
+      color: 'border-[#8b987b]'
     },
     {
       name: 'Elite',
@@ -59,7 +59,7 @@ const Membership: React.FC = () => {
       color: 'border-black'
     }
   ];
-
+// bg-[#8b987b] text-[#f5efe5]
   const faqs = [
     {
       question: 'Can I cancel my membership anytime?',
@@ -86,7 +86,7 @@ const Membership: React.FC = () => {
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+      <section className="py-20 bg-[#f5efe5] from-gray-50 to-[#f5efe5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -98,15 +98,15 @@ const Membership: React.FC = () => {
               Choose the perfect plan to start your transformation journey. 
               All memberships include access to our world-class facilities and expert guidance.
             </p>
-            <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-4 inline-block">
-              <p className="text-yellow-800 font-medium">🎉 New Member Special: Get your first month FREE!</p>
+            <div className="bg-[#8b987b] border border-[#8b987b] rounded-lg p-4 inline-block">
+              <p className="text-[#f5efe5] font-medium">🎉 New Member Special: Get your first month FREE!</p>
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* Membership Plans */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-[#f5efe5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {plans.map((plan, index) => (
@@ -116,12 +116,12 @@ const Membership: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className={`relative bg-white rounded-lg shadow-lg overflow-hidden border-2 ${plan.color} ${
+                className={`relative bg-[#f5efe5] rounded-lg shadow-lg overflow-hidden border-2 ${plan.color} ${
                   plan.popular ? 'scale-105' : ''
                 }`}
               >
                 {plan.popular && (
-                  <div className="absolute top-0 left-0 right-0 bg-yellow-600 text-black text-center py-2 font-semibold">
+                  <div className="absolute top-0 left-0 right-0 bg-[#8b987b] text-black text-center py-2 font-semibold">
                     Most Popular
                   </div>
                 )}
@@ -129,7 +129,7 @@ const Membership: React.FC = () => {
                 <div className={`p-8 ${plan.popular ? 'pt-16' : ''}`}>
                   <div className="text-center mb-8">
                     <plan.icon className={`h-12 w-12 mx-auto mb-4 ${
-                      plan.popular ? 'text-yellow-600' : 'text-gray-600'
+                      plan.popular ? 'text-[#8b987b]' : 'text-gray-600'
                     }`} />
                     <h3 className="text-2xl font-bold text-black mb-2">{plan.name}</h3>
                     <p className="text-gray-600 mb-6">{plan.description}</p>
@@ -150,8 +150,8 @@ const Membership: React.FC = () => {
 
                   <button className={`w-full py-3 px-4 rounded-md font-semibold transition-colors ${
                     plan.popular
-                      ? 'bg-yellow-600 text-black hover:bg-yellow-500'
-                      : 'bg-black text-white hover:bg-gray-800'
+                      ? 'bg-[#8b987b] text-black hover:bg-yellow-500'
+                      : 'bg-black text-[#f5efe5] hover:bg-gray-800'
                   }`}>
                     Choose {plan.name}
                   </button>
@@ -163,7 +163,7 @@ const Membership: React.FC = () => {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-[#f5efe5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -205,7 +205,7 @@ const Membership: React.FC = () => {
                 viewport={{ once: true }}
                 className="text-center"
               >
-                <div className="bg-yellow-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="bg-[#8b987b] hover:bg-yellow-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Check className="h-8 w-8 text-black" />
                 </div>
                 <h3 className="text-xl font-semibold text-black mb-3">{benefit.title}</h3>
@@ -217,7 +217,7 @@ const Membership: React.FC = () => {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-[#f5efe5]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -240,10 +240,10 @@ const Membership: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-gray-50 rounded-lg p-6"
+                className="bg-[#f5efe5] rounded-lg p-6"
               >
                 <h3 className="text-lg font-semibold text-black mb-3">{faq.question}</h3>
-                <p className="text-gray-600">{faq.answer}</p>
+                <p className="text-gray-600"gray-600>{faq.answer}</p>
               </motion.div>
             ))}
           </div>
@@ -251,7 +251,7 @@ const Membership: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-black text-white">
+      <section className="py-20 bg-black text-[#f5efe5]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -260,14 +260,14 @@ const Membership: React.FC = () => {
             viewport={{ once: true }}
           >
             <h2 className="text-4xl font-bold mb-6">Ready to Start Your Journey?</h2>
-            <p className="text-xl text-gray-300 mb-8">
+            <p className="text-xl text-[#f5efe5] mb-8">
               Join Studio Reform today and take the first step towards transforming your life
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-yellow-600 text-black px-8 py-4 rounded-md font-semibold text-lg hover:bg-yellow-500 transition-colors">
+              <button className="bg-[#8b987b] text-black px-8 py-4 rounded-md font-semibold text-lg hover:bg-yellow-500 transition-colors">
                 Start Free Trial
               </button>
-              <button className="border-2 border-white text-white px-8 py-4 rounded-md font-semibold text-lg hover:bg-white hover:text-black transition-colors">
+              <button className="border-2 border-[#f5efe5] text-[#f5efe5] px-8 py-4 rounded-md font-semibold text-lg hover:bg-[#f5efe5] hover:text-black transition-colors">
                 Schedule Tour
               </button>
             </div>

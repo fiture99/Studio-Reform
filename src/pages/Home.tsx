@@ -121,8 +121,8 @@ const Home: React.FC = () => {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl font-bold mb-6">Ready to Transform?</h2>
-            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            <h2 className="text-4xl text-[#f5efe5] font-bold mb-6">Ready to Transform?</h2>
+            <p className="text-xl text-[#f5efe5] mb-8 max-w-2xl mx-auto">
               Join hundreds of members who have already started their journey to a better life
             </p>
             <Link

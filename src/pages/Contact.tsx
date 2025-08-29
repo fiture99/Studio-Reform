@@ -63,11 +63,11 @@ const Contact: React.FC = () => {
       details: 'Mon-Fri: 6am-10pm\nSat-Sun: 7am-8pm'
     }
   ];
-
+// bg-[#8b987b] text-[#f5efe5]
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-r from-black to-gray-900 text-white">
+      <section className="py-20 bg-gradient-to-r from-black to-gray-900 text-[#f5efe5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -84,7 +84,7 @@ const Contact: React.FC = () => {
       </section>
 
       {/* Contact Info Grid */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-[#f5efe5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
             {contactInfo.map((info, index) => (
@@ -96,7 +96,7 @@ const Contact: React.FC = () => {
                 viewport={{ once: true }}
                 className="text-center group"
               >
-                <div className="bg-yellow-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-yellow-500 transition-colors">
+                <div className="bg-[#8b987b] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-yellow-500 transition-colors">
                   <info.icon className="h-8 w-8 text-black" />
                 </div>
                 <h3 className="text-xl font-semibold text-black mb-3">{info.title}</h3>
@@ -217,7 +217,7 @@ const Contact: React.FC = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-yellow-600 text-black px-6 py-3 rounded-md font-semibold hover:bg-yellow-500 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#8b987b]  text-black px-6 py-3 rounded-md font-semibold hover:bg-yellow-500 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div>
@@ -245,25 +245,25 @@ const Contact: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-6">
+              <div className="bg-yellow-500 rounded-lg p-6">
                 <h3 className="text-xl font-semibold text-black mb-4">Studio Hours</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Monday - Friday</span>
+                    <span className="font-medium">Monday - Friday</span>
                     <span className="font-medium">6:00 AM - 10:00 PM</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Saturday</span>
+                    <span className="font-medium">Saturday</span>
                     <span className="font-medium">7:00 AM - 8:00 PM</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Sunday</span>
+                    <span className="font-medium">Sunday</span>
                     <span className="font-medium">7:00 AM - 8:00 PM</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+              <div className="bg-[#8b987b] border border-yellow-200 rounded-lg p-6">
                 <h3 className="text-xl font-semibold text-black mb-4">First Visit?</h3>
                 <p className="text-gray-700 mb-4">
                   New to Studio Reform? We'd love to show you around! Schedule a complimentary 

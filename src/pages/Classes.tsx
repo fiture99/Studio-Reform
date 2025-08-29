@@ -37,6 +37,8 @@ const Classes: React.FC = () => {
     
     try {
       // For demo purposes, book for tomorrow at the first available time
+      // text[#f5efe5]
+      // text-[#8b987b]
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       
@@ -59,7 +61,7 @@ const Classes: React.FC = () => {
   if (loading) {
     return (
       <div className="pt-16 min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8b987b]"></div>
       </div>
     );
   }
@@ -67,7 +69,7 @@ const Classes: React.FC = () => {
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-r from-black to-gray-900 text-white">
+      <section className="py-20 bg-gradient-to-r from-black to-gray-900 text-[#f5efe5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -75,7 +77,7 @@ const Classes: React.FC = () => {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-5xl font-bold mb-6">Our Classes</h1>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            <p className="text-xl text-[#f5efe5] max-w-2xl mx-auto">
               Discover the perfect class for your fitness journey. From beginner-friendly sessions 
               to advanced challenges, we have something for everyone.
             </p>
@@ -84,7 +86,7 @@ const Classes: React.FC = () => {
       </section>
 
       {/* Classes Grid */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-[#f5efe5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {classes.map((classItem, index) => (
@@ -94,7 +96,7 @@ const Classes: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                className="bg-[#f5efe5] rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
               >
                 <div className="relative h-48">
                   <img 
@@ -102,25 +104,25 @@ const Classes: React.FC = () => {
                     alt={classItem.name}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-4 right-4 bg-yellow-600 text-black px-3 py-1 rounded-full text-sm font-semibold">
+                  <div className="absolute top-4 right-4 bg-[#8b987b] text-black px-3 py-1 rounded-full text-sm font-semibold">
                     {classItem.difficulty}
                   </div>
                 </div>
                 
                 <div className="p-6">
                   <h3 className="text-2xl font-bold text-black mb-2">{classItem.name}</h3>
-                  <p className="text-gray-600 mb-4">{classItem.description}</p>
+                  <p className="text-[#f5efe5] mb-4">{classItem.description}</p>
                   
                   <div className="space-y-2 mb-6">
-                    <div className="flex items-center text-gray-600">
+                    <div className="flex items-center text-[#f5efe5]">
                       <BookOpen className="h-4 w-4 mr-2" />
                       <span className="text-sm">Instructor: {classItem.instructor}</span>
                     </div>
-                    <div className="flex items-center text-gray-600">
+                    <div className="flex items-center text-[#f5efe5]">
                       <Clock className="h-4 w-4 mr-2" />
                       <span className="text-sm">{classItem.duration}</span>
                     </div>
-                    <div className="flex items-center text-gray-600">
+                    <div className="flex items-center text-[#f5efe5]">
                       <Users className="h-4 w-4 mr-2" />
                       <span className="text-sm">Max {classItem.capacity} people</span>
                     </div>
@@ -129,7 +131,7 @@ const Classes: React.FC = () => {
                   <button 
                     onClick={() => handleBookClass(classItem.id)}
                     disabled={bookingLoading === classItem.id}
-                    className="w-full bg-yellow-600 text-black py-2 px-4 rounded-md font-semibold hover:bg-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-[#8b987b] text-black py-2 px-4 rounded-md font-semibold hover:bg-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {bookingLoading === classItem.id ? (
                       <div className="flex items-center justify-center">
@@ -148,7 +150,7 @@ const Classes: React.FC = () => {
       </section>
 
       {/* Schedule Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-[#f5efe5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -171,8 +173,8 @@ const Classes: React.FC = () => {
                 onClick={() => setSelectedDay(day)}
                 className={`px-6 py-2 rounded-md font-medium transition-colors ${
                   selectedDay === day
-                    ? 'bg-yellow-600 text-black'
-                    : 'bg-white text-gray-600 hover:bg-gray-100'
+                    ? 'bg-[#8b987b] text-black'
+                    : 'bg-[#f5efe5] text-gray-600 hover:bg-yellow-500 hover:text-[#f5efe5]'
                 }`}
               >
                 {day}
@@ -186,10 +188,10 @@ const Classes: React.FC = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
-            className="bg-white rounded-lg shadow-lg p-8"
+            className="bg-[#f5efe5] rounded-lg shadow-lg p-8"
           >
             <div className="flex items-center mb-6">
-              <Calendar className="h-6 w-6 text-yellow-600 mr-3" />
+              <Calendar className="h-6 w-6 text-[#8b987b] mr-3" />
               <h3 className="text-2xl font-bold text-black">{selectedDay} Schedule</h3>
             </div>
             
@@ -200,11 +202,11 @@ const Classes: React.FC = () => {
                   <div key={classItem.name} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                     <div>
                       <h4 className="font-semibold text-black">{classItem.name}</h4>
-                      <p className="text-gray-600 text-sm">with {classItem.instructor}</p>
+                      <p className="text-[#f5efe5] text-sm">with {classItem.instructor}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium text-yellow-600">{times}</p>
-                      <p className="text-gray-600 text-sm">{classItem.duration}</p>
+                      <p className="font-medium text-[#8b987b]">{times}</p>
+                      <p className="text-[#f5efe5] text-sm">{classItem.duration}</p>
                     </div>
                   </div>
                 ) : null;
