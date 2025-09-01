@@ -81,7 +81,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitchToRegi
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-[#8F9980] focus:border-[#8F9980] transition-colors"
                   placeholder="your.email@example.com"
                 />
               </div>
@@ -98,7 +98,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitchToRegi
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors pr-12"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-[#8F9980] focus:border-[#8F9980] transition-colors pr-12"
                     placeholder="Enter your password"
                   />
                   <button
@@ -114,7 +114,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitchToRegi
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-sage-green text-white px-6 py-3 rounded-md font-semibold hover:bg-soft-blue transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#8F9980] text-white px-6 py-3 rounded-md font-semibold hover:bg-[#b9d9eb] transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -132,7 +132,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitchToRegi
                 Don't have an account?{' '}
                 <button
                   onClick={onSwitchToRegister}
-                  className="text-sage-green hover:text-soft-blue font-medium"
+                  className="text-[#8F9980] hover:text-[#b9d9eb] font-medium"
                 >
                   Sign up here
                 </button>

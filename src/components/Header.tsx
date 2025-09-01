@@ -6,6 +6,10 @@ import { useAuth } from '../contexts/AuthContext';
 import LoginModal from './Auth/LoginModal';
 import RegisterModal from './Auth/RegisterModal';
 
+
+// #8F9980
+// #e8e1c7
+// #b9d9eb
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -38,8 +42,8 @@ const Header: React.FC = () => {
       <header className="bg-white shadow-sm fixed w-full top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link to="/" className="flex items-center space-x-2 text-black hover:text-sage-green transition-colors">
-            <Dumbbell className="h-8 w-8 text-sage-green" />
+          <Link to="/" className="flex items-center space-x-2 text-black hover:text-[#8F9980] transition-colors">
+            <Dumbbell className="h-8 w-8 text-[#8F9980]" />
             <span className="font-bold text-xl">Studio Reform</span>
           </Link>
 
@@ -51,15 +55,15 @@ const Header: React.FC = () => {
                 to={item.href}
                 className={`font-medium transition-colors relative ${
                   isActive(item.href)
-                    ? 'text-sage-green'
-                    : 'text-gray-700 hover:text-sage-green'
+                    ? 'text-[#8F9980]'
+                    : 'text-gray-700 hover:text-[#8F9980]'
                 }`}
               >
                 {item.name}
                 {isActive(item.href) && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute -bottom-6 left-0 right-0 h-0.5 bg-sage-green"
+                    className="absolute -bottom-6 left-0 right-0 h-0.5 bg-[#8F9980]"
                   />
                 )}
               </Link>
@@ -73,7 +77,7 @@ const Header: React.FC = () => {
                 </div>
                 <button
                   onClick={logout}
-                  className="flex items-center space-x-2 text-gray-600 hover:text-sage-green transition-colors"
+                  className="flex items-center space-x-2 text-gray-600 hover:text=[#8F9980] transition-colors"
                 >
                   <LogOut className="h-4 w-4" />
                   <span>Logout</span>
@@ -83,13 +87,13 @@ const Header: React.FC = () => {
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => setShowLoginModal(true)}
-                  className="text-gray-700 hover:text-sage-green font-medium transition-colors"
+                  className="text-gray-700 hover:text-[#8F9980] font-medium transition-colors"
                 >
                   Sign In
                 </button>
                 <button
                   onClick={() => setShowRegisterModal(true)}
-                  className="bg-sage-green text-white px-4 py-2 rounded-md font-medium hover:bg-soft-blue transition-colors"
+                  className="bg-[#8F9980] text-white px-4 py-2 rounded-md font-medium hover:bg-[#b9d9eb] transition-colors"
                 >
                   Join Now
                 </button>
@@ -122,8 +126,8 @@ const Header: React.FC = () => {
                     to={item.href}
                     className={`block px-4 py-2 font-medium transition-colors ${
                       isActive(item.href)
-                        ? 'text-sage-green bg-sage-green/10'
-                        : 'text-gray-700 hover:text-sage-green hover:bg-gray-50'
+                        ? 'text-[#8F9980] bg-[#8F9980]/10'
+                        : 'text-gray-700 hover:text-[#8F9980] hover:bg-gray-50'
                     }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
@@ -142,7 +146,7 @@ const Header: React.FC = () => {
                         logout();
                         setIsMenuOpen(false);
                       }}
-                      className="flex items-center space-x-2 text-gray-600 hover:text-sage-green transition-colors"
+                      className="flex items-center space-x-2 text-gray-600 hover:text-[#8F9980] transition-colors"
                     >
                       <LogOut className="h-4 w-4" />
                       <span>Logout</span>
@@ -155,7 +159,7 @@ const Header: React.FC = () => {
                         setShowLoginModal(true);
                         setIsMenuOpen(false);
                       }}
-                      className="block w-full text-left text-gray-700 hover:text-sage-green font-medium transition-colors"
+                      className="block w-full text-left text-gray-700 hover:text-[#8F9980] font-medium transition-colors"
                     >
                       Sign In
                     </button>
@@ -164,7 +168,7 @@ const Header: React.FC = () => {
                         setShowRegisterModal(true);
                         setIsMenuOpen(false);
                       }}
-                      className="block w-full bg-sage-green text-white px-4 py-2 rounded-md font-medium text-center hover:bg-soft-blue transition-colors"
+                      className="block w-full bg-[#8F9980] text-white px-4 py-2 rounded-md font-medium text-center hover:bg-soft-blue transition-colors"
                     >
                       Join Now
                     </button>

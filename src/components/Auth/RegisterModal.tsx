@@ -105,7 +105,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-[#8F9980] focus:border-[#8F9980] transition-colors"
                   placeholder="Your full name"
                 />
               </div>
@@ -121,7 +121,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-[#8F9980] focus:border-[#8F9980] transition-colors"
                   placeholder="your.email@example.com"
                 />
               </div>
@@ -136,7 +136,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-[#8F9980] focus:border-[#8F9980] transition-colors"
                   placeholder="(555) 123-4567"
                 />
               </div>
@@ -150,7 +150,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
                   name="membership_plan"
                   value={formData.membership_plan}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-[#8F9980] focus:border-[#8F9980] transition-colors"
                 >
                   <option value="Starter">Starter - $89/month</option>
                   <option value="Transform">Transform - $149/month</option>
@@ -170,7 +170,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors pr-12"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-[#8F9980] focus:border-[#8F9980] transition-colors pr-12"
                     placeholder="Create a password"
                   />
                   <button
@@ -195,7 +195,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
                     required
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors pr-12"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-[#8F9980] focus:border-[#8F9980] transition-colors pr-12"
                     placeholder="Confirm your password"
                   />
                   <button
@@ -211,7 +211,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-sage-green text-white px-6 py-3 rounded-md font-semibold hover:bg-soft-blue transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#8F9980] text-white px-6 py-3 rounded-md font-semibold hover:bg-[#b9d9eb] transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -229,7 +229,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
                 Already have an account?{' '}
                 <button
                   onClick={onSwitchToLogin}
-                  className="text-sage-green hover:text-soft-blue font-medium"
+                  className="text-[#8F9980] hover:text-[#b9d9eb] font-medium"
                 >
                   Sign in here
                 </button>

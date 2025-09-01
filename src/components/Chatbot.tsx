@@ -105,7 +105,7 @@ const Chatbot: React.FC = () => {
       {/* Chat Bubble */}
       <motion.button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 bg-sage-green text-white p-4 rounded-full shadow-lg hover:bg-soft-blue transition-colors z-40 ${isOpen ? 'hidden' : 'block'}`}
+        className={`fixed bottom-6 right-6 bg-[#8F9980] text-white p-4 rounded-full shadow-lg hover:bg-[#b9d9eb] transition-colors z-40 ${isOpen ? 'hidden' : 'block'}`}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
       >
@@ -122,7 +122,7 @@ const Chatbot: React.FC = () => {
             className="fixed bottom-6 right-6 w-80 sm:w-96 h-96 bg-white rounded-lg shadow-xl z-50 flex flex-col"
           >
             {/* Header */}
-            <div className="bg-sage-green text-white p-4 rounded-t-lg flex items-center justify-between">
+            <div className="bg-[#8F9980] text-white p-4 rounded-t-lg flex items-center justify-between">
               <div className="flex items-center">
                 <Bot className="h-6 w-6 mr-2" />
                 <div>
@@ -132,7 +132,7 @@ const Chatbot: React.FC = () => {
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1 hover:bg-soft-blue rounded"
+                className="p-1 hover:bg-[#b9d9eb] rounded"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -148,7 +148,7 @@ const Chatbot: React.FC = () => {
                   <div
                     className={`max-w-xs px-3 py-2 rounded-lg text-sm ${
                       message.sender === 'user'
-                        ? 'bg-sage-green text-white'
+                        ? 'bg-[#8F9980] text-white'
                         : 'bg-gray-100 text-gray-800'
                     }`}
                   >
@@ -197,7 +197,7 @@ const Chatbot: React.FC = () => {
                 <button
                   onClick={handleSendMessage}
                  disabled={loading || !inputMessage.trim()}
-                 className="bg-sage-green text-white p-2 rounded-md hover:bg-soft-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                 className="bg-[#8F9980] text-white p-2 rounded-md hover:bg-[#b9d9eb] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                  {loading ? (
                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>

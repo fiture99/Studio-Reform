@@ -67,7 +67,7 @@ const Contact: React.FC = () => {
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-r from-sage-green to-pure-black text-white">
+      <section className="py-20 bg-gradient-to-r from-[#8F9980] to-pure-black text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -96,7 +96,7 @@ const Contact: React.FC = () => {
                 viewport={{ once: true }}
                 className="text-center group"
               >
-                <div className="bg-sage-green w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-soft-blue transition-colors">
+                <div className="bg-[#8F9980] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-[#b9d9eb] transition-colors">
                   <info.icon className="h-8 w-8 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold text-pure-black mb-3">{info.title}</h3>
@@ -141,7 +141,7 @@ const Contact: React.FC = () => {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-[#8F9980] focus:border-[#8F9980] transition-colors"
                       placeholder="Your name"
                     />
                   </div>
@@ -156,7 +156,7 @@ const Contact: React.FC = () => {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-[#8F9980] focus:border-[#8F9980] transition-colors"
                       placeholder="your.email@example.com"
                     />
                   </div>
@@ -173,7 +173,7 @@ const Contact: React.FC = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-[#8F9980] focus:border-[#8F9980] transition-colors"
                       placeholder="(555) 123-4567"
                     />
                   </div>
@@ -186,7 +186,7 @@ const Contact: React.FC = () => {
                       name="subject"
                       value={formData.subject}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-[#8F9980] focus:border-[#8F9980] transition-colors"
                     >
                       <option value="">Select a subject</option>
                       <option value="trial">Trial Class</option>
@@ -209,7 +209,7 @@ const Contact: React.FC = () => {
                     rows={6}
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-[#8F9980] focus:border-[#8F9980] transition-colors"
                     placeholder="Tell us about your wellness goals or questions about reformer Pilates..."
                   ></textarea>
                 </div>
@@ -217,7 +217,7 @@ const Contact: React.FC = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-sage-green text-white px-6 py-3 rounded-md font-semibold hover:bg-soft-blue transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[#8F9980] text-white px-6 py-3 rounded-md font-semibold hover:bg-[#b9d9eb] transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -245,31 +245,31 @@ const Contact: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg p-6 border border-sage-green/20">
+              <div className="bg-white rounded-lg p-6 border border-[#8F9980]/20">
                 <h3 className="text-xl font-semibold text-pure-black mb-4">Studio Hours</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Monday - Friday</span>
-                    <span className="font-medium text-sage-green">7:00 AM - 8:00 PM</span>
+                    <span className="font-medium text-[#8F9980]">7:00 AM - 8:00 PM</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Saturday</span>
-                    <span className="font-medium text-sage-green">8:00 AM - 6:00 PM</span>
+                    <span className="font-medium text-[#8F9980]">8:00 AM - 6:00 PM</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Sunday</span>
-                    <span className="font-medium text-sage-green">8:00 AM - 6:00 PM</span>
+                    <span className="font-medium text-[#8F9980]">8:00 AM - 6:00 PM</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-sage-green/10 border border-sage-green/30 rounded-lg p-6">
+              <div className="bg-[#8F9980]/10 border border-[#8F9980]/30 rounded-lg p-6">
                 <h3 className="text-xl font-semibold text-pure-black mb-4">New to Reformer Pilates?</h3>
                 <p className="text-gray-700 mb-4">
                   We'd love to welcome you to our studio! Schedule a complimentary 
                   consultation to learn about reformer Pilates and find the right level for you.
                 </p>
-                <button className="bg-sage-green text-white px-6 py-2 rounded-md font-semibold hover:bg-soft-blue transition-colors">
+                <button className="bg-[#8F9980] text-white px-6 py-2 rounded-md font-semibold hover:bg-[#b9d9eb] transition-colors">
                   Schedule Consultation
                 </button>
               </div>

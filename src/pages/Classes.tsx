@@ -104,7 +104,7 @@ const Classes: React.FC = () => {
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-r from-sage-green to-pure-black text-white">
+      <section className="py-20 bg-gradient-to-r from-[#8F9980] to-pure-black text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -139,7 +139,7 @@ const Classes: React.FC = () => {
                     alt={classItem.name}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-4 right-4 bg-sage-green text-white px-3 py-1 rounded-full text-sm font-semibold">
+                  <div className="absolute top-4 right-4 bg-[#8F9980] text-white px-3 py-1 rounded-full text-sm font-semibold">
                     {classItem.difficulty}
                   </div>
                   <div className="absolute top-4 left-4 bg-pure-black/80 text-cloud-cream px-3 py-1 rounded-full text-sm font-semibold">
@@ -169,7 +169,7 @@ const Classes: React.FC = () => {
                   <button 
                     onClick={() => handleBookClass(classItem.id)}
                     disabled={bookingLoading === classItem.id}
-                    className="w-full bg-sage-green text-white py-2 px-4 rounded-md font-semibold hover:bg-soft-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-[#8F9980] text-white py-2 px-4 rounded-md font-semibold hover:bg-[#b9d9eb] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {bookingLoading === classItem.id ? (
                       <div className="flex items-center justify-center">
@@ -215,7 +215,7 @@ const Classes: React.FC = () => {
                       <p className="text-gray-600 text-sm">All Levels Available</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium text-sage-green">7:00 AM - 8:00 PM</p>
+                      <p className="font-medium text-[#8F9980]">7:00 AM - 8:00 PM</p>
                       <p className="text-gray-600 text-sm">Multiple sessions daily</p>
                     </div>
                   </div>
@@ -225,7 +225,7 @@ const Classes: React.FC = () => {
                       <p className="text-gray-600 text-sm">Weekend Sessions</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium text-sage-green">8:00 AM - 6:00 PM</p>
+                      <p className="font-medium text-[#8F9980]">8:00 AM - 6:00 PM</p>
                       <p className="text-gray-600 text-sm">Relaxed schedule</p>
                     </div>
                   </div>
@@ -235,11 +235,11 @@ const Classes: React.FC = () => {
               <div>
                 <h3 className="text-2xl font-bold text-pure-black mb-6">Class Capacity</h3>
                 <div className="space-y-4">
-                  <div className="p-4 bg-sage-green/10 rounded-lg">
+                  <div className="p-4 bg-[#8F9980]/10 rounded-lg">
                     <p className="font-semibold text-pure-black mb-2">Small Class Sizes</p>
                     <p className="text-gray-600 text-sm">Maximum 6-8 participants per class to ensure personalized attention and proper form guidance.</p>
                   </div>
-                  <div className="p-4 bg-soft-blue/10 rounded-lg">
+                  <div className="p-4 bg-[#b9d9eb]/10 rounded-lg">
                     <p className="font-semibold text-pure-black mb-2">Private Sessions</p>
                     <p className="text-gray-600 text-sm">One-on-one training available for personalized programs and specific goals.</p>
                   </div>

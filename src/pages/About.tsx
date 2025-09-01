@@ -142,7 +142,7 @@ const About: React.FC = () => {
                 />
                 <div className="p-6">
                   <h3 className="text-xl font-semibold text-pure-black mb-2">{trainer.name}</h3>
-                  <p className="text-sage-green font-medium mb-3">{trainer.specialty}</p>
+                  <p className="text-[#8F9980] font-medium mb-3">{trainer.specialty}</p>
                   <p className="text-gray-600 text-sm">{trainer.credentials}</p>
                 </div>
               </motion.div>
@@ -152,7 +152,7 @@ const About: React.FC = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-sage-green text-white">
+      <section className="py-20 bg-[#8F9980] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}

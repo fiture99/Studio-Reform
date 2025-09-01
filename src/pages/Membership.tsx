@@ -36,7 +36,7 @@ const Membership: React.FC = () => {
         'Guest passes (2/month)'
       ],
       popular: true,
-      color: 'border-[#8b987b]'
+      color: 'border-[#8F9980]'
     },
     {
       name: 'Elite',
@@ -59,7 +59,7 @@ const Membership: React.FC = () => {
       color: 'border-black'
     }
   ];
-// bg-[#8b987b] text-[#f5efe5]
+// bg-[#8F9980] text-[#f5efe5]
   const faqs = [
     {
       question: 'Can I cancel my membership anytime?',
@@ -98,7 +98,7 @@ const Membership: React.FC = () => {
               Choose the perfect plan to start your transformation journey. 
               All memberships include access to our world-class facilities and expert guidance.
             </p>
-            <div className="bg-[#8b987b] border border-[#8b987b] rounded-lg p-4 inline-block">
+            <div className="bg-[#8F9980] border border-[#8F9980] rounded-lg p-4 inline-block">
               <p className="text-[#f5efe5] font-medium">🎉 New Member Special: Get your first month FREE!</p>
             </div>
           </motion.div>
@@ -121,7 +121,7 @@ const Membership: React.FC = () => {
                 }`}
               >
                 {plan.popular && (
-                  <div className="absolute top-0 left-0 right-0 bg-[#8b987b] text-black text-center py-2 font-semibold">
+                  <div className="absolute top-0 left-0 right-0 bg-[#8F9980] text-black text-center py-2 font-semibold">
                     Most Popular
                   </div>
                 )}
@@ -129,7 +129,7 @@ const Membership: React.FC = () => {
                 <div className={`p-8 ${plan.popular ? 'pt-16' : ''}`}>
                   <div className="text-center mb-8">
                     <plan.icon className={`h-12 w-12 mx-auto mb-4 ${
-                      plan.popular ? 'text-[#8b987b]' : 'text-gray-600'
+                      plan.popular ? 'text-[#8F9980]' : 'text-gray-600'
                     }`} />
                     <h3 className="text-2xl font-bold text-black mb-2">{plan.name}</h3>
                     <p className="text-gray-600 mb-6">{plan.description}</p>
@@ -150,7 +150,7 @@ const Membership: React.FC = () => {
 
                   <button className={`w-full py-3 px-4 rounded-md font-semibold transition-colors ${
                     plan.popular
-                      ? 'bg-[#8b987b] text-black hover:bg-yellow-500'
+                      ? 'bg-[#8F9980] text-black hover:bg-[#b9d9eb]'
                       : 'bg-black text-[#f5efe5] hover:bg-gray-800'
                   }`}>
                     Choose {plan.name}
@@ -205,7 +205,7 @@ const Membership: React.FC = () => {
                 viewport={{ once: true }}
                 className="text-center"
               >
-                <div className="bg-[#8b987b] hover:bg-yellow-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="bg-[#8F9980] hover:bg-[#b9d9eb] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Check className="h-8 w-8 text-black" />
                 </div>
                 <h3 className="text-xl font-semibold text-black mb-3">{benefit.title}</h3>
@@ -264,7 +264,7 @@ const Membership: React.FC = () => {
               Join Studio Reform today and take the first step towards transforming your life
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-[#8b987b] text-black px-8 py-4 rounded-md font-semibold text-lg hover:bg-yellow-500 transition-colors">
+              <button className="bg-[#8F9980] text-black px-8 py-4 rounded-md font-semibold text-lg hover:bg-[#b9d9eb] transition-colors">
                 Start Free Trial
               </button>
               <button className="border-2 border-[#f5efe5] text-[#f5efe5] px-8 py-4 rounded-md font-semibold text-lg hover:bg-[#f5efe5] hover:text-black transition-colors">

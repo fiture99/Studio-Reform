@@ -2,7 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Users, Award, Heart, Clock } from 'lucide-react';
-
+// #8F9980
+// #e8e1c7
+// #b9d9eb
 const Home: React.FC = () => {
   const features = [
     {
@@ -31,7 +33,7 @@ const Home: React.FC = () => {
     <div className="pt-16">
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center text-white">
-        <div className="absolute inset-0 bg-gradient-to-r from-sage-green/80 to-pure-black/50 z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#8F9980]/80 to-pure-black/50 z-10"></div>
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -67,13 +69,13 @@ const Home: React.FC = () => {
           >
             <Link
               to="/classes"
-              className="bg-sage-green text-white px-8 py-4 rounded-md font-semibold text-lg hover:bg-sage-green/90 transition-colors inline-flex items-center justify-center"
+              className="bg-[#8F9980] text-white px-8 py-4 rounded-md font-semibold text-lg hover:bg-[#8F9980]/90 transition-colors inline-flex items-center justify-center"
             >
               Discover Your Balance <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
             <Link
               to="/about"
-              className="border-2 border-cloud-cream text-cloud-cream px-8 py-4 rounded-md font-semibold text-lg hover:bg-cloud-cream hover:text-sage-green transition-colors"
+              className="border-2 border-cloud-cream text-cloud-cream px-8 py-4 rounded-md font-semibold text-lg hover:bg-cloud-cream hover:text-[#8F9980] transition-colors"
             >
               Learn More
             </Link>
@@ -101,7 +103,7 @@ const Home: React.FC = () => {
                 viewport={{ once: true }}
                 className="text-center group"
               >
-                <div className="bg-sage-green w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-soft-blue transition-colors">
+                <div className="bg-[#8F9980] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-[#b9d9eb] transition-colors">
                   <feature.icon className="h-8 w-8 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold text-pure-black mb-3">{feature.title}</h3>
@@ -113,7 +115,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-sage-green text-white">
+      <section className="py-20 bg-[#8F9980] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -127,7 +129,7 @@ const Home: React.FC = () => {
             </p>
             <Link
               to="/membership"
-              className="bg-cloud-cream text-sage-green px-8 py-4 rounded-md font-semibold text-lg hover:bg-white transition-colors inline-flex items-center"
+              className="bg-cloud-cream text-[#8F9980] px-8 py-4 rounded-md font-semibold text-lg hover:bg-white transition-colors inline-flex items-center"
             >
               Start Your Journey <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
