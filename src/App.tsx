@@ -17,11 +17,11 @@ function App() {
         <Layout>
           <Routes>
             <Route path="/Studio-Reform/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/classes" element={<Classes />} />
-            <Route path="/membership" element={<Membership />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/admin" element={<Admin />} />
+            <Route path="/Studio-Reform/about" element={<About />} />
+            <Route path="/Studio-Reform/classes" element={<Classes />} />
+            <Route path="/Studio-Reform/membership" element={<Membership />} />
+            <Route path="/Studio-Reform/contact" element={<Contact />} />
+            <Route path="/Studio-Reform/admin" element={<Admin />} />
           </Routes>
           <Chatbot />
         </Layout>

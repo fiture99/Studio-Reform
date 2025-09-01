@@ -19,10 +19,10 @@ const Header: React.FC = () => {
 
   const navigation = [
     { name: 'Home', href: '/Studio-Reform/' },
-    { name: 'About', href: '/about' },
-    { name: 'Classes', href: '/classes' },
-    { name: 'Membership', href: '/membership' },
-    { name: 'Contact', href: '/contact' },
+    { name: 'About', href: '/Studio-Reform/about' },
+    { name: 'Classes', href: '/Studio-Reform/classes' },
+    { name: 'Membership', href: '/Studio-Reform/membership' },
+    { name: 'Contact', href: '/Studio-Reform/contact' },
   ];
 
   const isActive = (path: string) => location.pathname === path;
