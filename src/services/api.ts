@@ -1,7 +1,8 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // Auth token management
 let authToken: string | null = localStorage.getItem('authToken');
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1NjQ4NTc3MSwianRpIjoiYmVlYTQ2NDEtZjZlMi00N2NlLTk2ZDktNWMwMThhZWI5MDcyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNzU2NDg1NzcxLCJjc3JmIjoiYWJkM2VjN2ItYzAyMS00MjU5LWEwNTUtODBkMGQ0NzYwYWE2IiwiZXhwIjoxNzU2NTcyMTcxfQ.0ODjwirOlTjurzaF9bbn5HqszIpCvxxfGVqZK71thII
 
 export const setAuthToken = (token: string) => {
   authToken = token;
@@ -142,6 +143,12 @@ export const adminAPI = {
 
   getMembers: async () => {
     return apiRequest('/admin/members');
+  },
+
+  deleteClass: async (classId: number) => {
+    return apiRequest(`/classes/${classId}`, {
+      method: 'DELETE',
+    });
   },
 };
 

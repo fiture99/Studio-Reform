@@ -48,7 +48,7 @@ const About: React.FC = () => {
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="py-20 bg-[#f5efe5] from-gray-50 to-white">
+      <section className="py-20 bg-gradient-to-b from-cloud-cream to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
@@ -56,17 +56,19 @@ const About: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h1 className="text-5xl font-bold text-black mb-6">About Studio Reform</h1>
+            <h1 className="text-5xl font-bold text-pure-black mb-6">The Studio</h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Founded on the belief that true fitness goes beyond physical transformation, 
-              we create a space where mind, body, and spirit unite in perfect harmony.
+              Studio Reform is The Gambia's first boutique reformer Pilates studio, created to bring mindful
+              movement and modern wellness to our community. Rooted in the original principles of Pilates,
+              our classes focus on both healing and transformation — leaving you balanced, strengthened,
+              and renewed.
             </p>
           </motion.div>
         </div>
       </section>
 
       {/* Philosophy Section */}
-      <section className="py-20 bg-[#8b987b]">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -75,18 +77,18 @@ const About: React.FC = () => {
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-4xl font-bold text-[#f5efe5] mb-6">Our Philosophy</h2>
-              <p className="text-lg text-[#f5efe5] mb-6">
-                At Studio Reform, we believe that fitness is not just about building muscle or losing weight. 
-                It's about creating a sustainable lifestyle that nourishes your entire being.
+              <h2 className="text-4xl font-bold text-pure-black mb-6">Our Philosophy</h2>
+              <p className="text-lg text-gray-600 mb-6">
+                At Studio Reform, we believe in the transformative power of mindful movement. 
+                Our approach honors the original principles of Pilates while embracing modern wellness practices.
               </p>
-              <p className="text-lg text-[#f5efe5] mb-6">
-                Our approach combines cutting-edge fitness techniques with mindfulness practices, 
-                creating a holistic experience that transforms not just your body, but your relationship with health and wellness.
+              <p className="text-lg text-gray-600 mb-6">
+                Each class is designed to create balance between strength and flexibility, 
+                control and flow, challenge and restoration. We focus on quality of movement over quantity.
               </p>
-              <p className="text-lg text-[#f5efe5]">
-                Every program is designed to challenge you appropriately, support your goals, 
-                and help you discover strength you never knew you had.
+              <p className="text-lg text-gray-600">
+                Whether you're seeking healing, transformation, or simply a moment of mindful movement, 
+                our studio provides a sanctuary for your wellness journey.
               </p>
             </motion.div>
             
@@ -98,7 +100,7 @@ const About: React.FC = () => {
               className="relative"
             >
               <img 
-                src="https://images.pexels.com/photos/416809/pexels-photo-416809.jpeg?auto=compress&cs=tinysrgb&w=800"
+                src="https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800"
                 alt="Studio Interior" 
                 className="rounded-lg shadow-xl"
               />
@@ -108,7 +110,7 @@ const About: React.FC = () => {
       </section>
 
       {/* Trainers Section */}
-      <section className="py-20 bg-[#f5efe5]">
+      <section className="py-20 bg-cloud-cream">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
@@ -117,9 +119,9 @@ const About: React.FC = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold text-black mb-4">Meet Our Expert Trainers</h2>
-            <p className="text-xl text-[#f5efe5]">
-              Our certified professionals are passionate about helping you achieve your goals
+            <h2 className="text-4xl font-bold text-pure-black mb-4">Meet Our Instructors</h2>
+            <p className="text-xl text-gray-600">
+              Certified Pilates professionals dedicated to your mindful movement journey
             </p>
           </motion.div>
 
@@ -131,7 +133,7 @@ const About: React.FC = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-[#8b987b] rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
               >
                 <img 
                   src={trainer.image} 
@@ -139,9 +141,9 @@ const About: React.FC = () => {
                   className="w-full h-64 object-cover"
                 />
                 <div className="p-6">
-                  <h3 className="text-xl font-semibold text-black mb-2">{trainer.name}</h3>
-                  <p className="text-[#f5efe5] font-medium mb-3">{trainer.specialty}</p>
-                  <p className="text-[#f5efe5] text-sm">{trainer.credentials}</p>
+                  <h3 className="text-xl font-semibold text-pure-black mb-2">{trainer.name}</h3>
+                  <p className="text-sage-green font-medium mb-3">{trainer.specialty}</p>
+                  <p className="text-gray-600 text-sm">{trainer.credentials}</p>
                 </div>
               </motion.div>
             ))}
@@ -150,7 +152,7 @@ const About: React.FC = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-black text-[#f5efe5]">
+      <section className="py-20 bg-sage-green text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
@@ -160,8 +162,8 @@ const About: React.FC = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold mb-4">What Our Members Say</h2>
-            <p className="text-xl text-[#f5efe5]">
-              Real stories from real people who transformed their lives at Studio Reform
+            <p className="text-xl text-gray-300">
+              Stories of transformation, healing, and discovery from our Studio Reform community
             </p>
           </motion.div>
 
@@ -175,7 +177,7 @@ const About: React.FC = () => {
                 viewport={{ once: true }}
                 className="bg-gray-900 rounded-lg p-8 relative"
               >
-                <Quote className="h-8 w-8 text-[#8b987b] mb-4" />
+                <Quote className="h-8 w-8 text-cloud-cream mb-4" />
                 <p className="text-gray-300 mb-6 italic">"{testimonial.text}"</p>
                 <div className="flex items-center">
                   <img 
@@ -185,7 +187,7 @@ const About: React.FC = () => {
                   />
                   <div>
                     <p className="font-semibold">{testimonial.name}</p>
-                    <p className="text[#f5efe5] text-sm">{testimonial.role}</p>
+                    <p className="text-gray-400 text-sm">{testimonial.role}</p>
                   </div>
                 </div>
               </motion.div>

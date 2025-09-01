@@ -5,3 +5,17 @@ Flask-JWT-Extended==4.5.3
 Flask-Bcrypt==1.0.1
 python-dotenv==1.0.0
 psycopg2-binary==2.9.7
+
+
+
+
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1NjQ4NTc3MSwianRpIjoiYmVlYTQ2NDEtZjZlMi00N2NlLTk2ZDktNWMwMThhZWI5MDcyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNzU2NDg1NzcxLCJjc3JmIjoiYWJkM2VjN2ItYzAyMS00MjU5LWEwNTUtODBkMGQ0NzYwYWE2IiwiZXhwIjoxNzU2NTcyMTcxfQ.0ODjwirOlTjurzaF9bbn5HqszIpCvxxfGVqZK71thII",
+    "message": "Admin registered successfully",
+    "user": {
+        "email": "admin@sr.com",
+        "id": 2,
+        "is_admin": true,
+        "name": "admin"
+    }
+}

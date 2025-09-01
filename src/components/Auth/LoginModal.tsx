@@ -81,7 +81,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitchToRegi
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors"
                   placeholder="your.email@example.com"
                 />
               </div>
@@ -98,7 +98,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitchToRegi
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500 transition-colors pr-12"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors pr-12"
                     placeholder="Enter your password"
                   />
                   <button
@@ -114,10 +114,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitchToRegi
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#8b987b] text-black px-6 py-3 rounded-md font-semibold hover:bg-yellow-500 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-sage-green text-white px-6 py-3 rounded-md font-semibold hover:bg-soft-blue transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                 ) : (
                   <>
                     <LogIn className="h-5 w-5 mr-2" />
@@ -132,7 +132,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitchToRegi
                 Don't have an account?{' '}
                 <button
                   onClick={onSwitchToRegister}
-                  className="text-[#8b987b] hover:text-yellow-500 font-medium"
+                  className="text-sage-green hover:text-soft-blue font-medium"
                 >
                   Sign up here
                 </button>

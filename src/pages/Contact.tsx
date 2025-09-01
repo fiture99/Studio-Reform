@@ -45,12 +45,12 @@ const Contact: React.FC = () => {
     {
       icon: MapPin,
       title: 'Visit Us',
-      details: '123 Fitness Street\nDowntown, City 12345'
+      details: 'Banjul, The Gambia\nThe Gambia\'s first boutique reformer Pilates studio'
     },
     {
       icon: Phone,
       title: 'Call Us',
-      details: '(555) 123-4567\nMon-Fri: 6am-10pm'
+      details: '+220 123 4567\nMon-Fri: 7am-8pm'
     },
     {
       icon: Mail,
@@ -60,14 +60,14 @@ const Contact: React.FC = () => {
     {
       icon: Clock,
       title: 'Studio Hours',
-      details: 'Mon-Fri: 6am-10pm\nSat-Sun: 7am-8pm'
+      details: 'Mon-Fri: 7am-8pm\nSat-Sun: 8am-6pm'
     }
   ];
-// bg-[#8b987b] text-[#f5efe5]
+
   return (
     <div className="pt-16">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-r from-black to-gray-900 text-[#f5efe5]">
+      <section className="py-20 bg-gradient-to-r from-sage-green to-pure-black text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -75,16 +75,16 @@ const Contact: React.FC = () => {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-5xl font-bold mb-6">Contact Us</h1>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Ready to start your fitness journey? Get in touch with our team. 
-              We're here to help you achieve your goals.
+            <p className="text-xl text-cloud-cream max-w-2xl mx-auto">
+              Ready to discover mindful movement? Get in touch with our team. 
+              We're here to guide you on your reformer Pilates journey.
             </p>
           </motion.div>
         </div>
       </section>
 
       {/* Contact Info Grid */}
-      <section className="py-20 bg-[#f5efe5]">
+      <section className="py-20 bg-cloud-cream">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
             {contactInfo.map((info, index) => (
@@ -96,10 +96,10 @@ const Contact: React.FC = () => {
                 viewport={{ once: true }}
                 className="text-center group"
               >
-                <div className="bg-[#8b987b] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-yellow-500 transition-colors">
-                  <info.icon className="h-8 w-8 text-black" />
+                <div className="bg-sage-green w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-soft-blue transition-colors">
+                  <info.icon className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-black mb-3">{info.title}</h3>
+                <h3 className="text-xl font-semibold text-pure-black mb-3">{info.title}</h3>
                 <p className="text-gray-600 whitespace-pre-line">{info.details}</p>
               </motion.div>
             ))}
@@ -114,7 +114,7 @@ const Contact: React.FC = () => {
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl font-bold text-black mb-6">Send us a Message</h2>
+              <h2 className="text-3xl font-bold text-pure-black mb-6">Send us a Message</h2>
               
               {success && (
                 <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md mb-6">
@@ -141,7 +141,7 @@ const Contact: React.FC = () => {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors"
                       placeholder="Your name"
                     />
                   </div>
@@ -156,7 +156,7 @@ const Contact: React.FC = () => {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors"
                       placeholder="your.email@example.com"
                     />
                   </div>
@@ -173,7 +173,7 @@ const Contact: React.FC = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors"
                       placeholder="(555) 123-4567"
                     />
                   </div>
@@ -186,12 +186,12 @@ const Contact: React.FC = () => {
                       name="subject"
                       value={formData.subject}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors"
                     >
                       <option value="">Select a subject</option>
-                      <option value="membership">Membership Inquiry</option>
-                      <option value="classes">Class Information</option>
-                      <option value="training">Personal Training</option>
+                      <option value="trial">Trial Class</option>
+                      <option value="classes">Class Levels</option>
+                      <option value="private">Private Sessions</option>
                       <option value="facilities">Facility Tour</option>
                       <option value="other">Other</option>
                     </select>
@@ -209,18 +209,18 @@ const Contact: React.FC = () => {
                     rows={6}
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
-                    placeholder="Tell us about your fitness goals or any questions you have..."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-sage-green focus:border-sage-green transition-colors"
+                    placeholder="Tell us about your wellness goals or questions about reformer Pilates..."
                   ></textarea>
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#8b987b]  text-black px-6 py-3 rounded-md font-semibold hover:bg-yellow-500 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-sage-green text-white px-6 py-3 rounded-md font-semibold hover:bg-soft-blue transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                   ) : (
                     <>
                       Send Message <Send className="ml-2 h-5 w-5" />
@@ -239,38 +239,38 @@ const Contact: React.FC = () => {
               className="space-y-8"
             >
               <div>
-                <h2 className="text-3xl font-bold text-black mb-6">Find Us</h2>
+                <h2 className="text-3xl font-bold text-pure-black mb-6">Find Us</h2>
                 <div className="bg-gray-200 rounded-lg h-64 flex items-center justify-center">
-                  <p className="text-gray-600">Interactive Map Coming Soon</p>
+                  <p className="text-gray-600">Banjul, The Gambia - Contact for exact location</p>
                 </div>
               </div>
 
-              <div className="bg-yellow-500 rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-black mb-4">Studio Hours</h3>
+              <div className="bg-white rounded-lg p-6 border border-sage-green/20">
+                <h3 className="text-xl font-semibold text-pure-black mb-4">Studio Hours</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="font-medium">Monday - Friday</span>
-                    <span className="font-medium">6:00 AM - 10:00 PM</span>
+                    <span className="text-gray-600">Monday - Friday</span>
+                    <span className="font-medium text-sage-green">7:00 AM - 8:00 PM</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="font-medium">Saturday</span>
-                    <span className="font-medium">7:00 AM - 8:00 PM</span>
+                    <span className="text-gray-600">Saturday</span>
+                    <span className="font-medium text-sage-green">8:00 AM - 6:00 PM</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="font-medium">Sunday</span>
-                    <span className="font-medium">7:00 AM - 8:00 PM</span>
+                    <span className="text-gray-600">Sunday</span>
+                    <span className="font-medium text-sage-green">8:00 AM - 6:00 PM</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-[#8b987b] border border-yellow-200 rounded-lg p-6">
-                <h3 className="text-xl font-semibold text-black mb-4">First Visit?</h3>
+              <div className="bg-sage-green/10 border border-sage-green/30 rounded-lg p-6">
+                <h3 className="text-xl font-semibold text-pure-black mb-4">New to Reformer Pilates?</h3>
                 <p className="text-gray-700 mb-4">
-                  New to Studio Reform? We'd love to show you around! Schedule a complimentary 
-                  facility tour and consultation with one of our fitness experts.
+                  We'd love to welcome you to our studio! Schedule a complimentary 
+                  consultation to learn about reformer Pilates and find the right level for you.
                 </p>
-                <button className="bg-yellow-600 text-black px-6 py-2 rounded-md font-semibold hover:bg-yellow-500 transition-colors">
-                  Schedule Free Tour
+                <button className="bg-sage-green text-white px-6 py-2 rounded-md font-semibold hover:bg-soft-blue transition-colors">
+                  Schedule Consultation
                 </button>
               </div>
             </motion.div>

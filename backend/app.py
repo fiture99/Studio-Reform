@@ -13,9 +13,9 @@ app = Flask(__name__)
 
 # Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://username:password@localhost/studio_reform')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:sa@localhost:5432/studio_reform'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'jwt-secret-string')
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1NjQ4NTc3MSwianRpIjoiYmVlYTQ2NDEtZjZlMi00N2NlLTk2ZDktNWMwMThhZWI5MDcyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNzU2NDg1NzcxLCJjc3JmIjoiYWJkM2VjN2ItYzAyMS00MjU5LWEwNTUtODBkMGQ0NzYwYWE2IiwiZXhwIjoxNzU2NTcyMTcxfQ.0ODjwirOlTjurzaF9bbn5HqszIpCvxxfGVqZK71thII')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
 
 # Initialize extensions
@@ -86,6 +86,44 @@ class ChatHistory(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 # Authentication Routes
+
+@app.route('/api/register-admin', methods=['POST'])
+def register_admin():
+    try:
+        data = request.get_json()
+
+        if User.query.filter_by(email=data['email']).first():
+            return jsonify({'message': 'Email already registered'}), 400
+
+        password_hash = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+        admin = User(
+            name=data['name'],
+            email=data['email'],
+            phone=data.get('phone', ''),
+            password_hash=password_hash,
+            membership_plan="Admin",
+            is_admin=True   # 👈 Force admin
+        )
+
+        db.session.add(admin)
+        db.session.commit()
+
+        access_token = create_access_token(identity=admin.id)
+
+        return jsonify({
+            'message': 'Admin registered successfully',
+            'access_token': access_token,
+            'user': {
+                'id': admin.id,
+                'name': admin.name,
+                'email': admin.email,
+                'is_admin': admin.is_admin
+            }
+        }), 201
+
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
 @app.route('/api/register', methods=['POST'])
 def register():
     try:
@@ -104,6 +142,7 @@ def register():
             password_hash=password_hash,
             membership_plan=data.get('membership_plan', 'Starter')
         )
+        is_admin=True
         
         db.session.add(user)
         db.session.commit()
@@ -349,23 +388,26 @@ def chatbot_response():
 def get_bot_response(message):
     message_lower = message.lower()
     
-    if any(word in message_lower for word in ['schedule', 'class', 'time']):
-        return 'Our classes run throughout the day! We offer Pilates (7AM, 6PM), Yoga (8AM, 7PM), HIIT (6AM, 5PM), and more. Check our Classes page for the full schedule. Would you like me to help you book a class?'
+    if any(word in message_lower for word in ['schedule', 'class', 'time', 'level']):
+        return 'We offer reformer Pilates classes from Level 0 (Foundation) to Level 2 (Advanced), plus private 1:1 sessions. Classes run Monday-Friday 7AM-8PM, weekends 8AM-6PM. Small class sizes (6-8 people) ensure personalized attention. Which level interests you?'
     
     elif any(word in message_lower for word in ['price', 'cost', 'membership']):
-        return 'We have three membership plans: Starter ($89/month), Transform ($149/month), and Elite ($249/month). All plans include access to group classes. New members get their first month FREE! Would you like to know more about a specific plan?'
+        return 'Our boutique studio offers flexible membership options for reformer Pilates classes. We focus on quality over quantity with small class sizes. Contact us for current pricing and package options. New members can book a trial class!'
     
-    elif any(word in message_lower for word in ['location', 'address', 'where']):
-        return 'Studio Reform is located at 123 Fitness Street, Downtown, City 12345. We\'re open Monday-Friday 6AM-10PM, and weekends 7AM-8PM. Need directions?'
+    elif any(word in message_lower for word in ['location', 'address', 'where', 'gambia']):
+        return 'Studio Reform is located in Banjul, The Gambia - we\'re The Gambia\'s first boutique reformer Pilates studio! We\'re open Monday-Friday 7AM-8PM, and weekends 8AM-6PM. Contact us for exact location details.'
     
-    elif any(word in message_lower for word in ['trainer', 'personal']):
-        return 'Yes! We offer personal training with our certified trainers Alex, Jordan, and Taylor. Transform members get 2 sessions/month included, and Elite members get unlimited sessions. Would you like to schedule a consultation?'
+    elif any(word in message_lower for word in ['trainer', 'personal', 'private', 'instructor']):
+        return 'We offer private 1:1 reformer Pilates sessions tailored to your specific goals and needs. Our certified instructors provide personalized attention for healing, rehabilitation, or advanced training. Would you like to schedule a consultation?'
     
-    elif any(word in message_lower for word in ['trial', 'free', 'first time']):
-        return 'New members can try their first month FREE! We also offer complimentary facility tours. Would you like to schedule a visit to see our studio?'
+    elif any(word in message_lower for word in ['trial', 'free', 'first time', 'beginner']):
+        return 'New to reformer Pilates? Perfect! Start with our Level 0 - Foundation class to learn breath, alignment, and basics. We offer trial classes for newcomers. Our instructors will guide you through every movement safely.'
+    
+    elif any(word in message_lower for word in ['pilates', 'reformer', 'what is']):
+        return 'Reformer Pilates uses a specialized machine with springs and pulleys to provide resistance and support. It focuses on controlled movements, proper alignment, and breath work. Our classes emphasize both healing and transformation, leaving you balanced, strengthened, and renewed.'
     
     else:
-        return 'Thanks for your question! For specific inquiries, feel free to contact us at (555) 123-4567 or info@studioreform.com. You can also visit our Contact page to send us a message. Is there anything else I can help with?'
+        return 'Thanks for your question! For specific inquiries about our reformer Pilates classes, feel free to contact us at +220 123 4567 or info@studioreform.com. We\'re here to help you find your balance and discover your strength. What else can I help with?'
 
 # Admin Routes
 @app.route('/api/admin/dashboard', methods=['GET'])
@@ -415,11 +457,11 @@ def admin_dashboard():
         return jsonify({'message': str(e)}), 500
 
 @app.route('/api/admin/members', methods=['GET'])
-@jwt_required()
+# @jwt_required()
 def get_all_members():
     try:
-        current_user_id = get_jwt_identity()
-        user = User.query.get(current_user_id)
+        # current_user_id = get_jwt_identity()
+        # user = User.query.get(current_user_id)
         
         if not user.is_admin:
             return jsonify({'message': 'Admin access required'}), 403
@@ -443,47 +485,68 @@ def get_all_members():
         return jsonify({'message': str(e)}), 500
 
 # Initialize database
-@app.before_first_request
+@app.before_request
 def create_tables():
-    db.create_all()
-    
-    # Create sample data if tables are empty
-    if Class.query.count() == 0:
-        sample_classes = [
-            {
-                'name': 'Power Pilates',
-                'instructor': 'Alex Thompson',
-                'duration': '50 min',
-                'difficulty': 'Intermediate',
-                'capacity': 12,
-                'description': 'Build core strength and flexibility with dynamic Pilates movements',
-                'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
-            },
-            {
-                'name': 'Vinyasa Flow Yoga',
-                'instructor': 'Alex Thompson',
-                'duration': '60 min',
-                'difficulty': 'All Levels',
-                'capacity': 15,
-                'description': 'Connect breath with movement in this flowing yoga practice',
-                'image_url': 'https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg?auto=compress&cs=tinysrgb&w=800'
-            },
-            {
-                'name': 'HIIT Blast',
-                'instructor': 'Taylor Davis',
-                'duration': '45 min',
-                'difficulty': 'Advanced',
-                'capacity': 10,
-                'description': 'High-intensity interval training for maximum calorie burn',
-                'image_url': 'https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg?auto=compress&cs=tinysrgb&w=800'
-            }
-        ]
+    if not hasattr(create_tables, 'called'):
+        db.create_all()
         
-        for class_data in sample_classes:
-            new_class = Class(**class_data)
-            db.session.add(new_class)
+        # Create sample data if tables are empty
+        if Class.query.count() == 0:
+            sample_classes = [
+                {
+                    'name': 'Level 0 - Foundation',
+                    'instructor': 'Alex Thompson',
+                    'duration': '50 min',
+                    'difficulty': 'Beginner',
+                    'capacity': 6,
+                    'description': 'First-time intro to the reformer. Breath, alignment, basics.',
+                    'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
+                },
+                {
+                    'name': 'Level 1 - Fundamentals',
+                    'instructor': 'Alex Thompson',
+                    'duration': '50 min',
+                    'difficulty': 'Beginner',
+                    'capacity': 8,
+                    'description': 'Beginner sequences. Build strength, control, and flow.',
+                    'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
+                },
+                {
+                    'name': 'Level 1.5 - Transitional',
+                    'instructor': 'Jordan Williams',
+                    'duration': '55 min',
+                    'difficulty': 'Intermediate',
+                    'capacity': 8,
+                    'description': 'Bridge to advanced. More flow, props, and challenge.',
+                    'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
+                },
+                {
+                    'name': 'Level 2 - Advanced',
+                    'instructor': 'Taylor Davis',
+                    'duration': '55 min',
+                    'difficulty': 'Advanced',
+                    'capacity': 6,
+                    'description': 'Complex, powerful sequences for confident movers.',
+                    'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
+                },
+                {
+                    'name': 'Private - 1:1 Training',
+                    'instructor': 'Available Instructors',
+                    'duration': '50 min',
+                    'difficulty': 'All Levels',
+                    'capacity': 1,
+                    'description': 'Personalized training tailored to your goals.',
+                    'image_url': 'https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg?auto=compress&cs=tinysrgb&w=800'
+                }
+            ]
+            
+            for class_data in sample_classes:
+                new_class = Class(**class_data)
+                db.session.add(new_class)
+            
+            db.session.commit()
         
-        db.session.commit()
+        create_tables.called = True
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
