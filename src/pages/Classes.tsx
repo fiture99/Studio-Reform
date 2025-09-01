@@ -3,6 +3,11 @@ import { motion } from 'framer-motion';
 import { Clock, Users, Calendar, BookOpen, Star } from 'lucide-react';
 import { classesAPI, bookingsAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import advanceImg from '../images/advance.png';
+import foundationImg from '../images/Foudation.png';
+import foundamentalImg from '../images/Foundamental.png';
+import transitionalImg from '../images/transitional.png';
+
 
 const Classes: React.FC = () => {
   const [classes, setClasses] = useState<any[]>([]);
@@ -11,53 +16,54 @@ const Classes: React.FC = () => {
   const { isAuthenticated } = useAuth();
 
   // Pilates class levels with descriptions
-  const classLevels = [
-    {
-      level: 'Level 0',
-      name: 'Foundation',
-      description: 'First-time intro to the reformer. Breath, alignment, basics.',
-      difficulty: 'Beginner',
-      duration: '50 min',
-      instructor: 'Alex Thompson',
-      image: 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
-    },
-    {
-      level: 'Level 1',
-      name: 'Fundamentals', 
-      description: 'Beginner sequences. Build strength, control, and flow.',
-      difficulty: 'Beginner',
-      duration: '50 min',
-      instructor: 'Alex Thompson',
-      image: 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
-    },
-    {
-      level: 'Level 1.5',
-      name: 'Transitional',
-      description: 'Bridge to advanced. More flow, props, and challenge.',
-      difficulty: 'Intermediate',
-      duration: '55 min',
-      instructor: 'Jordan Williams',
-      image: 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
-    },
-    {
-      level: 'Level 2',
-      name: 'Advanced',
-      description: 'Complex, powerful sequences for confident movers.',
-      difficulty: 'Advanced',
-      duration: '55 min',
-      instructor: 'Taylor Davis',
-      image: 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
-    },
-    {
-      level: 'Private',
-      name: '1:1 Training',
-      description: 'Personalized training tailored to your goals.',
-      difficulty: 'All Levels',
-      duration: '50 min',
-      instructor: 'Available Instructors',
-      image: 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
-    }
-  ];
+const classLevels = [
+  {
+    level: 'Level 0',
+    name: 'Foundation',
+    description: 'Perfect for those who have never done Reformer Pilates before. These sessions introduce you to the Reformer, focusing on breath, alignment, and the most basic movements. It’s a gentle, slow-paced class designed to build comfort and confidence. No experience needed — just curiosity and a willingness to learn. Clients only need to complete 1 Level 0 class.',
+    difficulty: 'Beginner',
+    duration: '50 min',
+    instructor: 'Alex Thompson',
+    image: foundationImg
+  },
+  {
+    level: 'Level 1',
+    name: 'Fundamentals',
+    description: 'Ideal for beginners who are ready to build on the foundation. These classes focus on control, strength, and connecting movement with breath. You’ll reinforce basic Pilates principles while gaining confidence in the Reformer.',
+    difficulty: 'Beginner',
+    duration: '50 min',
+    instructor: 'Alex Thompson',
+    image: foundamentalImg
+  },
+  {
+    level: 'Level 1.5',
+    name: 'Transitional',
+    description: 'Designed for those who feel strong in Level 1, but aren’t quite ready for the pace and complexity of Level 2. This level bridges the gap by offering a more dynamic flow, increased coordination, and deeper engagement. Props may be introduced for extra challenge. You’ll know you’re ready for this level when you crave just a bit more.',
+    difficulty: 'Intermediate',
+    duration: '55 min',
+    instructor: 'Jordan Williams',
+    image: transitionalImg
+  },
+  {
+    level: 'Level 2',
+    name: 'Advanced',
+    description: 'For clients who have mastered Reformer Pilates fundamentals and want to take it to the next level. Expect complex sequences, endurance-focused exercises, creative transitions, and powerful flows. Reminder: Just because you’ve reached Level 2 doesn’t mean you can’t return to a lower-level class — revisiting the basics is always a strong choice.',
+    difficulty: 'Advanced',
+    duration: '55 min',
+    instructor: 'Taylor Davis',
+    image: advanceImg
+  },
+  {
+    level: 'Private',
+    name: 'Private Session',
+    description: '1:1 personalized training tailored to your goals. A fully customized session that adapts to your pace, needs, and objectives.',
+    difficulty: 'All Levels',
+    duration: '50 min',
+    instructor: 'Available Instructors',
+    image: 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
+  }
+];
+
   useEffect(() => {
     // Use the predefined class levels instead of fetching from API
     setClasses(classLevels);
@@ -237,7 +243,7 @@ const Classes: React.FC = () => {
                 <div className="space-y-4">
                   <div className="p-4 bg-[#8F9980]/10 rounded-lg">
                     <p className="font-semibold text-pure-black mb-2">Small Class Sizes</p>
-                    <p className="text-gray-600 text-sm">Maximum 6-8 participants per class to ensure personalized attention and proper form guidance.</p>
+                    <p className="text-gray-600 text-sm">Maximum 5 participants per class to ensure personalized attention and proper form guidance.</p>
                   </div>
                   <div className="p-4 bg-[#b9d9eb]/10 rounded-lg">
                     <p className="font-semibold text-pure-black mb-2">Private Sessions</p>
