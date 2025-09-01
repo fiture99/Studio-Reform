@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import LoginModal from './Auth/LoginModal';
 import RegisterModal from './Auth/RegisterModal';
+import logo from '../images/logo (1).svg'
 
 
 // #8F9980
@@ -42,8 +43,8 @@ const Header: React.FC = () => {
       <header className="bg-white shadow-sm fixed w-full top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link to="/" className="flex items-center space-x-2 text-black hover:text-[#8F9980] transition-colors">
-            <Dumbbell className="h-8 w-8 text-[#8F9980]" />
+          <Link to="/Studio-Reform/" className="flex items-center space-x-2 text-black hover:text-[#8F9980] transition-colors">
+<img src={logo} alt="Studio Reform Logo" className="h-[65px]  object-contain" />
             <span className="font-bold text-xl">Studio Reform</span>
           </Link>
 

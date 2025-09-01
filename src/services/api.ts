@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
 
 // Auth token management
 let authToken: string | null = localStorage.getItem('authToken');
@@ -90,16 +90,30 @@ export const classesAPI = {
 
 // Bookings API
 export const bookingsAPI = {
+  // create: async (bookingData: {
+  //   class_id: number;
+  //   booking_date: string;
+  //   booking_time: string;
+  // }) => {
+  //   return apiRequest('/bookings', {
+  //     method: 'POST',
+  //     body: JSON.stringify(bookingData),
+  //   });
+  // },
+
   create: async (bookingData: {
-    class_id: number;
-    booking_date: string;
-    booking_time: string;
-  }) => {
-    return apiRequest('/bookings', {
-      method: 'POST',
-      body: JSON.stringify(bookingData),
-    });
-  },
+  class_id: number;
+  booking_date: string;
+  booking_time: string;
+}) => {
+  console.log('Booking payload:', bookingData); // <-- log payload
+  return apiRequest('/bookings', {
+    method: 'POST',
+    body: JSON.stringify(bookingData),
+  });
+},
+
+
 
   getUserBookings: async () => {
     return apiRequest('/bookings');

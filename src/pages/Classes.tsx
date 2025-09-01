@@ -18,6 +18,7 @@ const Classes: React.FC = () => {
   // Pilates class levels with descriptions
 const classLevels = [
   {
+    id: 1,
     level: 'Level 0',
     name: 'Foundation',
     description: 'Perfect for those who have never done Reformer Pilates before. These sessions introduce you to the Reformer, focusing on breath, alignment, and the most basic movements. It’s a gentle, slow-paced class designed to build comfort and confidence. No experience needed — just curiosity and a willingness to learn. Clients only need to complete 1 Level 0 class.',
@@ -27,6 +28,7 @@ const classLevels = [
     image: foundationImg
   },
   {
+    id: 2,
     level: 'Level 1',
     name: 'Fundamentals',
     description: 'Ideal for beginners who are ready to build on the foundation. These classes focus on control, strength, and connecting movement with breath. You’ll reinforce basic Pilates principles while gaining confidence in the Reformer.',
@@ -36,6 +38,7 @@ const classLevels = [
     image: foundamentalImg
   },
   {
+    id: 3,
     level: 'Level 1.5',
     name: 'Transitional',
     description: 'Designed for those who feel strong in Level 1, but aren’t quite ready for the pace and complexity of Level 2. This level bridges the gap by offering a more dynamic flow, increased coordination, and deeper engagement. Props may be introduced for extra challenge. You’ll know you’re ready for this level when you crave just a bit more.',
@@ -45,6 +48,7 @@ const classLevels = [
     image: transitionalImg
   },
   {
+    id: 4,
     level: 'Level 2',
     name: 'Advanced',
     description: 'For clients who have mastered Reformer Pilates fundamentals and want to take it to the next level. Expect complex sequences, endurance-focused exercises, creative transitions, and powerful flows. Reminder: Just because you’ve reached Level 2 doesn’t mean you can’t return to a lower-level class — revisiting the basics is always a strong choice.',
@@ -54,6 +58,7 @@ const classLevels = [
     image: advanceImg
   },
   {
+    id: 5,
     level: 'Private',
     name: 'Private Session',
     description: '1:1 personalized training tailored to your goals. A fully customized session that adapts to your pace, needs, and objectives.',
@@ -71,32 +76,61 @@ const classLevels = [
   }, []);
 
 
-  const handleBookClass = async (classId: number) => {
-    if (!isAuthenticated) {
-      alert('Please sign in to book a class');
-      return;
-    }
+  // const handleBookClass = async (classId: number) => {
+  //   if (!isAuthenticated) {
+  //     alert('Please sign in to book a class');
+  //     return;
+  //   }
 
-    setBookingLoading(classId);
+  //   setBookingLoading(classId);
     
-    try {
-      // For demo purposes, book for tomorrow at the first available time
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
+  //   try {
+  //     // For demo purposes, book for tomorrow at the first available time
+  //     const tomorrow = new Date();
+  //     tomorrow.setDate(tomorrow.getDate() + 1);
       
-      await bookingsAPI.create({
-        class_id: classId,
-        booking_date: tomorrow.toISOString().split('T')[0],
-        booking_time: '07:00'
-      });
+  //     await bookingsAPI.create({
+  //       class_id: classId,
+  //       booking_date: tomorrow.toISOString().split('T')[0],
+  //       booking_time: '07:00'
+  //     });
       
-      alert('Class booked successfully!');
-    } catch (error: any) {
-      alert(error.message || 'Failed to book class');
-    } finally {
-      setBookingLoading(null);
-    }
-  };
+  //     alert('Class booked successfully!');
+  //   } catch (error: any) {
+  //     alert(error.message || 'Failed to book class');
+  //   } finally {
+  //     setBookingLoading(null);
+  //   }
+  // };
+
+const handleBookClass = async (classId: number) => {
+  if (!isAuthenticated) {
+    alert('Please sign in to book a class');
+    return;
+  }
+
+  setBookingLoading(classId);
+
+  try {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const payload = {
+      class_id: classId,
+      booking_date: tomorrow.toISOString().split('T')[0],
+      booking_time: '07:00'
+    };
+
+    await bookingsAPI.create(payload);
+
+    alert('Class booked successfully!');
+  } catch (error: any) {
+    console.error(error);
+    alert(error.response?.data?.msg || 'Failed to book class');
+  } finally {
+    setBookingLoading(null);
+  }
+};
 
 
   if (loading) {

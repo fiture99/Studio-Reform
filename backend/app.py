@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from flask_bcrypt import Bcrypt
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 import os
 from dotenv import load_dotenv
 
@@ -15,7 +15,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:sa@localhost:5432/studio_reform'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1NjQ4NTc3MSwianRpIjoiYmVlYTQ2NDEtZjZlMi00N2NlLTk2ZDktNWMwMThhZWI5MDcyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MiwibmJmIjoxNzU2NDg1NzcxLCJjc3JmIjoiYWJkM2VjN2ItYzAyMS00MjU5LWEwNTUtODBkMGQ0NzYwYWE2IiwiZXhwIjoxNzU2NTcyMTcxfQ.0ODjwirOlTjurzaF9bbn5HqszIpCvxxfGVqZK71thII')
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'jwt-secret-key-change-in-production')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
 
 # Initialize extensions
@@ -34,7 +34,7 @@ class User(db.Model):
     membership_plan = db.Column(db.String(50))
     is_admin = db.Column(db.Boolean, default=False)
     status = db.Column(db.String(20), default='Active')
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
     bookings = db.relationship('Booking', backref='user', lazy=True)
 
@@ -47,7 +47,7 @@ class Class(db.Model):
     capacity = db.Column(db.Integer, nullable=False)
     description = db.Column(db.Text)
     image_url = db.Column(db.String(255))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
     schedules = db.relationship('ClassSchedule', backref='class_info', lazy=True)
     bookings = db.relationship('Booking', backref='class_info', lazy=True)
@@ -55,7 +55,7 @@ class Class(db.Model):
 class ClassSchedule(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=False)
-    day_of_week = db.Column(db.String(10), nullable=False)  # Monday, Tuesday, etc.
+    day_of_week = db.Column(db.String(10), nullable=False)
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
 
@@ -65,28 +65,27 @@ class Booking(db.Model):
     class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=False)
     booking_date = db.Column(db.Date, nullable=False)
     booking_time = db.Column(db.Time, nullable=False)
-    status = db.Column(db.String(20), default='Confirmed')  # Confirmed, Cancelled, Waitlist
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(20), default='Confirmed')
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 class Contact(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), nullable=False)
-    phone = db.Column(db.String(20))
-    subject = db.Column(db.String(100))
+    phone = db.Column(db.String(20), default='')
+    subject = db.Column(db.String(100), default='', nullable=False)  # Changed this
     message = db.Column(db.Text, nullable=False)
-    status = db.Column(db.String(20), default='New')  # New, Read, Responded
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(20), default='New')
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 class ChatHistory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     session_id = db.Column(db.String(100), nullable=False)
     user_message = db.Column(db.Text, nullable=False)
     bot_response = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 # Authentication Routes
-
 @app.route('/api/register-admin', methods=['POST'])
 def register_admin():
     try:
@@ -102,7 +101,7 @@ def register_admin():
             phone=data.get('phone', ''),
             password_hash=password_hash,
             membership_plan="Admin",
-            is_admin=True   # 👈 Force admin
+            is_admin=True
         )
 
         db.session.add(admin)
@@ -122,6 +121,7 @@ def register_admin():
         }), 201
 
     except Exception as e:
+        db.session.rollback()
         return jsonify({'message': str(e)}), 500
 
 @app.route('/api/register', methods=['POST'])
@@ -140,9 +140,9 @@ def register():
             email=data['email'],
             phone=data.get('phone', ''),
             password_hash=password_hash,
-            membership_plan=data.get('membership_plan', 'Starter')
+            membership_plan=data.get('membership_plan', 'Starter'),
+            is_admin=False  # Regular users are not admins
         )
-        is_admin=True
         
         db.session.add(user)
         db.session.commit()
@@ -157,11 +157,13 @@ def register():
                 'id': user.id,
                 'name': user.name,
                 'email': user.email,
-                'membership_plan': user.membership_plan
+                'membership_plan': user.membership_plan,
+                'is_admin': user.is_admin
             }
         }), 201
         
     except Exception as e:
+        db.session.rollback()
         return jsonify({'message': str(e)}), 500
 
 @app.route('/api/login', methods=['POST'])
@@ -223,7 +225,7 @@ def get_classes():
                 'capacity': class_item.capacity,
                 'enrolled': current_bookings,
                 'description': class_item.description,
-                'image': class_item.image_url,
+                'image_url': class_item.image_url,
                 'schedule': schedule_data
             })
         
@@ -260,34 +262,81 @@ def create_class():
         return jsonify({'message': 'Class created successfully', 'class_id': new_class.id}), 201
         
     except Exception as e:
+        db.session.rollback()
         return jsonify({'message': str(e)}), 500
 
 # Booking Routes
+@app.route('/api/test-booking', methods=['POST'])
+@jwt_required()
+def test_booking():
+    try:
+        data = request.get_json()
+        app.logger.debug('Test booking data: %s', data)
+        
+        # Just return the received data
+        return jsonify({
+            'received': data,
+            'message': 'Test successful'
+        }), 200
+        
+    except Exception as e:
+        app.logger.error('Test booking error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+# Booking Routes - Modified to handle any class ID
 @app.route('/api/bookings', methods=['POST'])
 @jwt_required()
 def create_booking():
     try:
         current_user_id = get_jwt_identity()
         data = request.get_json()
+
+        if not data:
+            return jsonify({'message': 'No JSON received'}), 400
+
+        required_fields = ['class_id', 'booking_date', 'booking_time']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({'message': f'Missing field: {field}'}), 400
+
+        # Don't check if class exists in database since we're using frontend data
+        # Just validate the class_id is a positive integer
+        try:
+            class_id = int(data['class_id'])
+            if class_id <= 0:
+                return jsonify({'message': 'Invalid class ID'}), 400
+        except (ValueError, TypeError):
+            return jsonify({'message': 'Class ID must be a number'}), 400
+
+        # Parse booking date/time
+        try:
+            booking_date = datetime.strptime(data['booking_date'], '%Y-%m-%d').date()
+            booking_time = datetime.strptime(data['booking_time'], '%H:%M').time()
+        except ValueError:
+            return jsonify({'message': 'Invalid date or time format'}), 400
+
+        # Check if user already has a booking for this class at this time
+        existing_booking = Booking.query.filter_by(
+            user_id=current_user_id,
+            class_id=data['class_id'],
+            booking_date=booking_date,
+            booking_time=booking_time
+        ).first()
         
-        # Check if class exists and has capacity
-        class_item = Class.query.get(data['class_id'])
-        if not class_item:
-            return jsonify({'message': 'Class not found'}), 404
-        
-        # Count current bookings for this class and date
-        booking_date = datetime.strptime(data['booking_date'], '%Y-%m-%d').date()
-        booking_time = datetime.strptime(data['booking_time'], '%H:%M').time()
-        
+        if existing_booking:
+            return jsonify({'message': 'You already have a booking for this class at this time'}), 400
+
+        # For demo purposes, set a default capacity and check bookings
+        # In a real app, you'd get this from the database
+        default_capacity = 8
         current_bookings = Booking.query.filter_by(
             class_id=data['class_id'],
             booking_date=booking_date,
             booking_time=booking_time,
             status='Confirmed'
         ).count()
-        
-        status = 'Confirmed' if current_bookings < class_item.capacity else 'Waitlist'
-        
+
+        status = 'Confirmed' if current_bookings < default_capacity else 'Waitlist'
+
         booking = Booking(
             user_id=current_user_id,
             class_id=data['class_id'],
@@ -295,17 +344,18 @@ def create_booking():
             booking_time=booking_time,
             status=status
         )
-        
+
         db.session.add(booking)
         db.session.commit()
-        
+
         return jsonify({
             'message': f'Booking {status.lower()}',
             'booking_id': booking.id,
             'status': status
         }), 201
-        
+
     except Exception as e:
+        db.session.rollback()
         return jsonify({'message': str(e)}), 500
 
 @app.route('/api/bookings', methods=['GET'])
@@ -340,11 +390,16 @@ def submit_contact():
     try:
         data = request.get_json()
         
+        # Ensure subject is always a string
+        subject = data.get('subject', '')
+        if subject is None:
+            subject = ''
+        
         contact = Contact(
             name=data['name'],
             email=data['email'],
             phone=data.get('phone', ''),
-            subject=data.get('subject', ''),
+            subject=subject,
             message=data['message']
         )
         
@@ -354,6 +409,7 @@ def submit_contact():
         return jsonify({'message': 'Message sent successfully'}), 201
         
     except Exception as e:
+        db.session.rollback()
         return jsonify({'message': str(e)}), 500
 
 # Chatbot Routes
@@ -364,10 +420,8 @@ def chatbot_response():
         user_message = data['message']
         session_id = data.get('session_id', 'anonymous')
         
-        # Simple chatbot logic (you can enhance this with AI/ML)
         bot_response = get_bot_response(user_message)
         
-        # Save chat history
         chat_history = ChatHistory(
             session_id=session_id,
             user_message=user_message,
@@ -379,7 +433,7 @@ def chatbot_response():
         
         return jsonify({
             'response': bot_response,
-            'timestamp': datetime.utcnow().isoformat()
+            'timestamp': datetime.now(timezone.utc).isoformat()
         }), 200
         
     except Exception as e:
@@ -424,7 +478,7 @@ def admin_dashboard():
         total_members = User.query.filter_by(is_admin=False).count()
         active_classes = Class.query.count()
         today_bookings = Booking.query.filter_by(
-            booking_date=datetime.utcnow().date(),
+            booking_date=datetime.now(timezone.utc).date(),
             status='Confirmed'
         ).count()
         
@@ -448,7 +502,7 @@ def admin_dashboard():
                 'total_members': total_members,
                 'active_classes': active_classes,
                 'today_bookings': today_bookings,
-                'revenue_mtd': 18450  # This would be calculated from actual payment data
+                'revenue_mtd': 18450
             },
             'recent_bookings': bookings_data
         }), 200
@@ -457,11 +511,11 @@ def admin_dashboard():
         return jsonify({'message': str(e)}), 500
 
 @app.route('/api/admin/members', methods=['GET'])
-# @jwt_required()
+@jwt_required()  # Fixed: Added back JWT requirement
 def get_all_members():
     try:
-        # current_user_id = get_jwt_identity()
-        # user = User.query.get(current_user_id)
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
         
         if not user.is_admin:
             return jsonify({'message': 'Admin access required'}), 403
@@ -485,68 +539,101 @@ def get_all_members():
         return jsonify({'message': str(e)}), 500
 
 # Initialize database
-@app.before_request
-def create_tables():
-    if not hasattr(create_tables, 'called'):
-        db.create_all()
+# @app.before_request
+# def create_tables():
+#     if not hasattr(create_tables, 'called'):
+#         db.create_all()
         
-        # Create sample data if tables are empty
-        if Class.query.count() == 0:
-            sample_classes = [
-                {
-                    'name': 'Level 0 - Foundation',
-                    'instructor': 'Alex Thompson',
-                    'duration': '50 min',
-                    'difficulty': 'Beginner',
-                    'capacity': 6,
-                    'description': 'First-time intro to the reformer. Breath, alignment, basics.',
-                    'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
-                },
-                {
-                    'name': 'Level 1 - Fundamentals',
-                    'instructor': 'Alex Thompson',
-                    'duration': '50 min',
-                    'difficulty': 'Beginner',
-                    'capacity': 8,
-                    'description': 'Beginner sequences. Build strength, control, and flow.',
-                    'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
-                },
-                {
-                    'name': 'Level 1.5 - Transitional',
-                    'instructor': 'Jordan Williams',
-                    'duration': '55 min',
-                    'difficulty': 'Intermediate',
-                    'capacity': 8,
-                    'description': 'Bridge to advanced. More flow, props, and challenge.',
-                    'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
-                },
-                {
-                    'name': 'Level 2 - Advanced',
-                    'instructor': 'Taylor Davis',
-                    'duration': '55 min',
-                    'difficulty': 'Advanced',
-                    'capacity': 6,
-                    'description': 'Complex, powerful sequences for confident movers.',
-                    'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
-                },
-                {
-                    'name': 'Private - 1:1 Training',
-                    'instructor': 'Available Instructors',
-                    'duration': '50 min',
-                    'difficulty': 'All Levels',
-                    'capacity': 1,
-                    'description': 'Personalized training tailored to your goals.',
-                    'image_url': 'https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg?auto=compress&cs=tinysrgb&w=800'
-                }
-            ]
+#         # Create sample data if tables are empty
+#         if Class.query.count() == 0:
+#             sample_classes = [
+#                 {
+#                     'name': 'Level 0 - Foundation',
+#                     'instructor': 'Alex Thompson',
+#                     'duration': '50 min',
+#                     'difficulty': 'Beginner',
+#                     'capacity': 6,
+#                     'description': 'First-time intro to the reformer. Breath, alignment, basics.',
+#                     'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
+#                 },
+#                 {
+#                     'name': 'Level 1 - Fundamentals',
+#                     'instructor': 'Alex Thompson',
+#                     'duration': '50 min',
+#                     'difficulty': 'Beginner',
+#                     'capacity': 8,
+#                     'description': 'Beginner sequences. Build strength, control, and flow.',
+#                     'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
+#                 },
+#                 {
+#                     'name': 'Level 1.5 - Transitional',
+#                     'instructor': 'Jordan Williams',
+#                     'duration': '55 min',
+#                     'difficulty': 'Intermediate',
+#                     'capacity': 8,
+#                     'description': 'Bridge to advanced. More flow, props, and challenge.',
+#                     'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
+#                 },
+#                 {
+#                     'name': 'Level 2 - Advanced',
+#                     'instructor': 'Taylor Davis',
+#                     'duration': '55 min',
+#                     'difficulty': 'Advanced',
+#                     'capacity': 6,
+#                     'description': 'Complex, powerful sequences for confident movers.',
+#                     'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
+#                 },
+#                 {
+#                     'name': 'Private - 1:1 Training',
+#                     'instructor': 'Available Instructors',
+#                     'duration': '50 min',
+#                     'difficulty': 'All Levels',
+#                     'capacity': 1,
+#                     'description': 'Personalized training tailored to your goals.',
+#                     'image_url': 'https://images.pexels.com/photos/4162449/pexels-photo-4162449.jpeg?auto=compress&cs=tinysrgb&w=800'
+#                 }
+#             ]
             
-            for class_data in sample_classes:
-                new_class = Class(**class_data)
-                db.session.add(new_class)
+#             for class_data in sample_classes:
+#                 new_class = Class(**class_data)
+#                 db.session.add(new_class)
             
-            db.session.commit()
+#             db.session.commit()
+            
+#             # Add sample schedules
+#             sample_schedules = [
+#                 {'class_id': 1, 'day_of_week': 'Monday', 'start_time': '07:00', 'end_time': '07:50'},
+#                 {'class_id': 1, 'day_of_week': 'Wednesday', 'start_time': '07:00', 'end_time': '07:50'},
+#                 {'class_id': 1, 'day_of_week': 'Friday', 'start_time': '07:00', 'end_time': '07:50'},
+#                 {'class_id': 2, 'day_of_week': 'Tuesday', 'start_time': '08:00', 'end_time': '08:50'},
+#                 {'class_id': 2, 'day_of_week': 'Thursday', 'start_time': '08:00', 'end_time': '08:50'},
+#                 {'class_id': 3, 'day_of_week': 'Monday', 'start_time': '09:00', 'end_time': '09:55'},
+#                 {'class_id': 3, 'day_of_week': 'Wednesday', 'start_time': '09:00', 'end_time': '09:55'},
+#                 {'class_id': 4, 'day_of_week': 'Tuesday', 'start_time': '10:00', 'end_time': '10:55'},
+#                 {'class_id': 4, 'day_of_week': 'Thursday', 'start_time': '10:00', 'end_time': '10:55'},
+#                 {'class_id': 5, 'day_of_week': 'Monday', 'start_time': '14:00', 'end_time': '14:50'},
+#                 {'class_id': 5, 'day_of_week': 'Tuesday', 'start_time': '14:00', 'end_time': '14:50'},
+#                 {'class_id': 5, 'day_of_week': 'Wednesday', 'start_time': '14:00', 'end_time': '14:50'},
+#                 {'class_id': 5, 'day_of_week': 'Thursday', 'start_time': '14:00', 'end_time': '14:50'},
+#                 {'class_id': 5, 'day_of_week': 'Friday', 'start_time': '14:00', 'end_time': '14:50'},
+#             ]
+            
+#             for schedule_data in sample_schedules:
+#                 # Convert time strings to time objects
+#                 start_time = datetime.strptime(schedule_data['start_time'], '%H:%M').time()
+#                 end_time = datetime.strptime(schedule_data['end_time'], '%H:%M').time()
+                
+#                 schedule = ClassSchedule(
+#                     class_id=schedule_data['class_id'],
+#                     day_of_week=schedule_data['day_of_week'],
+#                     start_time=start_time,
+#                     end_time=end_time
+#                 )
+#                 db.session.add(schedule)
+            
+#             db.session.commit()
         
-        create_tables.called = True
+#         create_tables.called = True
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

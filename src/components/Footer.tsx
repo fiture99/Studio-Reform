@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Dumbbell, MapPin, Phone, Mail, Facebook, Instagram, Twitter } from 'lucide-react';
+import logo from '../images/logo (1).svg'
 
 const Footer: React.FC = () => {
   return (
@@ -11,7 +12,9 @@ const Footer: React.FC = () => {
           {/* Studio Info */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <Dumbbell className="h-8 w-8 text-yellow-600" />
+              {/* <Dumbbell className="h-8 w-8 text-yellow-600" /> */}
+              <img src={logo} alt="Studio Reform Logo" className="h-[65px]  " />
+              
               <span className="text-gray-300 font-semibold">Studio Reform</span>
             </div>
             <p className="text-gray-300 mb-4 max-w-md">
