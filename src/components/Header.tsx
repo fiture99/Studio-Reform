@@ -18,7 +18,7 @@ const Header: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
 
   const navigation = [
-    { name: 'Home', href: '/' },
+    { name: 'Home', href: '/Studio-Reform/' },
     { name: 'About', href: '/about' },
     { name: 'Classes', href: '/classes' },
     { name: 'Membership', href: '/membership' },
