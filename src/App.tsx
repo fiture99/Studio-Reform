@@ -23,7 +23,6 @@ function App() {
             <Route path="/Studio-Reform/contact" element={<Contact />} />
             <Route path="/Studio-Reform/admin" element={<Admin />} />
           </Routes>
-          <Chatbot />
         </Layout>
       </Router>
     </AuthProvider>
