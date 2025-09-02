@@ -9,6 +9,7 @@ const Admin: React.FC = () => {
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { user, isAdmin } = useAuth();
 
   useEffect(() => {
@@ -22,8 +23,9 @@ const Admin: React.FC = () => {
     try {
       const data = await adminAPI.getDashboard();
       setDashboardData(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch dashboard data:', error);
+      setError(error.message || 'Failed to load dashboard data');
     }
   };
 
@@ -31,10 +33,26 @@ const Admin: React.FC = () => {
     try {
       const data = await adminAPI.getMembers();
       setMembers(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch members:', error);
+      setError(error.message || 'Failed to load members');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteMember = async (memberId: number) => {
+    if (window.confirm('Are you sure you want to delete this member?')) {
+      try {
+        // This would call your backend API to delete a member
+        console.log('Deleting member:', memberId);
+        // await adminAPI.deleteMember(memberId);
+        // Refresh the members list
+        fetchMembers();
+      } catch (error) {
+        console.error('Failed to delete member:', error);
+        setError('Failed to delete member');
+      }
     }
   };
 
@@ -57,6 +75,23 @@ const Admin: React.FC = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="pt-16 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-black mb-4">Error</h1>
+          <p className="text-gray-600">{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-4 bg-yellow-600 text-black px-4 py-2 rounded-md font-medium hover:bg-yellow-500 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const tabs = [
     { id: 'dashboard', name: 'Dashboard', icon: BarChart },
     { id: 'members', name: 'Members', icon: Users },
@@ -66,12 +101,17 @@ const Admin: React.FC = () => {
     { id: 'settings', name: 'Settings', icon: Settings }
   ];
 
-  const stats = dashboardData ? [
-    { label: 'Total Members', value: dashboardData.stats.total_members.toString(), change: '+12%', color: 'text-green-600' },
-    { label: 'Active Classes', value: dashboardData.stats.active_classes.toString(), change: '+2', color: 'text-blue-600' },
-    { label: 'Today\'s Bookings', value: dashboardData.stats.today_bookings.toString(), change: '+8%', color: 'text-yellow-600' },
-    { label: 'Revenue (MTD)', value: `$${dashboardData.stats.revenue_mtd.toLocaleString()}`, change: '+15%', color: 'text-green-600' }
-  ] : [];
+  const stats = dashboardData?.stats ? [
+    { label: 'Total Members', value: dashboardData.stats.total_members?.toString() || '0', change: '+12%', color: 'text-green-600' },
+    { label: 'Active Classes', value: dashboardData.stats.active_classes?.toString() || '0', change: '+2', color: 'text-blue-600' },
+    { label: 'Today\'s Bookings', value: dashboardData.stats.today_bookings?.toString() || '0', change: '+8%', color: 'text-yellow-600' },
+    { label: 'Revenue (MTD)', value: `$${dashboardData.stats.revenue_mtd?.toLocaleString() || '0'}`, change: '+15%', color: 'text-green-600' }
+  ] : [
+    { label: 'Total Members', value: '0', change: '+0%', color: 'text-gray-600' },
+    { label: 'Active Classes', value: '0', change: '+0', color: 'text-gray-600' },
+    { label: 'Today\'s Bookings', value: '0', change: '+0%', color: 'text-gray-600' },
+    { label: 'Revenue (MTD)', value: '$0', change: '+0%', color: 'text-gray-600' }
+  ];
 
   return (
     <div className="pt-16 min-h-screen bg-gray-50">
@@ -158,7 +198,13 @@ const Admin: React.FC = () => {
                               </span>
                             </td>
                           </tr>
-                        )) || []}
+                        )) || (
+                          <tr>
+                            <td colSpan={4} className="py-4 text-center text-gray-600">
+                              No recent bookings
+                            </td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -196,33 +242,44 @@ const Admin: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {members.map((member) => (
-                          <tr key={member.id} className="border-b border-gray-100">
-                            <td className="py-3 text-black font-medium">{member.name}</td>
-                            <td className="py-3 text-gray-600">{member.email}</td>
-                            <td className="py-3 text-gray-600">{member.plan}</td>
-                            <td className="py-3">
-                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                member.status === 'Active' 
-                                  ? 'bg-green-100 text-green-800'
-                                  : 'bg-red-100 text-red-800'
-                              }`}>
-                                {member.status}
-                              </span>
-                            </td>
-                            <td className="py-3 text-gray-600">{member.joined}</td>
-                            <td className="py-3">
-                              <div className="flex space-x-2">
-                                <button className="text-blue-600 hover:text-blue-800">
-                                  <Edit className="h-4 w-4" />
-                                </button>
-                                <button className="text-red-600 hover:text-red-800">
-                                  <Trash2 className="h-4 w-4" />
-                                </button>
-                              </div>
+                        {members.length > 0 ? (
+                          members.map((member) => (
+                            <tr key={member.id} className="border-b border-gray-100">
+                              <td className="py-3 text-black font-medium">{member.name}</td>
+                              <td className="py-3 text-gray-600">{member.email}</td>
+                              <td className="py-3 text-gray-600">{member.plan}</td>
+                              <td className="py-3">
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                  member.status === 'Active' 
+                                    ? 'bg-green-100 text-green-800'
+                                    : 'bg-red-100 text-red-800'
+                                }`}>
+                                  {member.status}
+                                </span>
+                              </td>
+                              <td className="py-3 text-gray-600">{member.joined}</td>
+                              <td className="py-3">
+                                <div className="flex space-x-2">
+                                  <button className="text-blue-600 hover:text-blue-800">
+                                    <Edit className="h-4 w-4" />
+                                  </button>
+                                  <button 
+                                    className="text-red-600 hover:text-red-800"
+                                    onClick={() => handleDeleteMember(member.id)}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={6} className="py-4 text-center text-gray-600">
+                              No members found
                             </td>
                           </tr>
-                        ))}
+                        )}
                       </tbody>
                     </table>
                   </div>

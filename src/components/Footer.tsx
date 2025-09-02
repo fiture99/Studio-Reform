@@ -12,9 +12,7 @@ const Footer: React.FC = () => {
           {/* Studio Info */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              {/* <Dumbbell className="h-8 w-8 text-yellow-600" /> */}
-              <img src={logo} alt="Studio Reform Logo" className="h-[65px]  " />
-              
+              <img src={logo} alt="Studio Reform Logo" className="h-[65px]" />
               <span className="text-gray-300 font-semibold">Studio Reform</span>
             </div>
             <p className="text-gray-300 mb-4 max-w-md">
@@ -43,10 +41,10 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="font-semibold text-lg mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              <li><Link to="/about" className="text-gray-300 hover:text-yellow-600 transition-colors">About Us</Link></li>
-              <li><Link to="/classes" className="text-gray-300 hover:text-yellow-600 transition-colors">Classes</Link></li>
-              <li><Link to="/membership" className="text-gray-300 hover:text-yellow-600 transition-colors">Membership</Link></li>
-              <li><Link to="/contact" className="text-gray-300 hover:text-yellow-600 transition-colors">Contact</Link></li>
+              <li><Link to="/Studio-Reform/about" className="text-gray-300 hover:text-yellow-600 transition-colors">About Us</Link></li>
+              <li><Link to="/Studio-Reform/classes" className="text-gray-300 hover:text-yellow-600 transition-colors">Classes</Link></li>
+              <li><Link to="/Studio-Reform/membership" className="text-gray-300 hover:text-yellow-600 transition-colors">Membership</Link></li>
+              <li><Link to="/Studio-Reform/contact" className="text-gray-300 hover:text-yellow-600 transition-colors">Contact</Link></li>
             </ul>
           </div>
 
@@ -69,6 +67,12 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
+        </div>
+
+        {/* Copyright & Website Credit */}
+        <div className="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400 text-sm">
+          <p>&copy; {new Date().getFullYear()} Studio Reform. All rights reserved.</p>
+          <p>Website built by <a href="https://nyakoiservices.tech" target="_blank" rel="noopener noreferrer" className="text-yellow-600 hover:underline">Nyakoi Services</a></p>
         </div>
       </div>
     </footer>
