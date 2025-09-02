@@ -8,7 +8,7 @@ import os
 from dotenv import load_dotenv
 import logging
 
-# Set up logging
+# Set up logging3
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
