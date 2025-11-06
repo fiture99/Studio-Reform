@@ -29,7 +29,7 @@ app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'jwt-secret-key-chang
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
 
 
-app.config.from_object(config[env])
+# app.config.from_object(config[env])
 
 # Initialize extensions
 db = SQLAlchemy(app)
