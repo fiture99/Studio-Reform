@@ -9,8 +9,6 @@ from dotenv import load_dotenv
 import logging
 from sqlalchemy import text
 import random
-from config import config
-
 import string
 
 # Set up logging
@@ -41,24 +39,47 @@ bcrypt = Bcrypt(app)
 
 # Configure CORS properly - UPDATED
 # ✅ FIXED: Use ONLY Flask-CORS, remove manual CORS handlers
-
-
-CORS(app, 
-     origins=app.config['CORS_ORIGINS'],
+CORS(app,
+     resources={r"/*": {"origins": [
+         "https://studio-reform.onrender.com",
+         "https://studio-reform-1.onrender.com",
+         "https://studioreform.fit",
+         "http://localhost:5173",
+         "http://127.0.0.1:5173"
+     ]}},
      methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
      allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
      supports_credentials=True)
 
-# Global OPTIONS handler for preflight requests
-@app.before_request
-def handle_options():
-    if request.method == 'OPTIONS':
-        response = jsonify({'status': 'success'})
-        response.headers.add('Access-Control-Allow-Origin', request.headers.get('Origin', '*'))
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-        response.headers.add('Access-Control-Allow-Credentials', 'true')
-        return response
+# # Manual CORS handling for preflight requests
+# @app.before_request
+# def handle_preflight():
+#     if request.method == "OPTIONS":
+#         response = jsonify({"status": "success"})
+#         response.headers.add("Access-Control-Allow-Origin", request.headers.get("Origin", "*"))
+#         response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With")
+#         response.headers.add("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")
+#         response.headers.add("Access-Control-Allow-Credentials", "true")
+#         response.headers.add("Access-Control-Max-Age", "86400")  # 24 hours
+#         return response, 200
+
+# @app.after_request
+# def after_request(response):
+#     origin = request.headers.get('Origin')
+#     allowed_origins = [
+#         "https://studio-reform.onrender.com",
+#         "https://studio-reform-1.onrender.com", 
+#         "http://localhost:5173",
+#         "http://127.0.0.1:5173"
+#     ]
+    
+#     if origin in allowed_origins:
+#         response.headers.add('Access-Control-Allow-Origin', origin)
+#     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With')
+#     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+#     response.headers.add('Access-Control-Allow-Credentials', 'true')
+#     return response
+
 
 
 # JWT error handlers
