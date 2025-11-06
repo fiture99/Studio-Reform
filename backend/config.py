@@ -1,0 +1,58 @@
+import os
+from datetime import timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
+
+class Config:
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgresql://postgres:sa@localhost:5432/Studio_Reform_New'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # JWT Configuration
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt-secret-string'
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=24)
+    
+    # CORS - Add all possible origins
+    CORS_ORIGINS = [
+        'http://localhost:5173', 
+        'http://localhost:3000',
+        'http://127.0.0.1:5173',
+        'http://127.0.0.1:3000',
+        'https://studio-reform.onrender.com',
+        'https://studio-reform-1.onrender.com',
+        'https://studioreform.fit'
+    ]
+    
+    # Upload Configuration
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or 'uploads'
+    MAX_CONTENT_LENGTH = int(os.environ.get('MAX_CONTENT_LENGTH') or 16 * 1024 * 1024)  # 16MB
+
+class DevelopmentConfig(Config):
+    DEBUG = True
+    # Add more origins for development if needed
+    CORS_ORIGINS = Config.CORS_ORIGINS + [
+        'http://localhost:8000',
+        'http://127.0.0.1:8000'
+    ]
+
+class ProductionConfig(Config):
+    DEBUG = False
+    # Update with your production domains
+    CORS_ORIGINS = [
+        'https://studio-reform.onrender.com',
+        'https://studio-reform-1.onrender.com',
+        'https://studioreform.fit'
+    ]
+
+class TestingConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/studio_reform_test_db'
+    CORS_ORIGINS = ['http://localhost:5173']
+
+config = {
+    'development': DevelopmentConfig,
+    'production': ProductionConfig,
+    'testing': TestingConfig,
+    'default': DevelopmentConfig
+}
