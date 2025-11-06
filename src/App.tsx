@@ -16,7 +16,7 @@ function App() {
       <Router>
         <Layout>
           <Routes>
-            <Route path="/Studio-Reform/" element={<Home />} />
+            <Route path="/" element={<Home />} />
             <Route path="/Studio-Reform/about" element={<About />} />
             <Route path="/Studio-Reform/classes" element={<Classes />} />
             <Route path="/Studio-Reform/membership" element={<Membership />} />
