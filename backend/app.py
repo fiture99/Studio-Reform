@@ -39,17 +39,20 @@ bcrypt = Bcrypt(app)
 
 # Configure CORS properly - UPDATED
 # ✅ FIXED: Use ONLY Flask-CORS, remove manual CORS handlers
-CORS(app,
-     resources={r"/*": {"origins": [
-         "https://studio-reform.onrender.com",
-         "https://studio-reform-1.onrender.com",
-         "https://studioreform.fit",
-         "http://localhost:5173",
-         "http://127.0.0.1:5173"
-     ]}},
-     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-     allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
-     supports_credentials=True)
+# configure CORS once, before any routes
+CORS(app, resources={r"/*": {"origins": [
+    "https://studio-reform.onrender.com",
+    "https://studio-reform-1.onrender.com",
+    "http://localhost:5173"
+]}}, supports_credentials=True)
+
+@app.after_request
+def add_cors_headers(resp):
+    resp.headers.add("Access-Control-Allow-Origin", "https://studio-reform.onrender.com")
+    resp.headers.add("Access-Control-Allow-Credentials", "true")
+    resp.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With")
+    resp.headers.add("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
+    return resp
 
 # # Manual CORS handling for preflight requests
 # @app.before_request
