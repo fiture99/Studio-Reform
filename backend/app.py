@@ -30,9 +30,25 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
 
 # Initialize extensions
 db = SQLAlchemy(app)
-cors = CORS(app)
+# cors = CORS(app)
 jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
+
+CORS(app, 
+     resources={
+         r"/*": {
+             "origins": [
+                 "https://studio-reform.onrender.com",
+                 "https://studio-reform-1.onrender.com", 
+                 "http://localhost:5173",
+                 "http://127.0.0.1:5173"
+             ],
+             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+             "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
+             "supports_credentials": True
+         }
+     })
+
 
 # JWT error handlers
 @jwt.unauthorized_loader
