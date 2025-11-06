@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Clock, Users, Calendar, BookOpen, Star } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Clock, Users, BookOpen, Star, Check, X } from 'lucide-react';
 import { classesAPI, bookingsAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import advanceImg from '../images/advance.png';
@@ -8,130 +8,141 @@ import foundationImg from '../images/Foudation.png';
 import foundamentalImg from '../images/Foundamental.png';
 import transitionalImg from '../images/transitional.png';
 
-
 const Classes: React.FC = () => {
   const [classes, setClasses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [bookingLoading, setBookingLoading] = useState<number | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const { isAuthenticated } = useAuth();
 
-  // Pilates class levels with descriptions
-const classLevels = [
-  {
-    id: 1,
-    level: 'Level 0',
-    name: 'Foundation',
-    description: 'Perfect for those who have never done Reformer Pilates before. These sessions introduce you to the Reformer, focusing on breath, alignment, and the most basic movements. It’s a gentle, slow-paced class designed to build comfort and confidence. No experience needed — just curiosity and a willingness to learn. Clients only need to complete 1 Level 0 class.',
-    difficulty: 'Beginner',
-    duration: '50 min',
-    instructor: 'Alex Thompson',
-    image: foundationImg
-  },
-  {
-    id: 2,
-    level: 'Level 1',
-    name: 'Fundamentals',
-    description: 'Ideal for beginners who are ready to build on the foundation. These classes focus on control, strength, and connecting movement with breath. You’ll reinforce basic Pilates principles while gaining confidence in the Reformer.',
-    difficulty: 'Beginner',
-    duration: '50 min',
-    instructor: 'Alex Thompson',
-    image: foundamentalImg
-  },
-  {
-    id: 3,
-    level: 'Level 1.5',
-    name: 'Transitional',
-    description: 'Designed for those who feel strong in Level 1, but aren’t quite ready for the pace and complexity of Level 2. This level bridges the gap by offering a more dynamic flow, increased coordination, and deeper engagement. Props may be introduced for extra challenge. You’ll know you’re ready for this level when you crave just a bit more.',
-    difficulty: 'Intermediate',
-    duration: '55 min',
-    instructor: 'Jordan Williams',
-    image: transitionalImg
-  },
-  {
-    id: 4,
-    level: 'Level 2',
-    name: 'Advanced',
-    description: 'For clients who have mastered Reformer Pilates fundamentals and want to take it to the next level. Expect complex sequences, endurance-focused exercises, creative transitions, and powerful flows. Reminder: Just because you’ve reached Level 2 doesn’t mean you can’t return to a lower-level class — revisiting the basics is always a strong choice.',
-    difficulty: 'Advanced',
-    duration: '55 min',
-    instructor: 'Taylor Davis',
-    image: advanceImg
-  },
-  {
-    id: 5,
-    level: 'Private',
-    name: 'Private Session',
-    description: '1:1 personalized training tailored to your goals. A fully customized session that adapts to your pace, needs, and objectives.',
-    difficulty: 'All Levels',
-    duration: '50 min',
-    instructor: 'Available Instructors',
-    image: 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
-  }
-];
+  const classLevels = [
+    {
+      id: 1,
+      level: 'all levels',
+      name: 'Root (Classical)',
+      description: 'A return to classical Pilates. Precise, grounded, and methodical — ROOT follows the traditional reformer sequence focusing on control, alignment, and flow. Ideal for anyone wanting to reconnect with the roots of the method through a structured, mindful pace.',
+      difficulty: 'All Levels',
+      duration: '50 min',
+      instructor: 'Studio Reform',
+      image: foundationImg
+    },
+    {
+      id: 2,
+      level: 'all levels',
+      name: 'Reform I (Signature, Full Body)',
+      description: 'The signature Studio Reform experience. A full-body reformer flow that merges strength, elongation, and balance.',
+      difficulty: 'All Levels',
+      duration: '50 min',
+      instructor: 'Studio Reform',
+      image: foundamentalImg
+    },
+    {
+      id: 3,
+      level: 'intermediate',
+      name: 'Reform II (Abs, Booty, Core)',
+      description: 'The sculpting phase. Focus on the ABC\'s. A focused reformer class targeting abs, booty, and core through deeper resistance and endurance sequences. Elevated energy, refined precision, intentional burn.',
+      difficulty: 'Intermediate',
+      duration: '55 min',
+      instructor: 'Studio Reform',
+      image: transitionalImg
+    },
+    {
+      id: 4,
+      level: 'all levels',
+      name: 'Rhythm (Jumpboard)',
+      description: 'A dynamic reformer flow with jumpboard integration. Low-impact bursts that challenge coordination and control while maintaining form and precision. Strength in flight, grounded by grace.',
+      difficulty: 'All Levels',
+      duration: '55 min',
+      instructor: 'Studio Reform',
+      image: advanceImg
+    },
+    {
+      id: 5,
+      level: 'all levels',
+      name: 'Repose (Stretch)',
+      description: 'A restorative reformer experience for elongation, mobility, and release. Focused on breath, flexibility, and tension relief — the Studio Reform reset. "Rest is part of reform."',
+      difficulty: 'All Levels',
+      duration: '50 min',
+      instructor: 'Studio Reform',
+      image: 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
+    }
+  ]
 
   useEffect(() => {
-    // Use the predefined class levels instead of fetching from API
     setClasses(classLevels);
     setLoading(false);
   }, []);
 
+  const showSuccessMessage = (message: string) => {
+    setSuccessMessage(message);
+    setShowSuccess(true);
+    setTimeout(() => {
+      setShowSuccess(false);
+    }, 5000);
+  };
 
-  // const handleBookClass = async (classId: number) => {
-  //   if (!isAuthenticated) {
-  //     alert('Please sign in to book a class');
-  //     return;
-  //   }
+  const handleBookClass = async (classItem: any) => {
+    if (!isAuthenticated) {
+      alert('Please sign in to book a class');
+      return;
+    }
 
-  //   setBookingLoading(classId);
-    
-  //   try {
-  //     // For demo purposes, book for tomorrow at the first available time
-  //     const tomorrow = new Date();
-  //     tomorrow.setDate(tomorrow.getDate() + 1);
-      
-  //     await bookingsAPI.create({
-  //       class_id: classId,
-  //       booking_date: tomorrow.toISOString().split('T')[0],
-  //       booking_time: '07:00'
-  //     });
-      
-  //     alert('Class booked successfully!');
-  //   } catch (error: any) {
-  //     alert(error.message || 'Failed to book class');
-  //   } finally {
-  //     setBookingLoading(null);
-  //   }
-  // };
+    setBookingLoading(classItem.id);
 
-const handleBookClass = async (classId: number) => {
-  if (!isAuthenticated) {
-    alert('Please sign in to book a class');
-    return;
-  }
+    try {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
 
-  setBookingLoading(classId);
+      // Create the booking
+      const response = await bookingsAPI.create({
+        booking_type: 'class',
+        class_id: classItem.id,
+        booking_date: tomorrow.toISOString().split('T')[0],
+        booking_time: '07:00',
+        amount: 0
+      });
 
-  try {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
+      // Show success message immediately after booking
+      showSuccessMessage(`Success! Your ${classItem.name} class has been booked for ${tomorrow.toISOString().split('T')[0]} at 07:00. Your reference number is: ${response.reference_number}`);
 
-    const payload = {
-      class_id: classId,
-      booking_date: tomorrow.toISOString().split('T')[0],
-      booking_time: '07:00'
-    };
+    } catch (error: any) {
+      console.error(error);
+      alert(error.response?.data?.message || error.message || 'Failed to book class');
+    } finally {
+      setBookingLoading(null);
+    }
+  };
 
-    await bookingsAPI.create(payload);
-
-    alert('Class booked successfully!');
-  } catch (error: any) {
-    console.error(error);
-    alert(error.response?.data?.msg || 'Failed to book class');
-  } finally {
-    setBookingLoading(null);
-  }
-};
-
+  // Success Notification Component
+  const SuccessNotification = () => (
+    <AnimatePresence>
+      {showSuccess && (
+        <motion.div
+          initial={{ opacity: 0, y: -50, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -50, scale: 0.9 }}
+          className="fixed top-20 right-4 z-50 max-w-sm w-full"
+        >
+          <div className="bg-green-500 text-white p-4 rounded-lg shadow-lg border-l-4 border-green-600">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Check className="h-5 w-5 mr-2" />
+                <span className="font-semibold">Booking Confirmed!</span>
+              </div>
+              <button
+                onClick={() => setShowSuccess(false)}
+                className="text-white hover:text-green-200 transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <p className="mt-2 text-sm">{successMessage}</p>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 
   if (loading) {
     return (
@@ -143,6 +154,9 @@ const handleBookClass = async (classId: number) => {
 
   return (
     <div className="pt-16">
+      {/* Success Notification */}
+      <SuccessNotification />
+
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-r from-[#8F9980] to-pure-black text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -183,12 +197,12 @@ const handleBookClass = async (classId: number) => {
                     {classItem.difficulty}
                   </div>
                   <div className="absolute top-4 left-4 bg-pure-black/80 text-cloud-cream px-3 py-1 rounded-full text-sm font-semibold">
-                    {classItem.name.split(' - ')[0]}
+                    {classItem.level}
                   </div>
                 </div>
                 
                 <div className="p-6">
-                  <h3 className="text-2xl font-bold text-pure-black mb-2">{classItem.name.split(' - ')[1] || classItem.name}</h3>
+                  <h3 className="text-2xl font-bold text-pure-black mb-2">{classItem.name}</h3>
                   <p className="text-gray-600 mb-4">{classItem.description}</p>
                   
                   <div className="space-y-2 mb-6">
@@ -202,14 +216,14 @@ const handleBookClass = async (classId: number) => {
                     </div>
                     <div className="flex items-center text-gray-600">
                       <Users className="h-4 w-4 mr-2" />
-                      <span className="text-sm">{classItem.enrolled || 0}/{classItem.capacity} enrolled</span>
+                      <span className="text-sm">{classItem.enrolled || 0}/{classItem.capacity || 8} enrolled</span>
                     </div>
                   </div>
                   
                   <button 
-                    onClick={() => handleBookClass(classItem.id)}
+                    onClick={() => handleBookClass(classItem)}
                     disabled={bookingLoading === classItem.id}
-                    className="w-full bg-[#8F9980] text-white py-2 px-4 rounded-md font-semibold hover:bg-[#b9d9eb] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-[#8F9980] text-white py-2 px-4 rounded-md font-semibold hover:bg-[#7a8570] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {bookingLoading === classItem.id ? (
                       <div className="flex items-center justify-center">
@@ -243,7 +257,6 @@ const handleBookClass = async (classId: number) => {
             </p>
           </motion.div>
 
-
           <div className="bg-white rounded-lg shadow-lg p-8 max-w-4xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
@@ -273,15 +286,15 @@ const handleBookClass = async (classId: number) => {
               </div>
               
               <div>
-                <h3 className="text-2xl font-bold text-pure-black mb-6">Class Capacity</h3>
+                <h3 className="text-2xl font-bold text-pure-black mb-6">Booking Information</h3>
                 <div className="space-y-4">
                   <div className="p-4 bg-[#8F9980]/10 rounded-lg">
-                    <p className="font-semibold text-pure-black mb-2">Small Class Sizes</p>
-                    <p className="text-gray-600 text-sm">Maximum 5 participants per class to ensure personalized attention and proper form guidance.</p>
+                    <p className="font-semibold text-pure-black mb-2">Instant Confirmation</p>
+                    <p className="text-gray-600 text-sm">Your class booking is confirmed immediately with a reference number.</p>
                   </div>
                   <div className="p-4 bg-[#b9d9eb]/10 rounded-lg">
-                    <p className="font-semibold text-pure-black mb-2">Private Sessions</p>
-                    <p className="text-gray-600 text-sm">One-on-one training available for personalized programs and specific goals.</p>
+                    <p className="font-semibold text-pure-black mb-2">Need to Cancel?</p>
+                    <p className="text-gray-600 text-sm">Contact us at least 2 hours before your scheduled class.</p>
                   </div>
                 </div>
               </div>

@@ -72,7 +72,7 @@ const Footer: React.FC = () => {
         {/* Copyright & Website Credit */}
         <div className="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400 text-sm">
           <p>&copy; {new Date().getFullYear()} Studio Reform. All rights reserved.</p>
-          <p>Website built by <a href="https://nyakoiservices.tech" target="_blank" rel="noopener noreferrer" className="text-yellow-600 hover:underline">Nyakoi Services</a></p>
+          <p>Website built by <a href="https://nyakoi-services.onrender.com/" target="_blank" rel="noopener noreferrer" className="text-yellow-600 hover:underline">Nyakoi Services</a></p>
         </div>
       </div>
     </footer>

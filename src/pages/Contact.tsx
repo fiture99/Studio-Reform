@@ -74,7 +74,7 @@ const Contact: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-5xl font-bold mb-6">Contact Us</h1>
+            <h1 className="text-5xl font-bold mb-6 font-rigor">Contact Us</h1>
             <p className="text-xl text-cloud-cream max-w-2xl mx-auto">
               Ready to discover mindful movement? Get in touch with our team. 
               We're here to guide you on your reformer Pilates journey.
