@@ -1,4 +1,7 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://studio-reform-1.onrender.com';
+
+
 
 // Auth token management
 let authToken: string | null = localStorage.getItem('authToken');
