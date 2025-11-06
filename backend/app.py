@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 import logging
 from sqlalchemy import text
 import random
+from config import config
+
 import string
 
 # Set up logging
