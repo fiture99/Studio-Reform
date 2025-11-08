@@ -37,14 +37,16 @@ db = SQLAlchemy(app)
 jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
 
-# Configure CORS properly - UPDATED
-# ✅ FIXED: Use ONLY Flask-CORS, remove manual CORS handlers
-# configure CORS once, before any routes
-CORS(app, resources={r"/*": {"origins": [
-    "https://studio-reform.onrender.com",
-    "https://studio-reform-1.onrender.com",
-    "http://localhost:5173"
-]}}, supports_credentials=True)
+# Configure CORS properly - UPDATEDCORS(app,
+     resources={r"/*": {"origins": [
+         "https://studio-reform.onrender.com",
+         "http://localhost:5173",
+         "http://127.0.0.1:5173"
+     ]}},
+     supports_credentials=True,
+     allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+
 
 @app.after_request
 def add_cors_headers(resp):
