@@ -9,6 +9,7 @@ import Membership from './pages/Membership';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
 import Chatbot from './components/Chatbot';
+import './index.css'
 
 function App() {
   return (

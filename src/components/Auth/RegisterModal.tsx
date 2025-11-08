@@ -141,7 +141,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
                 />
               </div>
 
-              <div>
+              {/* <div>
                 <label htmlFor="membership_plan" className="block text-sm font-medium text-gray-700 mb-2">
                   Membership Plan
                 </label>
@@ -156,7 +156,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ isOpen, onClose, onSwitch
                   <option value="Transform">Transform - $149/month</option>
                   <option value="Elite">Elite - $249/month</option>
                 </select>
-              </div>
+              </div> */}
 
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">

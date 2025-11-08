@@ -31,9 +31,15 @@ const Footer: React.FC = () => {
               <span className="text-gray-300">info@studioreform.com</span>
             </div>
             <div className="flex space-x-4">
-              <Facebook className="h-6 w-6 text-gray-400 hover:text-yellow-600 cursor-pointer transition-colors" />
-              <Instagram className="h-6 w-6 text-gray-400 hover:text-yellow-600 cursor-pointer transition-colors" />
-              <Twitter className="h-6 w-6 text-gray-400 hover:text-yellow-600 cursor-pointer transition-colors" />
+              <a href="https://facebook.com/yourpage" target="_blank" rel="noopener noreferrer">
+                <Facebook className="h-6 w-6 text-gray-400 hover:text-yellow-600 cursor-pointer transition-colors" />
+              </a>
+              <a href="https://www.instagram.com/studioreform.gm?igsh=MWVrNDA3endjN3Q5Ng== " target="_blank" rel="noopener noreferrer">
+                <Instagram className="h-6 w-6 text-gray-400 hover:text-yellow-600 cursor-pointer transition-colors" />
+              </a>
+              <a href="https://twitter.com/yourpage" target="_blank" rel="noopener noreferrer">
+                <Twitter className="h-6 w-6 text-gray-400 hover:text-yellow-600 cursor-pointer transition-colors" />
+              </a>
             </div>
           </div>
 
