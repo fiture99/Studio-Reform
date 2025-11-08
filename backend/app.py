@@ -38,25 +38,22 @@ jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
 
 # Configure CORS properly - UPDATEDCORS(app,
-CORS(app,
-     resources={r"/*": {"origins": [
-         "https://studio-reform.onrender.com",
-         "https://studio-reform-1.onrender.com",
-         "http://localhost:5173",
-         "http://127.0.0.1:5173"
-     ]}},
-     supports_credentials=True,
-     allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
-     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
-
-
-
 @app.after_request
 def add_cors_headers(resp):
-    resp.headers.add("Access-Control-Allow-Origin", "https://studio-reform.onrender.com")
-    resp.headers.add("Access-Control-Allow-Credentials", "true")
-    resp.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With")
-    resp.headers.add("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
+    allowed_origins = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://studio-reform.onrender.com",
+        "https://studio-reform-1.onrender.com"
+    ]
+    
+    origin = request.headers.get("Origin")
+    if origin in allowed_origins:
+        resp.headers["Access-Control-Allow-Origin"] = origin
+    
+    resp.headers["Access-Control-Allow-Credentials"] = "true"
+    resp.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization,X-Requested-With"
+    resp.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
     return resp
 
 # # Manual CORS handling for preflight requests
