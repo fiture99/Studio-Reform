@@ -68,13 +68,13 @@ const Home: React.FC = () => {
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <Link
-              to="/classes"
+              to="/Studio-Reform/classes"
               className="bg-[#8F9980] text-white px-8 py-4 rounded-md font-semibold text-lg hover:bg-[#8F9980]/90 transition-colors inline-flex items-center justify-center"
             >
               Discover Your Balance <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
             <Link
-              to="/about"
+              to="/Studio-Reform/about"
               className="border-2 border-cloud-cream text-cloud-cream px-8 py-4 rounded-md font-semibold text-lg hover:bg-cloud-cream hover:text-[#8F9980] transition-colors"
             >
               Learn More
@@ -128,7 +128,7 @@ const Home: React.FC = () => {
               Join our community and experience the transformative power of reformer Pilates
             </p>
             <Link
-              to="/membership"
+              to="/Studio-Reform/membership"
               className="bg-cloud-cream text-[#8F9980] px-8 py-4 rounded-md font-semibold text-lg hover:bg-white transition-colors inline-flex items-center"
             >
               Start Your Journey <ArrowRight className="ml-2 h-5 w-5" />
