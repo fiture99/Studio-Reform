@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitchToRegi
   const [error, setError] = useState('');
 
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,9 +28,17 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSwitchToRegi
     setError('');
 
     try {
-      await login(formData.email, formData.password);
+      const userData = await login(formData.email, formData.password);
       onClose();
       setFormData({ email: '', password: '' });
+      
+      // Check if user is admin and redirect accordingly
+      if (userData.is_admin) {
+        navigate('/Studio-Reform/admin');
+      } else {
+        navigate('/');
+      }
+      
     } catch (error: any) {
       setError(error.message || 'Login failed');
     } finally {

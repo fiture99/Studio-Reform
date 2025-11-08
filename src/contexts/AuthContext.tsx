@@ -11,14 +11,14 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
   register: (userData: {
     name: string;
     email: string;
     password: string;
     phone?: string;
     membership_plan?: string;
-  }) => Promise<void>;
+  }) => Promise<User>;
   logout: () => void;
   isAuthenticated: boolean;
   isAdmin: boolean;
@@ -46,22 +46,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     // Check if user is already logged in
     const token = getAuthToken();
-    if (token) {
-      // You might want to validate the token with the backend here
-      // For now, we'll just set loading to false
-      setLoading(false);
-    } else {
-      setLoading(false);
+    const storedUser = localStorage.getItem('user');
+    
+    if (token && storedUser) {
+      try {
+        const userData = JSON.parse(storedUser);
+        setUser(userData);
+      } catch (error) {
+        console.error('Error parsing stored user data:', error);
+        // Clear corrupted data
+        localStorage.removeItem('user');
+        removeAuthToken();
+      }
     }
+    setLoading(false);
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<User> => {
     try {
+      setLoading(true);
       const response = await authAPI.login({ email, password });
+      
+      // Set auth token
       setAuthToken(response.access_token);
+      
+      // Set user data
       setUser(response.user);
+      
+      // Store user data in localStorage for persistence
+      localStorage.setItem('user', JSON.stringify(response.user));
+      
+      return response.user;
     } catch (error) {
+      // Clear any partial data on error
+      removeAuthToken();
+      localStorage.removeItem('user');
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,19 +93,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     password: string;
     phone?: string;
     membership_plan?: string;
-  }) => {
+  }): Promise<User> => {
     try {
+      setLoading(true);
       const response = await authAPI.register(userData);
+      
+      // Set auth token
       setAuthToken(response.access_token);
+      
+      // Set user data
       setUser(response.user);
+      
+      // Store user data in localStorage for persistence
+      localStorage.setItem('user', JSON.stringify(response.user));
+      
+      return response.user;
     } catch (error) {
+      // Clear any partial data on error
+      removeAuthToken();
+      localStorage.removeItem('user');
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const logout = () => {
     removeAuthToken();
     setUser(null);
+    localStorage.removeItem('user');
   };
 
   const value: AuthContextType = {
