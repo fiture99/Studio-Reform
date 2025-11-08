@@ -28,7 +28,7 @@ const Footer: React.FC = () => {
             </div>
             <div className="flex items-center space-x-2 mb-6">
               <Mail className="h-4 w-4 text-yellow-600" />
-              <span className="text-gray-300">info@studioreform.com</span>
+              <span className="text-gray-300">info@studioreform.fit</span>
             </div>
             <div className="flex space-x-4">
               <a href="https://facebook.com/yourpage" target="_blank" rel="noopener noreferrer">
@@ -68,7 +68,7 @@ const Footer: React.FC = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4 text-yellow-600" />
-                <span className="text-gray-300">support@studioreform.com</span>
+                <span className="text-gray-300">info@studioreform.fit</span>
               </div>
             </div>
           </div>

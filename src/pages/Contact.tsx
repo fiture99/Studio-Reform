@@ -55,7 +55,7 @@ const Contact: React.FC = () => {
     {
       icon: Mail,
       title: 'Email Us',
-      details: 'info@studioreform.com\nSupport response within 24hrs'
+      details: 'info@studioreform.fit\nSupport response within 24hrs'
     },
     {
       icon: Clock,
