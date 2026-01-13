@@ -42,11 +42,11 @@ const Membership: React.FC = () => {
       title: 'Wave Mobile Money',
       icon: Phone,
       details: [
-        { label: 'Wave Number', value: '+220 123 4567' },
+        { label: 'Wave Number', value: '+220 2600250' },
         { label: 'Account Name', value: 'Studio Reform' }
       ],
       instructions: [
-        'Open your Wave app or dial *715*12345#',
+        'Open your Wave app',
         'Send payment to the number above',
         'Include your reference number'
       ],
@@ -59,12 +59,12 @@ const Membership: React.FC = () => {
       details: [
         { label: 'Bank Name', value: 'Trust Bank' },
         { label: 'Account Name', value: 'Studio Reform' },
-        { label: 'Account Number', value: '002123456789' }
+        { label: 'Account Number', value: '10114221701' }
       ],
       instructions: [
         'Transfer to the account details above',
         'Use reference number as payment reference',
-        'Send screenshot to +220 123 4567'
+        'Send screenshot to +220 2600250'
       ],
       color: 'bg-blue-700 hover:bg-blue-800'
     }
@@ -293,7 +293,7 @@ const Membership: React.FC = () => {
           <div class="section">
             <h2>Important Notes</h2>
             <ul>
-              <li>Send payment confirmation to +220 123 4567 on WhatsApp</li>
+              <li>Send payment confirmation to +220 2600250 on WhatsApp</li>
               <li>Include your name and reference number</li>
               <li>Your package will be activated after payment confirmation</li>
               <li>Contact us if you have any questions</li>
@@ -536,7 +536,7 @@ const Membership: React.FC = () => {
                         <h4 className="font-semibold text-blue-800 mb-2">After Payment:</h4>
                         <p className="text-sm text-blue-700">
                           Send your payment confirmation to{' '}
-                          <strong>+220 123 4567</strong> on WhatsApp with your name and reference number.
+                          <strong>+220 2600250</strong> on WhatsApp with your name and reference number.
                         </p>
                       </div>
 
@@ -626,7 +626,7 @@ const Membership: React.FC = () => {
                   <h4 className="font-semibold text-blue-800 mb-2">After Payment:</h4>
                   <p className="text-sm text-blue-700">
                     Send your payment confirmation to{' '}
-                    <strong>+220 123 4567</strong> on WhatsApp with your name and reference number.
+                    <strong>+220 2600250</strong> on WhatsApp with your name and reference number.
                   </p>
                 </motion.div>
               )}

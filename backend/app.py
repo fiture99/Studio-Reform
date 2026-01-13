@@ -22,7 +22,8 @@ app = Flask(__name__)
 # Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here')
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:sa@localhost:5432/Studio_Reform_New'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://marche_db_user:4zvWz3FKqHRanQNF7zeQ8BIaBLyBCiC9@dpg-d3r62dodl3ps73celsmg-a.oregon-postgres.render.com/marche_db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://marche_db_user:4zvWz3FKqHRanQNF7zeQ8BIaBLyBCiC9@dpg-d3r62dodl3ps73celsmg-a.oregon-postgres.render.com/marche_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://marche_db_9wla_user:f52t6PxlctvwN5NSzS55Qwvq0sFGb08O@dpg-d5j2a51r0fns738dfg6g-a.oregon-postgres.render.com/marche_db_9wla'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'jwt-secret-key-change-in-production')
