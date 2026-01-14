@@ -45,7 +45,7 @@ def add_cors_headers(resp):
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "https://studio-reform.onrender.com",
-        "https://studio-reform-1.onrender.com"
+        "https://studio-reform-1.onrender.com",
         "https://www.studioreform.fit"
     ]
     
