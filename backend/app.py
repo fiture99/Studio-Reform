@@ -46,6 +46,7 @@ def add_cors_headers(resp):
         "http://127.0.0.1:5173",
         "https://studio-reform.onrender.com",
         "https://studio-reform-1.onrender.com"
+        "https://www.studioreform.fit"
     ]
     
     origin = request.headers.get("Origin")
