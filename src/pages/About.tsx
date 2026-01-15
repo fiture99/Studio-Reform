@@ -110,7 +110,7 @@ const About: React.FC = () => {
       </section>
 
       {/* Trainers Section */}
-      <section className="py-20 bg-cloud-cream">
+      {/* <section className="py-20 bg-cloud-cream">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
@@ -149,10 +149,10 @@ const About: React.FC = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-[#8F9980] text-white">
+      {/* <section className="py-20 bg-[#8F9980] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
@@ -194,7 +194,7 @@ const About: React.FC = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 };
