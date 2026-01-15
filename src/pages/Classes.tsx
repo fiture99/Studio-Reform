@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, Users, BookOpen, Star, Check, X } from 'lucide-react';
 import { classesAPI, bookingsAPI } from '../services/api';
@@ -9,12 +10,15 @@ import foundamentalImg from '../images/Foundamental.png';
 import transitionalImg from '../images/transitional.png';
 
 const Classes: React.FC = () => {
+  const navigate = useNavigate();
   const [classes, setClasses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [bookingLoading, setBookingLoading] = useState<number | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const { isAuthenticated } = useAuth();
+
+
 
   const classLevels = [
     {
@@ -82,37 +86,96 @@ const Classes: React.FC = () => {
     }, 5000);
   };
 
-  const handleBookClass = async (classItem: any) => {
-    if (!isAuthenticated) {
-      alert('Please sign in to book a class');
-      return;
-    }
 
-    setBookingLoading(classItem.id);
 
-    try {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
+  // In Classes component, after successful booking
+const handleBookClass = async (classItem: any) => {
+  if (!isAuthenticated) {
+    alert('Please sign in to book a class');
+    return;
+  }
 
-      // Create the booking
-      const response = await bookingsAPI.create({
-        booking_type: 'class',
-        class_id: classItem.id,
-        booking_date: tomorrow.toISOString().split('T')[0],
-        booking_time: '07:00',
-        amount: 0
-      });
+  setBookingLoading(classItem.id);
 
-      // Show success message immediately after booking
-      showSuccessMessage(`Success! Your ${classItem.name} class has been booked for ${tomorrow.toISOString().split('T')[0]} at 07:00. Your reference number is: ${response.reference_number}`);
+  try {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
-    } catch (error: any) {
-      console.error(error);
-      alert(error.response?.data?.message || error.message || 'Failed to book class');
-    } finally {
-      setBookingLoading(null);
-    }
-  };
+    const response = await bookingsAPI.create({
+      booking_type: 'class',
+      class_id: classItem.id,
+      booking_date: tomorrow.toISOString().split('T')[0],
+      booking_time: '07:00',
+      amount: 0
+    });
+
+    showSuccessMessage(
+      `Success! Your ${classItem.name} class has been booked.
+Reference: ${response.reference_number}`
+    );
+
+    // Store booking data in sessionStorage - USE CORRECT STRUCTURE
+    sessionStorage.setItem('bookingData', JSON.stringify({
+      classBookingId: response.booking_id,  // Changed from bookingId
+      classReference: response.reference_number,  // Changed from referenceNumber
+      classItem: classItem,
+      timestamp: new Date().toISOString()
+    }));
+
+    // Navigate to membership
+    setTimeout(() => {
+      navigate('/Studio-Reform/membership');
+    }, 1000);
+
+  } catch (error: any) {
+    console.error(error);
+    alert(
+      error.response?.data?.message ||
+      error.message ||
+      'Failed to book class'
+    );
+  } finally {
+    setBookingLoading(null);
+  }
+};
+
+  
+
+  // const handleBookClass = async (classItem: any) => {
+  //   if (!isAuthenticated) {
+  //     alert('Please sign in to book a class');
+  //     return;
+  //   }
+
+  //   setBookingLoading(classItem.id);
+
+  //   try {
+  //     const tomorrow = new Date();
+  //     tomorrow.setDate(tomorrow.getDate() + 1);
+
+  //     // Create the booking
+  //     const response = await bookingsAPI.create({
+  //       booking_type: 'class',
+  //       class_id: classItem.id,
+  //       booking_date: tomorrow.toISOString().split('T')[0],
+  //       booking_time: '07:00',
+  //       amount: 0
+  //     });
+
+  //     // Show success message immediately after booking
+  //     showSuccessMessage(`Success! Your ${classItem.name} class has been booked for ${tomorrow.toISOString().split('T')[0]} at 07:00. Your reference number is: ${response.reference_number}`);
+      
+  //      setTimeout(() => {
+  //       navigate('/Studio-Reform/membership'); // or '/payment' if that’s your route
+  //       }, 1000);
+    
+  //   } catch (error: any) {
+  //     console.error(error);
+  //     alert(error.response?.data?.message || error.message || 'Failed to book class');
+  //   } finally {
+  //     setBookingLoading(null);
+  //   }
+  // };
 
   // Success Notification Component
   const SuccessNotification = () => (
@@ -214,10 +277,10 @@ const Classes: React.FC = () => {
                       <Clock className="h-4 w-4 mr-2" />
                       <span className="text-sm">{classItem.duration}</span>
                     </div>
-                    <div className="flex items-center text-gray-600">
+                    {/* <div className="flex items-center text-gray-600">
                       <Users className="h-4 w-4 mr-2" />
                       <span className="text-sm">{classItem.enrolled || 0}/{classItem.capacity || 8} enrolled</span>
-                    </div>
+                    </div> */}
                   </div>
                   
                   <button 
@@ -294,7 +357,7 @@ const Classes: React.FC = () => {
                   </div>
                   <div className="p-4 bg-[#b9d9eb]/10 rounded-lg">
                     <p className="font-semibold text-pure-black mb-2">Need to Cancel?</p>
-                    <p className="text-gray-600 text-sm">Contact us at least 2 hours before your scheduled class.</p>
+                    <p className="text-gray-600 text-sm">Contact us at least 12 hours before your scheduled class.</p>
                   </div>
                 </div>
               </div>

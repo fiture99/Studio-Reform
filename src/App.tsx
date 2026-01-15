@@ -9,7 +9,8 @@ import Membership from './pages/Membership';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
 import Chatbot from './components/Chatbot';
-import './index.css'
+import './index.css';
+import Profile from './pages/Profile'
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/Studio-Reform/classes" element={<Classes />} />
             <Route path="/Studio-Reform/membership" element={<Membership />} />
             <Route path="/Studio-Reform/contact" element={<Contact />} />
+            <Route path="/Studio-Reform/profile" element={<Profile />} />
             <Route path="/Studio-Reform/admin" element={<Admin />} />
           </Routes>
         </Layout>

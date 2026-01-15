@@ -58,7 +58,7 @@ const Home: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-xl md:text-2xl mb-8 text-cloud-cream"
           >
-            The Gambia's first boutique reformer Pilates studio. Mindful movement and modern wellness rooted in the original principles of Pilates.
+            A boutique reformer Pilates studio in The Gambia. Mindful movement and modern wellness rooted in the original principles of Pilates.
           </motion.p>
           
           <motion.div 

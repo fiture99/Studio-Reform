@@ -1,18 +1,69 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Check, Copy, Phone, Building, Star, ArrowLeft, Printer } from 'lucide-react';
+import { Check, Copy, Phone, Building, Star, ArrowLeft, Printer, AlertCircle } from 'lucide-react';
 import { bookingsAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Membership: React.FC = () => {
   const [copied, setCopied] = useState<string | null>(null);
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null);
-  const [referenceNumber, setReferenceNumber] = useState<string>('');
   const [processing, setProcessing] = useState(false);
-  const [bookingId, setBookingId] = useState<number | null>(null);
+  const [classBookingId, setClassBookingId] = useState<number | null>(null);
+  const [membershipBookingId, setMembershipBookingId] = useState<number | null>(null);
+  const [classReference, setClassReference] = useState<string>('');
+  const [requiresClassBooking, setRequiresClassBooking] = useState(false);
+  
   const { isAuthenticated } = useAuth();
   const printRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Check for booking data from multiple sources
+  useEffect(() => {
+    const checkBookingData = () => {
+      // 1. Check location state (from navigation)
+      const bookingIdFromState = location.state?.bookingId;
+      const referenceFromState = location.state?.referenceNumber;
+      
+      // 2. Check sessionStorage (persisted data)
+      const storedData = sessionStorage.getItem('bookingData');
+      const bookingData = storedData ? JSON.parse(storedData) : null;
+      
+      console.log('SessionStorage data:', bookingData);
+      console.log('Location state:', location.state);
+      
+      // Try multiple possible property names
+      const classId = bookingIdFromState || 
+                     bookingData?.bookingId || 
+                     bookingData?.classBookingId;
+      
+      const reference = referenceFromState || 
+                       bookingData?.referenceNumber || 
+                       bookingData?.classReference;
+      
+      if (classId && reference) {
+        // Data found
+        setClassBookingId(classId);
+        setClassReference(reference);
+        setRequiresClassBooking(false);
+        
+        // Also store in sessionStorage with consistent structure
+        sessionStorage.setItem('bookingData', JSON.stringify({
+          classBookingId: classId,
+          classReference: reference,
+          timestamp: new Date().toISOString(),
+          ...bookingData
+        }));
+      } else {
+        // No booking data found
+        setRequiresClassBooking(true);
+      }
+    };
+    
+    checkBookingData();
+  }, [location]);
 
   const packages = [
     {
@@ -75,60 +126,124 @@ const Membership: React.FC = () => {
       alert('Please sign in to purchase a package');
       return;
     }
+    
+    if (requiresClassBooking) {
+      alert('Please book a class first before purchasing a membership package');
+      navigate('/Studio-Reform/classes');
+      return;
+    }
+    
     setSelectedPackage(pkg.id);
     setSelectedPaymentMethod(null);
-    setReferenceNumber('');
   };
 
   const handlePaymentMethodSelect = async (method: string) => {
-    if (!selectedPackage) return;
+  if (!selectedPackage) return;
 
-    setProcessing(true);
+  if (requiresClassBooking || !classBookingId || !classReference) {
+    alert('Please book a class first before purchasing a membership package');
+    navigate('/Studio-Reform/classes');
+    return;
+  }
 
-    try {
-      const selectedPkg = packages.flatMap(p => p.items).find(item => item.id === selectedPackage);
-      
-      if (!selectedPkg) {
-        alert('Package not found');
-        return;
-      }
+  setProcessing(true);
 
-      const response = await bookingsAPI.create({
-        booking_type: 'membership',
-        package_id: selectedPackage,
-        amount: selectedPkg.price
-      });
+  try {
+    const selectedPkg = packages
+      .flatMap(p => p.items)
+      .find(item => item.id === selectedPackage);
 
-      const refNumber = response.reference_number;
-      setReferenceNumber(refNumber);
-      setBookingId(response.booking_id);
-      setSelectedPaymentMethod(method);
-
-    } catch (error: any) {
-      console.error('Booking creation error:', error);
-      alert(error.message || 'Failed to create booking. Please try again.');
-    } finally {
-      setProcessing(false);
+    if (!selectedPkg) {
+      alert('Package not found');
+      return;
     }
-  };
+
+    // Try to create membership with the SAME reference number
+    // First, try with create() including reference_number
+    const response = await bookingsAPI.create({
+      booking_type: 'membership',
+      package_id: selectedPackage,
+      amount: selectedPkg.price,
+      reference_number: classReference,  // Try sending existing reference
+      class_booking_id: classBookingId   // Link to existing class booking
+    });
+
+    // If that doesn't work, fall back to createMembership
+    // const response = await bookingsAPI.createMembership({
+    //   booking_type: 'membership',
+    //   package_id: selectedPackage,
+    //   amount: selectedPkg.price,
+    //   reference_number: classReference  // Try if backend accepts it
+    // });
+
+    const membershipRef = response.reference_number;
+    
+    // Check if we got the same reference
+    if (membershipRef === classReference) {
+      console.log('✅ Success! Same reference number used:', membershipRef);
+    } else {
+      console.warn('⚠️ Different reference numbers. Backend generated new one.');
+      // You might want to update the backend to use same reference
+    }
+    
+    setMembershipBookingId(response.booking_id);
+    
+    // Update sessionStorage
+    const currentData = sessionStorage.getItem('bookingData');
+    const bookingData = currentData ? JSON.parse(currentData) : {};
+    bookingData.membershipBookingId = response.booking_id;
+    bookingData.displayReference = classReference;
+    bookingData.packageId = selectedPackage;
+    bookingData.packageName = selectedPkg.name;
+    bookingData.amount = selectedPkg.price;
+    sessionStorage.setItem('bookingData', JSON.stringify(bookingData));
+
+    setSelectedPaymentMethod(method);
+
+  } catch (error: any) {
+    console.error('Booking creation error:', error);
+    
+    // If backend doesn't accept reference_number, you need to modify backend
+    if (error.response?.status === 400 && error.response?.data?.message?.includes('reference')) {
+      alert('System error: Cannot use same reference. Please contact support.');
+    } else {
+      alert(
+        error.response?.data?.message ||
+        error.message ||
+        'Failed to create membership booking. Please try again.'
+      );
+    }
+  } finally {
+    setProcessing(false);
+  }
+};
 
   const handlePaymentComplete = async () => {
-    if (!selectedPaymentMethod || !bookingId) return;
+    if (!selectedPaymentMethod || !membershipBookingId) return;
 
     setProcessing(true);
 
     try {
-      await bookingsAPI.updatePayment(bookingId, {
+      // Update payment for the membership booking
+      await bookingsAPI.updatePayment(membershipBookingId, {
         payment_method: selectedPaymentMethod.toLowerCase()
       });
 
       const selectedPkg = packages.flatMap(p => p.items).find(item => item.id === selectedPackage);
-      alert(`Payment confirmed! Reference: ${referenceNumber}\nYour ${selectedPkg?.name} package has been activated.`);
       
+      // Show success with ONLY class reference
+      alert(`✅ Payment Confirmed!\n\n📅 Your Reference Number: ${classReference}\n📦 Package: ${selectedPkg?.name}\n\nYour class booking and package have been activated!`);
+      
+      // Clear sessionStorage after successful payment
+      sessionStorage.removeItem('bookingData');
+      
+      // Reset all states
       setSelectedPackage(null);
       setSelectedPaymentMethod(null);
-      setReferenceNumber('');
-      setBookingId(null);
+      setClassReference('');
+      setClassBookingId(null);
+      setMembershipBookingId(null);
+      setRequiresClassBooking(true);
 
     } catch (error: any) {
       console.error('Payment confirmation error:', error);
@@ -260,12 +375,12 @@ const Membership: React.FC = () => {
           </div>
 
           <div class="section">
-            <h2>Reference Number</h2>
+            <h2>Your Reference Number</h2>
             <div class="reference-number">
-              ${referenceNumber}
+              ${classReference}
             </div>
             <p style="text-align: center; color: #666;">
-              Include this reference number with your payment
+              Use this reference number for both your class booking and membership package
             </p>
           </div>
 
@@ -316,9 +431,73 @@ const Membership: React.FC = () => {
     printWindow.document.close();
   };
 
-  // Helper variables to avoid complex JSX expressions
+  // Helper variables
   const selectedPkgDetails = getSelectedPackageDetails();
   const selectedPaymentDetails = getSelectedPaymentMethodDetails();
+
+  // Booking status banner
+  const BookingStatusBanner = () => {
+    if (requiresClassBooking) {
+      return (
+        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <div className="flex items-center">
+            <AlertCircle className="h-5 w-5 text-yellow-600 mr-3" />
+            <div>
+              <h3 className="font-semibold text-yellow-800">Class Booking Required</h3>
+              <p className="text-sm text-yellow-700">
+                To purchase a membership, please book a class first to get your reference number.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => navigate('/Studio-Reform/classes')}
+            className="mt-3 bg-[#8F9980] text-white py-2 px-4 rounded-md text-sm font-semibold hover:bg-[#7a8570] transition-colors"
+          >
+            Go to Classes
+          </button>
+        </div>
+      );
+    }
+
+    if (classBookingId && classReference) {
+      return (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-green-800">
+                Active Booking Found ✓
+              </h3>
+              <div className="text-sm text-green-700">
+                <div className="mb-1">
+                  <span className="font-medium">Your Reference Number:</span>{' '}
+                  <code className="font-mono bg-green-100 px-2 py-1 rounded">{classReference}</code>
+                </div>
+                {/* <p className="text-xs text-green-600 italic">
+                  Use this reference for both class and membership
+                </p> */}
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                sessionStorage.removeItem('bookingData');
+                setClassBookingId(null);
+                setMembershipBookingId(null);
+                setClassReference('');
+                setSelectedPackage(null);
+                setSelectedPaymentMethod(null);
+                setRequiresClassBooking(true);
+              }}
+              className="text-sm text-green-700 hover:text-green-900 underline"
+            >
+              Clear & Start New
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <div className="pt-16 bg-[#f5efe5] min-h-screen">
@@ -338,6 +517,9 @@ const Membership: React.FC = () => {
       </section>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Booking Status Banner */}
+        <BookingStatusBanner />
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Packages Section */}
           <div>
@@ -349,6 +531,7 @@ const Membership: React.FC = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   viewport={{ once: true }}
+                  className={requiresClassBooking ? 'opacity-50 pointer-events-none' : ''}
                 >
                   <h2 className="text-3xl font-bold text-black mb-4">{pkg.category}</h2>
                   <ul className="space-y-4">
@@ -359,8 +542,8 @@ const Membership: React.FC = () => {
                           selectedPackage === item.id 
                             ? 'bg-[#8F9980] text-white border-white' 
                             : 'bg-white border-[#8F9980] hover:bg-gray-50'
-                        }`}
-                        onClick={() => handlePackageSelect(item)}
+                        } ${requiresClassBooking ? 'cursor-not-allowed' : ''}`}
+                        onClick={() => !requiresClassBooking && handlePackageSelect(item)}
                       >
                         <div className="flex items-center space-x-2">
                           {selectedPackage === item.id ? (
@@ -425,7 +608,7 @@ const Membership: React.FC = () => {
               )}
 
               {/* Payment Details View */}
-              {selectedPaymentMethod && referenceNumber ? (
+              {selectedPaymentMethod && classReference ? (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -463,10 +646,10 @@ const Membership: React.FC = () => {
                       <h3 className="font-bold text-lg mb-3">Your Reference Number</h3>
                       <div className="flex items-center justify-between">
                         <code className="text-lg font-mono bg-black/20 px-4 py-3 rounded flex-1 mr-4">
-                          {referenceNumber}
+                          {classReference}
                         </code>
                         <button
-                          onClick={() => copyToClipboard(referenceNumber, 'reference')}
+                          onClick={() => copyToClipboard(classReference, 'reference')}
                           className="p-3 bg-white/20 rounded hover:bg-white/30 transition-colors flex-shrink-0"
                         >
                           {copied === 'reference' ? (
@@ -571,15 +754,15 @@ const Membership: React.FC = () => {
                     >
                       <h3 className="font-bold text-lg mb-2">Ready for Payment</h3>
                       <p className="text-sm text-yellow-100">
-                        Select a payment method to generate your reference number
+                        Select a payment method to proceed with payment
                       </p>
                     </motion.div>
                   )}
 
-                  <div className="space-y-6">
+                  <div className={`space-y-6 ${requiresClassBooking ? 'opacity-50 pointer-events-none' : ''}`}>
                     {paymentMethods.map((method, index) => (
                       <div key={method.method} className={`bg-white rounded-lg shadow-lg p-6 border ${
-                        !selectedPackage ? 'opacity-50' : ''
+                        !selectedPackage || requiresClassBooking ? 'opacity-50' : ''
                       }`}>
                         <div className="flex items-center mb-4">
                           <method.icon className="h-6 w-6 mr-2 text-gray-600" />
@@ -589,16 +772,16 @@ const Membership: React.FC = () => {
                         <div className="bg-gray-50 rounded-lg p-4 mb-4">
                           <h4 className="font-semibold text-gray-700 mb-2">How it works:</h4>
                           <p className="text-sm text-gray-600">
-                            Select this method to get payment details and your reference number
+                            Select this method to get payment details using your class reference
                           </p>
                         </div>
 
                         <button
-                          onClick={() => handlePaymentMethodSelect(method.method)}
-                          disabled={!selectedPackage || processing}
+                          onClick={() => !requiresClassBooking && handlePaymentMethodSelect(method.method)}
+                          disabled={!selectedPackage || processing || requiresClassBooking}
                           className={`w-full text-white py-3 px-4 rounded-md font-semibold transition-colors ${
                             method.color
-                          } ${!selectedPackage || processing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          } ${!selectedPackage || processing || requiresClassBooking ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                           {processing ? (
                             <div className="flex items-center justify-center">
@@ -615,7 +798,7 @@ const Membership: React.FC = () => {
                 </>
               )}
 
-              {!selectedPaymentMethod && (
+              {!selectedPaymentMethod && !requiresClassBooking && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}

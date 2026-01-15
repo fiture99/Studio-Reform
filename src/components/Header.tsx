@@ -66,21 +66,25 @@ const Header: React.FC = () => {
                 </Link>
               ))}
               
-              {isAuthenticated ? (
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <User className="h-5 w-5 text-gray-600" />
-                    <span className="text-gray-700 font-medium">{user?.name}</span>
+              {/* // In your Header component, replace the user section: */}
+                {isAuthenticated ? (
+                  <div className="flex items-center space-x-4">
+                    <Link
+                      to="/Studio-Reform/profile"
+                      className="flex items-center space-x-2 text-gray-700 hover:text-[#8F9980] transition-colors header-font"
+                    >
+                      <User className="h-5 w-5" />
+                      <span>Profile</span>
+                    </Link>
+                    <button
+                      onClick={logout}
+                      className="flex items-center space-x-2 text-gray-600 hover:text-[#8F9980] transition-colors header-font"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>Logout</span>
+                    </button>
                   </div>
-                  <button
-                    onClick={logout}
-                    className="flex items-center space-x-2 text-gray-600 hover:text-[#8F9980] transition-colors header-font"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    <span>Logout</span>
-                  </button>
-                </div>
-              ) : (
+                ) : (
                 <div className="flex items-center space-x-4">
                   <button
                     onClick={() => setShowLoginModal(true)}

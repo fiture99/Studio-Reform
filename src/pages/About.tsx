@@ -58,9 +58,9 @@ const About: React.FC = () => {
           >
             <h1 className="text-5xl font-bold text-pure-black mb-6">The Studio</h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Studio Reform is The Gambia's first boutique reformer Pilates studio, created to bring mindful
+              Studio Reform A boutique reformer Pilates studio in The Gambia, created to bring mindful
               movement and modern wellness to our community. Rooted in the original principles of Pilates,
-              our classes focus on both healing and transformation — leaving you balanced, strengthened,
+              our classes focus on both healing and transformation leaving you balanced, strengthened,
               and renewed.
             </p>
           </motion.div>

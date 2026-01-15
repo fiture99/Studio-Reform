@@ -227,6 +227,29 @@ export const debugAPI = {
   },
 };
 
+
+export const userAPI = {
+  updateProfile: async (userData: {
+    name?: string;
+    email?: string;
+    phone?: string;
+  }) => {
+    return apiRequest('/users/profile', {
+      method: 'PUT',
+      body: JSON.stringify(userData),
+    });
+  },
+
+  changePassword: async (passwordData: {
+    current_password: string;
+    new_password: string;
+  }) => {
+    return apiRequest('/users/change-password', {
+      method: 'POST',
+      body: JSON.stringify(passwordData),
+    });
+  },
+};
 export default {
   auth: authAPI,
   classes: classesAPI,
