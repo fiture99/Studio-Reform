@@ -283,7 +283,7 @@ Reference: ${response.reference_number}`
                     </div> */}
                   </div>
                   
-                  <button 
+                  {/* <button 
                     onClick={() => handleBookClass(classItem)}
                     disabled={bookingLoading === classItem.id}
                     className="w-full bg-[#8F9980] text-white py-2 px-4 rounded-md font-semibold hover:bg-[#7a8570] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -296,7 +296,7 @@ Reference: ${response.reference_number}`
                     ) : (
                       classItem.name.includes('Private') ? 'Schedule Session' : 'Book Class'
                     )}
-                  </button>
+                  </button> */}
                 </div>
               </motion.div>
             ))}

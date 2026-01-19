@@ -164,9 +164,9 @@ class Booking(db.Model):
     booking_type = db.Column(db.String(20), nullable=False)  # 'class', 'membership'
     reference_number = db.Column(db.String(50), unique=True, nullable=False)
     amount = db.Column(db.Integer, nullable=False, default=0)  # Amount in Gambian Dalasi
-    status = db.Column(db.String(20), default='pending')  # pending, confirmed, cancelled, completed
+    status = db.Column(db.String(30), default='pending')  # pending, confirmed, cancelled, completed
     payment_method = db.Column(db.String(20), nullable=True)  # wave, bank, cash
-    payment_status = db.Column(db.String(20), default='pending')  # pending, paid, failed
+    payment_status = db.Column(db.String(30), default='pending')  # pending, paid, failed
     
     # Timestamps
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
@@ -440,6 +440,142 @@ def generate_reference_number():
     random_chars = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
     return f"{prefix}-{timestamp}-{random_chars}"
 
+# @app.route('/api/bookings', methods=['POST'])
+# @jwt_required()
+# def create_booking():
+#     try:
+#         current_user_id = get_jwt_identity()
+#         data = request.get_json()
+        
+#         logger.debug('Booking request from user %s: %s', current_user_id, data)
+
+#         if not data:
+#             return jsonify({'message': 'No JSON received'}), 400
+
+#         # Generate reference number
+#         reference_number = generate_reference_number()
+        
+#         booking_data = {
+#             'user_id': current_user_id,
+#             'reference_number': reference_number,
+#             'status': 'pending',
+#             'payment_status': 'pending'
+#         }
+        
+#         booking_type = data.get('booking_type', 'class')  # Default to class booking
+        
+#         if booking_type == 'class':
+#             # Class booking logic
+#             required_fields = ['class_id', 'booking_date', 'booking_time']
+#             for field in required_fields:
+#                 if field not in data:
+#                     return jsonify({'message': f'Missing field: {field}'}), 400
+
+#             # Validate class_id is an integer
+#             try:
+#                 class_id = int(data['class_id'])
+#                 if class_id <= 0:
+#                     return jsonify({'message': 'Invalid class ID'}), 400
+#             except (ValueError, TypeError):
+#                 return jsonify({'message': 'Class ID must be a number'}), 400
+
+#             # Parse booking date/time
+#             try:
+#                 booking_date = datetime.strptime(data['booking_date'], '%Y-%m-%d').date()
+#                 booking_time = datetime.strptime(data['booking_time'], '%H:%M').time()
+#             except ValueError:
+#                 return jsonify({'message': 'Invalid date or time format. Use YYYY-MM-DD and HH:MM'}), 400
+
+#             # Check if user already has a booking for this class at this time
+#             existing_booking = Booking.query.filter_by(
+#                 user_id=current_user_id,
+#                 class_id=class_id,
+#                 booking_date=booking_date,
+#                 booking_time=booking_time
+#             ).first()
+            
+#             if existing_booking:
+#                 return jsonify({'message': 'You already have a booking for this class at this time'}), 400
+
+#             # For demo purposes, use default capacity
+#             default_capacity = 8
+#             current_bookings = Booking.query.filter_by(
+#                 class_id=class_id,
+#                 booking_date=booking_date,
+#                 booking_time=booking_time,
+#                 status='confirmed'
+#             ).count()
+
+#             status = 'confirmed' if current_bookings < default_capacity else 'waitlist'
+
+#             booking_data.update({
+#                 'booking_type': 'class',
+#                 'class_id': class_id,
+#                 'booking_date': booking_date,
+#                 'booking_time': booking_time,
+#                 'status': status,
+#                 'amount': 0  # Classes might be free or have different pricing
+#             })
+            
+#         elif booking_type == 'membership':
+#             # Membership package booking
+#             package_id = data.get('package_id')
+#             if not package_id:
+#                 return jsonify({'message': 'Missing package_id for membership booking'}), 400
+                
+#             # In a real app, you'd fetch package details from PackageConfig
+#             # For now, we'll use a simple mapping
+#             package_prices = {
+#                 'intro-1': 800, 'intro-3': 2200, 'intro-5': 3500, 'intro-10': 6500, 'intro-unlimited': 12000,
+#                 'private-1': 2500, 'private-3': 7000, 'private-5': 11000, 'private-10': 20000
+#             }
+            
+#             package_sessions = {
+#                 'intro-1': 1, 'intro-3': 3, 'intro-5': 5, 'intro-10': 10, 'intro-unlimited': 999,
+#                 'private-1': 1, 'private-3': 3, 'private-5': 5, 'private-10': 10
+#             }
+            
+#             package_validity = {
+#                 'intro-1': 30, 'intro-3': 42, 'intro-5': 60, 'intro-10': 90, 'intro-unlimited': 30,
+#                 'private-1': 30, 'private-3': 42, 'private-5': 60, 'private-10': 90
+#             }
+            
+#             if package_id not in package_prices:
+#                 return jsonify({'message': 'Invalid package ID'}), 400
+                
+#             booking_data.update({
+#                 'booking_type': 'membership',
+#                 'package_type': package_id,
+#                 'package_sessions': package_sessions.get(package_id, 1),
+#                 'package_validity_days': package_validity.get(package_id, 30),
+#                 'amount': package_prices.get(package_id, 0),
+#                 'status': 'pending'  # Membership bookings need payment confirmation
+#             })
+            
+#         else:
+#             return jsonify({'message': 'Invalid booking type'}), 400
+
+#         # Create the booking
+#         booking = Booking(**booking_data)
+#         db.session.add(booking)
+#         db.session.commit()
+
+#         logger.debug('Booking created successfully with ID: %s', booking.id)
+        
+#         return jsonify({
+#             'message': f'Booking created successfully',
+#             'booking_id': booking.id,
+#             'reference_number': reference_number,
+#             'status': booking.status,
+#             'booking_type': booking_type
+#         }), 201
+
+#     except Exception as e:
+#         db.session.rollback()
+#         logger.error('Booking creation failed: %s', str(e))
+#         return jsonify({'message': f'Booking failed: {str(e)}'}), 500
+
+# ============================================
 @app.route('/api/bookings', methods=['POST'])
 @jwt_required()
 def create_booking():
@@ -465,6 +601,8 @@ def create_booking():
         booking_type = data.get('booking_type', 'class')  # Default to class booking
         
         if booking_type == 'class':
+            # Class booking logic (unchanged)
+            # ... (keep existing class booking logic)
             # Class booking logic
             required_fields = ['class_id', 'booking_date', 'booking_time']
             for field in required_fields:
@@ -518,13 +656,12 @@ def create_booking():
             })
             
         elif booking_type == 'membership':
-            # Membership package booking
+            # Membership package booking - MODIFIED FOR ADMIN APPROVAL
             package_id = data.get('package_id')
             if not package_id:
                 return jsonify({'message': 'Missing package_id for membership booking'}), 400
                 
-            # In a real app, you'd fetch package details from PackageConfig
-            # For now, we'll use a simple mapping
+            # Package mappings
             package_prices = {
                 'intro-1': 800, 'intro-3': 2200, 'intro-5': 3500, 'intro-10': 6500, 'intro-unlimited': 12000,
                 'private-1': 2500, 'private-3': 7000, 'private-5': 11000, 'private-10': 20000
@@ -549,7 +686,8 @@ def create_booking():
                 'package_sessions': package_sessions.get(package_id, 1),
                 'package_validity_days': package_validity.get(package_id, 30),
                 'amount': package_prices.get(package_id, 0),
-                'status': 'pending'  # Membership bookings need payment confirmation
+                'status': 'pending_payment',  # Start with pending_payment
+                'payment_status': 'pending'
             })
             
         else:
@@ -574,6 +712,299 @@ def create_booking():
         db.session.rollback()
         logger.error('Booking creation failed: %s', str(e))
         return jsonify({'message': f'Booking failed: {str(e)}'}), 500
+
+@app.route('/api/admin/membership-bookings', methods=['GET'])
+@jwt_required()
+def get_membership_bookings_admin():
+    """Get all membership bookings for admin review"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'message': 'Admin access required'}), 403
+        
+        # Get membership bookings
+        bookings = db.session.query(Booking, User).join(User).filter(
+            Booking.booking_type == 'membership'
+        ).order_by(Booking.created_at.desc()).all()
+        
+        bookings_data = []
+        
+        for booking, user_obj in bookings:
+            booking_dict = {
+                'id': booking.id,
+                'user_id': booking.user_id,
+                'user_name': user_obj.name,
+                'user_email': user_obj.email,
+                'reference_number': booking.reference_number,
+                'package_type': booking.package_type,
+                'package_sessions': booking.package_sessions,
+                'package_validity_days': booking.package_validity_days,
+                'amount': booking.amount,
+                'status': booking.status,
+                'payment_method': booking.payment_method,
+                'payment_status': booking.payment_status,
+                'created_at': booking.created_at.isoformat(),
+                'confirmed_at': booking.confirmed_at.isoformat() if booking.confirmed_at else None
+            }
+            
+            bookings_data.append(booking_dict)
+        
+        return jsonify(bookings_data), 200
+        
+    except Exception as e:
+        logger.error('Get membership bookings error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/admin/bookings/<int:booking_id>/approve', methods=['POST'])
+@jwt_required()
+def approve_membership_booking(booking_id):
+    """Admin approves a membership booking"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'message': 'Admin access required'}), 403
+        
+        booking = Booking.query.get(booking_id)
+        if not booking:
+            return jsonify({'message': 'Booking not found'}), 404
+            
+        if booking.booking_type != 'membership':
+            return jsonify({'message': 'Only membership bookings can be approved'}), 400
+            
+        if booking.status != 'pending_admin_approval':
+            return jsonify({'message': f'Booking is not pending approval. Current status: {booking.status}'}), 400
+        
+        # Approve the booking
+        booking.status = 'active'
+        booking.payment_status = 'verified'
+        booking.confirmed_at = datetime.now(timezone.utc)
+        
+        # Update user membership plan if needed
+        user = User.query.get(booking.user_id)
+        if user:
+            # Extract package name for display
+            package_name = booking.package_type.replace('-', ' ').title()
+            user.membership_plan = package_name
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Membership booking approved successfully',
+            'booking': {
+                'id': booking.id,
+                'status': booking.status,
+                'reference_number': booking.reference_number,
+                'user_name': user.name if user else 'Unknown'
+            }
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error('Approve membership error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/admin/bookings/<int:booking_id>/reject', methods=['POST'])
+@jwt_required()
+def reject_membership_booking(booking_id):
+    """Admin rejects a membership booking"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'message': 'Admin access required'}), 403
+        
+        data = request.get_json()
+        reason = data.get('reason', 'No reason provided')
+        
+        booking = Booking.query.get(booking_id)
+        if not booking:
+            return jsonify({'message': 'Booking not found'}), 404
+            
+        if booking.booking_type != 'membership':
+            return jsonify({'message': 'Only membership bookings can be rejected'}), 400
+            
+        if booking.status != 'pending_admin_approval':
+            return jsonify({'message': f'Booking is not pending approval. Current status: {booking.status}'}), 400
+        
+        # Reject the booking
+        booking.status = 'rejected'
+        booking.payment_status = 'rejected'
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Membership booking rejected',
+            'reason': reason,
+            'booking': {
+                'id': booking.id,
+                'status': booking.status,
+                'reference_number': booking.reference_number
+            }
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error('Reject membership error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+
+
+
+@app.route('/api/admin/dashboard', methods=['GET'])
+@jwt_required()
+def admin_dashboard():
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'message': 'Admin access required'}), 403
+        
+        # Get dashboard statistics
+        total_members = User.query.filter_by(is_admin=False).count()
+        active_classes = Class.query.count()
+        
+        # Today's bookings
+        today = datetime.now(timezone.utc).date()
+        today_bookings = Booking.query.filter(
+            Booking.booking_date == today,
+            Booking.status.in_(['confirmed', 'active'])
+        ).count()
+        
+        # Membership booking stats
+        pending_memberships = Booking.query.filter_by(
+            booking_type='membership',
+            status='pending_admin_approval'
+        ).count()
+        
+        active_memberships = Booking.query.filter_by(
+            booking_type='membership',
+            status='active'
+        ).count()
+        
+        # Total revenue (sum of all confirmed/active bookings)
+        revenue_result = db.session.query(db.func.sum(Booking.amount)).filter(
+            Booking.status.in_(['confirmed', 'active']),
+            Booking.payment_status.in_(['verified', 'paid'])
+        ).first()
+        total_revenue = revenue_result[0] if revenue_result[0] else 0
+        
+        return jsonify({
+            'stats': {
+                'total_members': total_members,
+                'active_classes': active_classes,
+                'today_bookings': today_bookings,
+                'pending_memberships': pending_memberships,
+                'active_memberships': active_memberships,
+                'total_revenue': total_revenue
+            }
+        }), 200
+        
+    except Exception as e:
+        logger.error('Admin dashboard error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+
+
+@app.route('/api/admin/members/<int:member_id>/assign-class', methods=['POST'])
+@jwt_required()
+def assign_class_to_member(member_id):
+    """Admin assigns a class to a member"""
+    try:
+        current_user_id = get_jwt_identity()
+        admin_user = User.query.get(int(current_user_id))
+        
+        if not admin_user or not admin_user.is_admin:
+            return jsonify({'message': 'Admin access required'}), 403
+        
+        data = request.get_json()
+        
+        member = User.query.get(member_id)
+        if not member:
+            return jsonify({'message': 'Member not found'}), 404
+        
+        # Check if member has active membership
+        active_membership = Booking.query.filter_by(
+            user_id=member_id,
+            booking_type='membership',
+            status='active'
+        ).first()
+        
+        if not active_membership:
+            return jsonify({'message': 'Member does not have an active membership'}), 400
+        
+        required_fields = ['class_id', 'booking_date', 'booking_time']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({'message': f'Missing field: {field}'}), 400
+        
+        # Validate class_id
+        try:
+            class_id = int(data['class_id'])
+            class_item = Class.query.get(class_id)
+            if not class_item:
+                return jsonify({'message': 'Class not found'}), 400
+        except (ValueError, TypeError):
+            return jsonify({'message': 'Invalid class ID'}), 400
+        
+        # Parse booking date/time
+        try:
+            booking_date = datetime.strptime(data['booking_date'], '%Y-%m-%d').date()
+            booking_time = datetime.strptime(data['booking_time'], '%H:%M').time()
+        except ValueError:
+            return jsonify({'message': 'Invalid date or time format. Use YYYY-MM-DD and HH:MM'}), 400
+        
+        # Check class capacity
+        current_bookings = Booking.query.filter_by(
+            class_id=class_id,
+            booking_date=booking_date,
+            booking_time=booking_time,
+            status='confirmed'
+        ).count()
+        
+        if current_bookings >= class_item.capacity:
+            return jsonify({'message': 'Class is fully booked at this time'}), 400
+        
+        # Generate reference number
+        reference_number = generate_reference_number()
+        
+        # Create the class booking for the member
+        class_booking = Booking(
+            user_id=member_id,
+            booking_type='class',
+            class_id=class_id,
+            booking_date=booking_date,
+            booking_time=booking_time,
+            reference_number=reference_number,
+            amount=0,  # Free since they have membership
+            status='confirmed',
+            payment_method='membership',
+            payment_status='paid'
+        )
+        
+        db.session.add(class_booking)
+        db.session.commit()
+        
+        return jsonify({
+            'message': f'Class assigned successfully to {member.name}',
+            'booking': {
+                'id': class_booking.id,
+                'reference_number': reference_number,
+                'class_name': class_item.name,
+                'booking_date': booking_date.isoformat(),
+                'booking_time': booking_time.strftime('%H:%M'),
+                'member_name': member.name
+            }
+        }), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error('Assign class error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+# ============================================
 
 @app.route('/api/bookings', methods=['GET'])
 @jwt_required()
@@ -629,15 +1060,29 @@ def update_payment_status(booking_id):
         if not booking:
             return jsonify({'message': 'Booking not found'}), 404
             
-        booking.payment_method = data.get('payment_method')
-        booking.payment_status = 'paid'
-        booking.status = 'confirmed'
-        booking.confirmed_at = datetime.now(timezone.utc)
+        payment_method = data.get('payment_method')
+        payment_status = data.get('payment_status', 'submitted')
+        
+        if not payment_method:
+            return jsonify({'message': 'Payment method is required'}), 400
+            
+        # Update payment details
+        booking.payment_method = payment_method
+        booking.payment_status = payment_status
+        
+        # For membership bookings, change status to pending_admin_approval
+        if booking.booking_type == 'membership':
+            booking.status = 'pending_admin_approval'
+            # Don't set confirmed_at yet - wait for admin approval
+        else:
+            # For class bookings, auto-confirm
+            booking.status = 'confirmed'
+            booking.confirmed_at = datetime.now(timezone.utc)
         
         db.session.commit()
         
         return jsonify({
-            'message': 'Payment status updated successfully',
+            'message': 'Payment submitted successfully. Awaiting admin approval.',
             'booking': booking.to_dict()
         }), 200
         
@@ -671,66 +1116,66 @@ def get_packages():
         logger.error('Get packages error: %s', str(e))
         return jsonify({'message': str(e)}), 500
 # Admin Routes
-@app.route('/api/admin/dashboard', methods=['GET'])
-@jwt_required()
-def admin_dashboard():
-    try:
-        current_user_id = get_jwt_identity()
-        user = User.query.get(int(current_user_id))  # Convert to int
+# @app.route('/api/admin/dashboard', methods=['GET'])
+# @jwt_required()
+# def admin_dashboard():
+#     try:
+#         current_user_id = get_jwt_identity()
+#         user = User.query.get(int(current_user_id))  # Convert to int
         
-        if not user or not user.is_admin:
-            return jsonify({'message': 'Admin access required'}), 403
+#         if not user or not user.is_admin:
+#             return jsonify({'message': 'Admin access required'}), 403
         
-        # Get dashboard statistics
-        total_members = User.query.filter_by(is_admin=False).count()
-        active_classes = Class.query.count()
-        today_bookings = Booking.query.filter(
-            Booking.booking_date == datetime.now(timezone.utc).date(),
-            Booking.status.in_(['confirmed', 'Confirmed'])
-        ).count()
+#         # Get dashboard statistics
+#         total_members = User.query.filter_by(is_admin=False).count()
+#         active_classes = Class.query.count()
+#         today_bookings = Booking.query.filter(
+#             Booking.booking_date == datetime.now(timezone.utc).date(),
+#             Booking.status.in_(['confirmed', 'Confirmed'])
+#         ).count()
         
-        # Get recent bookings
-        recent_bookings = db.session.query(Booking, User, Class).join(User).outerjoin(Class).order_by(
-            Booking.created_at.desc()
-        ).limit(10).all()
+#         # Get recent bookings
+#         recent_bookings = db.session.query(Booking, User, Class).join(User).outerjoin(Class).order_by(
+#             Booking.created_at.desc()
+#         ).limit(10).all()
         
-        bookings_data = []
-        for booking, user_obj, class_item in recent_bookings:
-            booking_data = {
-                'id': booking.id,
-                'member': user_obj.name,
-                'user_name': user_obj.name,
-                'status': booking.status
-            }
+#         bookings_data = []
+#         for booking, user_obj, class_item in recent_bookings:
+#             booking_data = {
+#                 'id': booking.id,
+#                 'member': user_obj.name,
+#                 'user_name': user_obj.name,
+#                 'status': booking.status
+#             }
             
-            if class_item:
-                booking_data.update({
-                    'class': class_item.name,
-                    'class_name': class_item.name,
-                    'time': booking.booking_time.strftime('%I:%M %p') if booking.booking_time else 'N/A'
-                })
-            else:
-                booking_data.update({
-                    'class': 'Membership Package',
-                    'class_name': 'Membership Package',
-                    'time': 'N/A'
-                })
+#             if class_item:
+#                 booking_data.update({
+#                     'class': class_item.name,
+#                     'class_name': class_item.name,
+#                     'time': booking.booking_time.strftime('%I:%M %p') if booking.booking_time else 'N/A'
+#                 })
+#             else:
+#                 booking_data.update({
+#                     'class': 'Membership Package',
+#                     'class_name': 'Membership Package',
+#                     'time': 'N/A'
+#                 })
                 
-            bookings_data.append(booking_data)
+#             bookings_data.append(booking_data)
         
-        return jsonify({
-            'stats': {
-                'total_members': total_members,
-                'active_classes': active_classes,
-                'today_bookings': today_bookings,
-                'revenue_mtd': 18450
-            },
-            'recent_bookings': bookings_data
-        }), 200
+#         return jsonify({
+#             'stats': {
+#                 'total_members': total_members,
+#                 'active_classes': active_classes,
+#                 'today_bookings': today_bookings,
+#                 'revenue_mtd': 18450
+#             },
+#             'recent_bookings': bookings_data
+#         }), 200
         
-    except Exception as e:
-        logger.error('Admin dashboard error: %s', str(e))
-        return jsonify({'message': str(e)}), 500
+#     except Exception as e:
+#         logger.error('Admin dashboard error: %s', str(e))
+#         return jsonify({'message': str(e)}), 500
 
 @app.route('/api/admin/members', methods=['GET'])
 @jwt_required()

@@ -174,6 +174,41 @@ export const chatbotAPI = {
 
 // Admin API - FIXED: Remove the extra /api prefix
 // Admin API
+// export const adminAPI = {
+//   getDashboard: async () => {
+//     return apiRequest('/admin/dashboard');
+//   },
+
+//   getMembers: async () => {
+//     return apiRequest('/admin/members');
+//   },
+
+//   // NEW: Get all classes for admin
+//   getAllClasses: async () => {
+//     return apiRequest('/admin/classes');
+//   },
+
+//   // NEW: Get all bookings for admin
+//   getAllBookings: async () => {
+//     return apiRequest('/admin/bookings');
+//   },
+
+//   // NEW: Update booking status
+//   updateBookingStatus: async (bookingId: number, status: string) => {
+//     return apiRequest(`/admin/bookings/${bookingId}/status`, {
+//       method: 'PUT',
+//       body: JSON.stringify({ status }),
+//     });
+//   },
+
+//   deleteClass: async (classId: number) => {
+//     return apiRequest(`/classes/${classId}`, {
+//       method: 'DELETE',
+//     });
+//   },
+// };
+// =====================================================
+// Admin API - Add new membership endpoints
 export const adminAPI = {
   getDashboard: async () => {
     return apiRequest('/admin/dashboard');
@@ -183,17 +218,34 @@ export const adminAPI = {
     return apiRequest('/admin/members');
   },
 
-  // NEW: Get all classes for admin
   getAllClasses: async () => {
     return apiRequest('/admin/classes');
   },
 
-  // NEW: Get all bookings for admin
   getAllBookings: async () => {
     return apiRequest('/admin/bookings');
   },
 
-  // NEW: Update booking status
+  // NEW: Get membership bookings for admin approval
+  getMembershipBookings: async () => {
+    return apiRequest('/admin/membership-bookings');
+  },
+
+  // NEW: Approve membership booking
+  approveMembershipBooking: async (bookingId: number) => {
+    return apiRequest(`/admin/bookings/${bookingId}/approve`, {
+      method: 'POST',
+    });
+  },
+
+  // NEW: Reject membership booking
+  rejectMembershipBooking: async (bookingId: number, reason: string) => {
+    return apiRequest(`/admin/bookings/${bookingId}/reject`, {
+      method: 'POST',
+      body: JSON.stringify({ reason }),
+    });
+  },
+
   updateBookingStatus: async (bookingId: number, status: string) => {
     return apiRequest(`/admin/bookings/${bookingId}/status`, {
       method: 'PUT',
@@ -207,6 +259,7 @@ export const adminAPI = {
     });
   },
 };
+// =====================================================
 
 // Debug/Test API - FIXED: Remove the extra /api prefix
 export const debugAPI = {
