@@ -21,7 +21,7 @@ load_dotenv()
 app = Flask(__name__)
 
 
-
+  
 # Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here')
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:sa@localhost:5432/Studio_Reform_New'
