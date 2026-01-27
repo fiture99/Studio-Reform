@@ -10,6 +10,7 @@ import logging
 from sqlalchemy import text
 import random
 import string
+from twilio.rest import Client 
 
 # Set up logging
 # logging.basicConfig(level=logging.DEBUG)
@@ -19,18 +20,34 @@ load_dotenv()
 
 app = Flask(__name__)
 
+
+
 # Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here')
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:sa@localhost:5432/Studio_Reform_New'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://marche_db_user:4zvWz3FKqHRanQNF7zeQ8BIaBLyBCiC9@dpg-d3r62dodl3ps73celsmg-a.oregon-postgres.render.com/marche_db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://marche_db_9wla_user:f52t6PxlctvwN5NSzS55Qwvq0sFGb08O@dpg-d5j2a51r0fns738dfg6g-a.oregon-postgres.render.com/marche_db_9wla'
 
+# os.environ['TWILIO_ACCOUNT_SID'] = 'AC7cbc69bd409b29a29825e72049f2bf42'
+# os.environ['TWILIO_AUTH_TOKEN'] = '4ebc7d0e7a591ebd3dd22097a019b37d'
+# os.environ['TWILIO_PHONE_NUMBER'] = '+16197933903'
+# os.environ['ADMIN_PHONE_NUMBER'] = '+2207741439'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'jwt-secret-key-change-in-production')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
 
 
-# app.config.from_object(config[env])
+# Twilio Configuration - SIMPLIFIED
+app.config['TWILIO_ACCOUNT_SID'] = os.getenv('TWILIO_ACCOUNT_SID')
+app.config['TWILIO_AUTH_TOKEN'] = os.getenv('TWILIO_AUTH_TOKEN')
+app.config['TWILIO_PHONE_NUMBER'] = os.getenv('TWILIO_PHONE_NUMBER')
+app.config['ADMIN_PHONE_NUMBER'] = os.getenv('ADMIN_PHONE_NUMBER')
+app.config['TWILIO_MESSAGING_SERVICE_SID'] = os.getenv('TWILIO_MESSAGING_SERVICE_SID')
+
+
+
+
+
 
 # Initialize extensions
 db = SQLAlchemy(app)
@@ -39,6 +56,66 @@ jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
 
 # Configure CORS properly - UPDATEDCORS(app,
+# @app.after_request
+# def add_cors_headers(resp):
+#     allowed_origins = [
+#         "http://localhost:5173",
+#         "http://127.0.0.1:5173",
+#         "https://studio-reform.onrender.com",
+#         "https://studio-reform-1.onrender.com",
+#         "https://www.studioreform.fit",
+        
+#     ]
+    
+#     origin = request.headers.get("Origin")
+#     if origin in allowed_origins:
+#         resp.headers["Access-Control-Allow-Origin"] = origin
+    
+#     resp.headers["Access-Control-Allow-Credentials"] = "true"
+#     resp.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization,X-Requested-With"
+#     resp.headers["Access-Control-Allow-Methods"] = "GET,POST,PUT,DELETE,OPTIONS"
+#     return resp
+
+
+# Initialize Twilio client
+# Initialize Twilio client - USING MESSAGING SERVICE
+# Initialize Twilio client
+twilio_client = None
+try:
+    if all([app.config.get('TWILIO_ACCOUNT_SID'), 
+             app.config.get('TWILIO_AUTH_TOKEN'),
+             app.config.get('TWILIO_MESSAGING_SERVICE_SID')]):
+        
+        twilio_client = Client(app.config['TWILIO_ACCOUNT_SID'], 
+                               app.config['TWILIO_AUTH_TOKEN'])
+        
+        # Test connection quietly
+        account = twilio_client.api.accounts(app.config['TWILIO_ACCOUNT_SID']).fetch()
+        print(f"✅ Twilio initialized")
+        
+    else:
+        missing = []
+        if not app.config.get('TWILIO_ACCOUNT_SID'): missing.append('TWILIO_ACCOUNT_SID')
+        if not app.config.get('TWILIO_AUTH_TOKEN'): missing.append('TWILIO_AUTH_TOKEN')
+        if not app.config.get('TWILIO_MESSAGING_SERVICE_SID'): missing.append('TWILIO_MESSAGING_SERVICE_SID')
+        print(f"❌ Twilio credentials incomplete. Missing: {missing}")
+        twilio_client = None
+        
+except Exception as e:
+    print(f"❌ Twilio initialization failed: {e}")
+    twilio_client = None
+
+# Configure CORS properly - UPDATED
+CORS(app, 
+     resources={r"/api/*": {"origins": [
+         "http://localhost:5173",
+         "http://127.0.0.1:5173",
+         "https://studio-reform.onrender.com",
+         "https://studio-reform-1.onrender.com",
+         "https://www.studioreform.fit",
+     ]}},
+     supports_credentials=True)
+
 @app.after_request
 def add_cors_headers(resp):
     allowed_origins = [
@@ -47,7 +124,6 @@ def add_cors_headers(resp):
         "https://studio-reform.onrender.com",
         "https://studio-reform-1.onrender.com",
         "https://www.studioreform.fit",
-        
     ]
     
     origin = request.headers.get("Origin")
@@ -237,6 +313,203 @@ class ChatHistory(db.Model):
     bot_response = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
+
+
+# ===========================================================================================
+
+
+
+# SMS Utility Functions
+# ============================================
+# SMS Utility Functions - ADD THIS SECTION
+# ============================================
+def send_sms(to_phone, message):
+    """Send SMS using Twilio Messaging Service"""
+    if not twilio_client:
+        return False
+    
+    try:
+        messaging_service_sid = app.config.get('TWILIO_MESSAGING_SERVICE_SID')
+        if not messaging_service_sid:
+            return False
+        
+        # Format phone number
+        if not to_phone:
+            return False
+        
+        if not to_phone.startswith('+'):
+            if to_phone.startswith('220'):
+                to_phone = f'+{to_phone}'
+            elif to_phone.startswith('0'):
+                to_phone = f'+220{to_phone[1:]}'
+            elif len(to_phone) == 7:
+                to_phone = f'+220{to_phone}'
+        
+        # Send SMS
+        sent_message = twilio_client.messages.create(
+            messaging_service_sid=messaging_service_sid,
+            body=message,
+            to=to_phone
+        )
+        
+        return True
+        
+    except Exception as e:
+        print(f"SMS failed: {str(e)}")
+        return False
+
+def send_payment_confirmation_sms(user, booking, payment_method):
+    """Send payment confirmation SMS to customer"""
+    try:
+        if not user.phone:
+            return False
+        
+        if booking.booking_type == 'membership':
+            package_type = booking.package_type.replace('-', ' ').title()
+            details = f"{package_type} Package - D{booking.amount}"
+        else:
+            class_info = Class.query.get(booking.class_id)
+            class_name = class_info.name if class_info else "Class"
+            details = f"{class_name} - D{booking.amount}"
+        
+        message = f"""✅ Studio Reform Payment Confirmation
+        
+Reference: {booking.reference_number}
+Type: {booking.booking_type.title()}
+Details: {details}
+Payment Method: {payment_method}
+Amount: D{booking.amount}
+Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}
+
+Your booking is pending admin approval.
+Thank you!"""
+        
+        return send_sms(user.phone, message)
+        
+    except Exception as e:
+        print(f"Payment confirmation SMS error: {str(e)}")
+        return False
+
+def send_admin_notification_sms(booking, user):
+    """Send notification SMS to admin"""
+    try:
+        admin_number = app.config['ADMIN_PHONE_NUMBER']
+        if not admin_number:
+            return False
+        
+        if booking.booking_type == 'membership':
+            package_type = booking.package_type.replace('-', ' ').title()
+            details = f"{package_type} Package - D{booking.amount}"
+        else:
+            class_info = Class.query.get(booking.class_id)
+            class_name = class_info.name if class_info else "Class"
+            details = f"{class_name} - D{booking.amount}"
+        
+        message = f"""📋 New Payment Received
+        
+Customer: {user.name}
+Phone: {user.phone}
+Reference: {booking.reference_number}
+Type: {booking.booking_type.title()}
+Details: {details}
+Amount: D{booking.amount}
+Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}
+
+Status: Pending Approval"""
+        
+        return send_sms(admin_number, message)
+        
+    except Exception as e:
+        print(f"Admin notification SMS error: {str(e)}")
+        return False
+
+def send_approval_notification_sms(user, booking):
+    """Send SMS when booking is approved"""
+    try:
+        if booking.booking_type == 'membership':
+            package_type = booking.package_type.replace('-', ' ').title()
+            details = f"{package_type} Package ({booking.package_sessions} sessions)"
+            validity = f"Valid for {booking.package_validity_days} days"
+        else:
+            class_info = Class.query.get(booking.class_id)
+            class_name = class_info.name if class_info else "Class"
+            details = f"{class_name}"
+            booking_date = booking.booking_date.strftime('%Y-%m-%d') if booking.booking_date else "N/A"
+            booking_time = booking.booking_time.strftime('%H:%M') if booking.booking_time else "N/A"
+            validity = f"{booking_date} at {booking_time}"
+        
+        message = f"""🎉 Studio Reform Booking Approved!
+        
+Reference: {booking.reference_number}
+Type: {booking.booking_type.title()}
+Details: {details}
+{validity}
+Amount Paid: D{booking.amount}
+Status: ✅ Active
+
+Welcome to Studio Reform!"""
+        
+        return send_sms(user.phone, message)
+        
+    except Exception as e:
+        print(f"Approval notification SMS error: {str(e)}")
+        return False
+
+# ===========================================================================================
+@app.route('/api/test-sms-system', methods=['GET'])
+def test_sms_system():
+    """Test the entire SMS system"""
+    try:
+        if not twilio_client:
+            return jsonify({
+                'success': False,
+                'message': 'Twilio client not initialized',
+                'status': 'NOT_READY'
+            }), 500
+        
+        admin_number = app.config['ADMIN_PHONE_NUMBER']
+        twilio_number = app.config['TWILIO_PHONE_NUMBER']
+        
+        # Test 1: Send test SMS
+        test_message = f"""🔧 Studio Reform SMS System Test
+        
+From: {twilio_number}
+To: {admin_number}
+Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+This is a test of the SMS notification system.
+If you receive this, payment notifications will work!"""
+        
+        sent_message = twilio_client.messages.create(
+            from_=twilio_number,
+            body=test_message,
+            to=admin_number
+        )
+        
+        return jsonify({
+            'success': True,
+            'message': '✅ SMS system test sent successfully!',
+            'status': 'WORKING',
+            'details': {
+                'message_sid': sent_message.sid,
+                'status': sent_message.status,
+                'from': sent_message.from_,
+                'to': sent_message.to,
+                'twilio_initialized': True
+            }
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'status': 'FAILED',
+            'config': {
+                'twilio_number': app.config.get('TWILIO_PHONE_NUMBER'),
+                'admin_number': app.config.get('ADMIN_PHONE_NUMBER'),
+                'twilio_client_exists': twilio_client is not None
+            }
+        }), 500
 
 # Request logging
 @app.before_request
@@ -757,55 +1030,55 @@ def get_membership_bookings_admin():
         logger.error('Get membership bookings error: %s', str(e))
         return jsonify({'message': str(e)}), 500
 
-@app.route('/api/admin/bookings/<int:booking_id>/approve', methods=['POST'])
-@jwt_required()
-def approve_membership_booking(booking_id):
-    """Admin approves a membership booking"""
-    try:
-        current_user_id = get_jwt_identity()
-        user = User.query.get(int(current_user_id))
+# @app.route('/api/admin/bookings/<int:booking_id>/approve', methods=['POST'])
+# @jwt_required()
+# def approve_membership_booking(booking_id):
+#     """Admin approves a membership booking"""
+#     try:
+#         current_user_id = get_jwt_identity()
+#         user = User.query.get(int(current_user_id))
         
-        if not user or not user.is_admin:
-            return jsonify({'message': 'Admin access required'}), 403
+#         if not user or not user.is_admin:
+#             return jsonify({'message': 'Admin access required'}), 403
         
-        booking = Booking.query.get(booking_id)
-        if not booking:
-            return jsonify({'message': 'Booking not found'}), 404
+#         booking = Booking.query.get(booking_id)
+#         if not booking:
+#             return jsonify({'message': 'Booking not found'}), 404
             
-        if booking.booking_type != 'membership':
-            return jsonify({'message': 'Only membership bookings can be approved'}), 400
+#         if booking.booking_type != 'membership':
+#             return jsonify({'message': 'Only membership bookings can be approved'}), 400
             
-        if booking.status != 'pending_admin_approval':
-            return jsonify({'message': f'Booking is not pending approval. Current status: {booking.status}'}), 400
+#         if booking.status != 'pending_admin_approval':
+#             return jsonify({'message': f'Booking is not pending approval. Current status: {booking.status}'}), 400
         
-        # Approve the booking
-        booking.status = 'active'
-        booking.payment_status = 'verified'
-        booking.confirmed_at = datetime.now(timezone.utc)
+#         # Approve the booking
+#         booking.status = 'active'
+#         booking.payment_status = 'verified'
+#         booking.confirmed_at = datetime.now(timezone.utc)
         
-        # Update user membership plan if needed
-        user = User.query.get(booking.user_id)
-        if user:
-            # Extract package name for display
-            package_name = booking.package_type.replace('-', ' ').title()
-            user.membership_plan = package_name
+#         # Update user membership plan if needed
+#         user = User.query.get(booking.user_id)
+#         if user:
+#             # Extract package name for display
+#             package_name = booking.package_type.replace('-', ' ').title()
+#             user.membership_plan = package_name
         
-        db.session.commit()
+#         db.session.commit()
         
-        return jsonify({
-            'message': 'Membership booking approved successfully',
-            'booking': {
-                'id': booking.id,
-                'status': booking.status,
-                'reference_number': booking.reference_number,
-                'user_name': user.name if user else 'Unknown'
-            }
-        }), 200
+#         return jsonify({
+#             'message': 'Membership booking approved successfully',
+#             'booking': {
+#                 'id': booking.id,
+#                 'status': booking.status,
+#                 'reference_number': booking.reference_number,
+#                 'user_name': user.name if user else 'Unknown'
+#             }
+#         }), 200
         
-    except Exception as e:
-        db.session.rollback()
-        logger.error('Approve membership error: %s', str(e))
-        return jsonify({'message': str(e)}), 500
+#     except Exception as e:
+#         db.session.rollback()
+#         logger.error('Approve membership error: %s', str(e))
+#         return jsonify({'message': str(e)}), 500
 
 @app.route('/api/admin/bookings/<int:booking_id>/reject', methods=['POST'])
 @jwt_required()
@@ -1049,6 +1322,51 @@ def submit_contact():
         logger.error('Contact form error: %s', str(e))
         return jsonify({'message': str(e)}), 500
 
+# @app.route('/api/bookings/<int:booking_id>/payment', methods=['POST'])
+# @jwt_required()
+# def update_payment_status(booking_id):
+#     try:
+#         current_user_id = get_jwt_identity()
+#         data = request.get_json()
+        
+#         booking = Booking.query.filter_by(id=booking_id, user_id=current_user_id).first()
+#         if not booking:
+#             return jsonify({'message': 'Booking not found'}), 404
+            
+#         payment_method = data.get('payment_method')
+#         payment_status = data.get('payment_status', 'submitted')
+        
+#         if not payment_method:
+#             return jsonify({'message': 'Payment method is required'}), 400
+            
+#         # Update payment details
+#         booking.payment_method = payment_method
+#         booking.payment_status = payment_status
+        
+#         # For membership bookings, change status to pending_admin_approval
+#         if booking.booking_type == 'membership':
+#             booking.status = 'pending_admin_approval'
+#             # Don't set confirmed_at yet - wait for admin approval
+#         else:
+#             # For class bookings, auto-confirm
+#             booking.status = 'confirmed'
+#             booking.confirmed_at = datetime.now(timezone.utc)
+        
+#         db.session.commit()
+        
+#         return jsonify({
+#             'message': 'Payment submitted successfully. Awaiting admin approval.',
+#             'booking': booking.to_dict()
+#         }), 200
+        
+#     except Exception as e:
+#         db.session.rollback()
+#         logger.error('Payment update error: %s', str(e))
+#         return jsonify({'message': str(e)}), 500
+
+# ==============================================================================================
+
+
 @app.route('/api/bookings/<int:booking_id>/payment', methods=['POST'])
 @jwt_required()
 def update_payment_status(booking_id):
@@ -1065,7 +1383,12 @@ def update_payment_status(booking_id):
         
         if not payment_method:
             return jsonify({'message': 'Payment method is required'}), 400
-            
+        
+        # Get user details
+        user = User.query.get(current_user_id)
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+        
         # Update payment details
         booking.payment_method = payment_method
         booking.payment_status = payment_status
@@ -1081,6 +1404,19 @@ def update_payment_status(booking_id):
         
         db.session.commit()
         
+        # Send SMS notifications
+        try:
+            # Send confirmation to customer
+            if user.phone:
+                send_payment_confirmation_sms(user, booking, payment_method)
+            
+            # Send notification to admin
+            send_admin_notification_sms(booking, user)
+            
+        except Exception as sms_error:
+            logger.error(f"SMS sending failed: {sms_error}")
+            # Don't fail the payment update if SMS fails
+        
         return jsonify({
             'message': 'Payment submitted successfully. Awaiting admin approval.',
             'booking': booking.to_dict()
@@ -1090,6 +1426,102 @@ def update_payment_status(booking_id):
         db.session.rollback()
         logger.error('Payment update error: %s', str(e))
         return jsonify({'message': str(e)}), 500
+
+# Update the approve_membership_booking endpoint to send SMS
+@app.route('/api/admin/bookings/<int:booking_id>/approve', methods=['POST'])
+@jwt_required()
+def approve_membership_booking(booking_id):
+    """Admin approves a membership booking"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'message': 'Admin access required'}), 403
+        
+        booking = Booking.query.get(booking_id)
+        if not booking:
+            return jsonify({'message': 'Booking not found'}), 404
+            
+        if booking.booking_type != 'membership':
+            return jsonify({'message': 'Only membership bookings can be approved'}), 400
+            
+        if booking.status != 'pending_admin_approval':
+            return jsonify({'message': f'Booking is not pending approval. Current status: {booking.status}'}), 400
+        
+        # Get customer details
+        customer = User.query.get(booking.user_id)
+        if not customer:
+            return jsonify({'message': 'Customer not found'}), 404
+        
+        # Approve the booking
+        booking.status = 'active'
+        booking.payment_status = 'verified'
+        booking.confirmed_at = datetime.now(timezone.utc)
+        
+        # Update user membership plan if needed
+        if customer:
+            # Extract package name for display
+            package_name = booking.package_type.replace('-', ' ').title()
+            customer.membership_plan = package_name
+        
+        db.session.commit()
+        
+        # Send approval SMS to customer
+        try:
+            if customer.phone:
+                send_approval_notification_sms(customer, booking)
+        except Exception as sms_error:
+            logger.error(f"Approval SMS sending failed: {sms_error}")
+            # Don't fail the approval if SMS fails
+        
+        return jsonify({
+            'message': 'Membership booking approved successfully',
+            'booking': {
+                'id': booking.id,
+                'status': booking.status,
+                'reference_number': booking.reference_number,
+                'user_name': customer.name if customer else 'Unknown'
+            }
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error('Approve membership error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+
+# Add a test SMS endpoint (optional, for debugging)
+@app.route('/api/admin/test-sms', methods=['POST'])
+@jwt_required()
+def test_sms():
+    """Test SMS functionality"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'message': 'Admin access required'}), 403
+        
+        data = request.get_json()
+        phone_number = data.get('phone_number')
+        message = data.get('message', 'Test SMS from Studio Reform')
+        
+        if not phone_number:
+            return jsonify({'message': 'Phone number is required'}), 400
+        
+        success = send_sms(phone_number, message)
+        
+        if success:
+            return jsonify({'message': 'Test SMS sent successfully'}), 200
+        else:
+            return jsonify({'message': 'Failed to send test SMS'}), 500
+            
+    except Exception as e:
+        logger.error(f'Test SMS error: {str(e)}')
+        return jsonify({'message': str(e)}), 500
+
+
+# =============================================================================================
 
 
 
