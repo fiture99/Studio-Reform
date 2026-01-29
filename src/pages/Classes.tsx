@@ -47,7 +47,7 @@ const Classes: React.FC = () => {
       name: 'Reform II (Abs, Booty, Core)',
       description: 'The sculpting phase. Focus on the ABC\'s. A focused reformer class targeting abs, booty, and core through deeper resistance and endurance sequences. Elevated energy, refined precision, intentional burn.',
       difficulty: 'Intermediate',
-      duration: '55 min',
+      duration: '50 min',
       instructor: 'Studio Reform',
       image: transitionalImg
     },
@@ -57,7 +57,7 @@ const Classes: React.FC = () => {
       name: 'Rhythm (Jumpboard)',
       description: 'A dynamic reformer flow with jumpboard integration. Low-impact bursts that challenge coordination and control while maintaining form and precision. Strength in flight, grounded by grace.',
       difficulty: 'All Levels',
-      duration: '55 min',
+      duration: '50 min',
       instructor: 'Studio Reform',
       image: advanceImg
     },

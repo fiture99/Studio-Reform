@@ -906,7 +906,7 @@ def create_booking():
                 return jsonify({'message': 'You already have a booking for this class at this time'}), 400
 
             # For demo purposes, use default capacity
-            default_capacity = 8
+            default_capacity = 4
             current_bookings = Booking.query.filter_by(
                 class_id=class_id,
                 booking_date=booking_date,
@@ -1895,7 +1895,7 @@ def create_tables():
                             'instructor': 'Studio Reform',
                             'duration': '50 min',
                             'difficulty': 'All Levels',
-                            'capacity': 8,
+                            'capacity': 4,
                             'description': 'A return to classical Pilates. Precise, grounded, and methodical — ROOT follows the traditional reformer sequence focusing on control, alignment, and flow.',
                             'image_url': '../images/Foudation.png'
                         },
@@ -1904,7 +1904,7 @@ def create_tables():
                             'instructor': 'Studio Reform',
                             'duration': '50 min',
                             'difficulty': 'All Levels',
-                            'capacity': 8,
+                            'capacity': 4,
                             'description': 'The signature Studio Reform experience. A full-body reformer flow that merges strength, elongation, and balance.',
                             'image_url': '../images/Foundamental.png'
                         },
@@ -1913,7 +1913,7 @@ def create_tables():
                             'instructor': 'Studio Reform',
                             'duration': '55 min',
                             'difficulty': 'Intermediate',
-                            'capacity': 6,
+                            'capacity': 4,
                             'description': 'The sculpting phase. Focus on the ABC\'s. A focused reformer class targeting abs, booty, and core through deeper resistance and endurance sequences.',
                             'image_url': '../images/transitional.png'
                         },
@@ -1922,7 +1922,7 @@ def create_tables():
                             'instructor': 'Studio Reform',
                             'duration': '55 min',
                             'difficulty': 'All Levels',
-                            'capacity': 6,
+                            'capacity': 4,
                             'description': 'A dynamic reformer flow with jumpboard integration. Low-impact bursts that challenge coordination and control while maintaining form and precision.',
                             'image_url': '../images/advance.png'
                         },
@@ -1931,7 +1931,7 @@ def create_tables():
                             'instructor': 'Studio Reform',
                             'duration': '50 min',
                             'difficulty': 'All Levels',
-                            'capacity': 8,
+                            'capacity': 4,
                             'description': 'A restorative reformer experience for elongation, mobility, and release. Focused on breath, flexibility, and tension relief.',
                             'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg'
                         },
