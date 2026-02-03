@@ -181,6 +181,185 @@ def revoked_token_callback(jwt_header, jwt_payload):
     return jsonify({'message': 'Token has been revoked'}), 401
 
 # Models
+# class User(db.Model):
+#     __tablename__ = 'SrUsers'
+    
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(100), nullable=False)
+#     email = db.Column(db.String(120), unique=True, nullable=False)
+#     phone = db.Column(db.String(20))
+#     password_hash = db.Column(db.String(128))
+#     membership_plan = db.Column(db.String(50))
+#     is_admin = db.Column(db.Boolean, default=False)
+#     status = db.Column(db.String(20), default='Active')
+#     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    
+#     # REMOVE THIS LINE - it's causing the conflict
+#     # bookings = db.relationship('Booking', backref='user', lazy=True)
+
+# class Class(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(100), nullable=False)
+#     instructor = db.Column(db.String(100), nullable=False)
+#     duration = db.Column(db.String(20), nullable=False)
+#     difficulty = db.Column(db.String(20), nullable=False)
+#     capacity = db.Column(db.Integer, nullable=False)
+#     description = db.Column(db.Text)
+#     image_url = db.Column(db.String(255))
+#     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    
+#     schedules = db.relationship('ClassSchedule', backref='class_info', lazy=True)
+#     # REMOVE THIS LINE - it's causing the conflict
+#     # bookings = db.relationship('Booking', backref='class_info', lazy=True)
+
+# class ClassSchedule(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=False)
+#     day_of_week = db.Column(db.String(10), nullable=False)
+#     start_time = db.Column(db.Time, nullable=False)
+#     end_time = db.Column(db.Time, nullable=False)
+
+# class Booking(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey('SrUsers.id'), nullable=False)
+    
+#     # For class bookings
+#     class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=True)
+#     booking_date = db.Column(db.Date, nullable=True)
+#     booking_time = db.Column(db.Time, nullable=True)
+    
+#     # For membership packages
+#     package_type = db.Column(db.String(50), nullable=True)  # 'intro-1', 'private-3', etc.
+#     package_sessions = db.Column(db.Integer, nullable=True)  # Number of sessions
+#     package_validity_days = db.Column(db.Integer, nullable=True)  # Validity in days
+    
+#     # Common fields
+#     booking_type = db.Column(db.String(20), nullable=False)  # 'class', 'membership'
+#     reference_number = db.Column(db.String(50), unique=True, nullable=False)
+#     amount = db.Column(db.Integer, nullable=False, default=0)  # Amount in Gambian Dalasi
+#     status = db.Column(db.String(30), default='pending')  # pending, confirmed, cancelled, completed
+#     payment_method = db.Column(db.String(20), nullable=True)  # wave, bank, cash
+#     payment_status = db.Column(db.String(30), default='pending')  # pending, paid, failed
+    
+#     # Timestamps
+#     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+#     confirmed_at = db.Column(db.DateTime, nullable=True)
+#     cancelled_at = db.Column(db.DateTime, nullable=True)
+    
+#     # Relationships - Define them only in one place
+#     user = db.relationship('User', backref='bookings')
+#     class_info = db.relationship('Class', backref='bookings')
+
+#     def to_dict(self):
+#         """Convert booking to dictionary for API responses"""
+#         data = {
+#             'id': self.id,
+#             'user_id': self.user_id,
+#             'booking_type': self.booking_type,
+#             'reference_number': self.reference_number,
+#             'amount': self.amount,
+#             'status': self.status,
+#             'payment_method': self.payment_method,
+#             'payment_status': self.payment_status,
+#             'created_at': self.created_at.isoformat(),
+#             'user_name': self.user.name if self.user else None
+#         }
+        
+#         if self.booking_type == 'class':
+#             data.update({
+#                 'class_id': self.class_id,
+#                 'class_name': self.class_info.name if self.class_info else None,
+#                 'booking_date': self.booking_date.isoformat() if self.booking_date else None,
+#                 'booking_time': self.booking_time.strftime('%H:%M') if self.booking_time else None,
+#                 'instructor': self.class_info.instructor if self.class_info else None
+#             })
+#         elif self.booking_type == 'membership':
+#             data.update({
+#                 'package_type': self.package_type,
+#                 'package_sessions': self.package_sessions,
+#                 'package_validity_days': self.package_validity_days
+#             })
+            
+#         return data
+
+# class PackageConfig(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     package_id = db.Column(db.String(50), unique=True, nullable=False)  # 'intro-1', 'private-3'
+#     name = db.Column(db.String(100), nullable=False)  # '1 Session', '3 Sessions'
+#     category = db.Column(db.String(50), nullable=False)  # 'Intro Pack', 'PRIVATE'
+#     price = db.Column(db.Integer, nullable=False)  # Amount in GMD
+#     sessions = db.Column(db.Integer, nullable=False)  # Number of sessions
+#     validity_days = db.Column(db.Integer, nullable=False)  # Validity in days
+#     is_active = db.Column(db.Boolean, default=True)
+#     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+# class Contact(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(100), nullable=False)
+#     email = db.Column(db.String(120), nullable=False)
+#     phone = db.Column(db.String(20), default='')
+#     subject = db.Column(db.String(100), default='', nullable=True)
+#     message = db.Column(db.Text, nullable=False)
+#     status = db.Column(db.String(20), default='New')
+#     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+# class ChatHistory(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     session_id = db.Column(db.String(100), nullable=False)
+#     user_message = db.Column(db.Text, nullable=False)
+#     bot_response = db.Column(db.Text, nullable=False)
+#     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+
+#     # Replace the ClassSlot model with these models
+
+# class WeeklySchedule(db.Model):
+#     """Weekly class schedule set by admin"""
+#     id = db.Column(db.Integer, primary_key=True)
+#     class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=False)
+#     day_of_week = db.Column(db.String(10), nullable=False)  # Monday, Tuesday, etc.
+#     start_time = db.Column(db.Time, nullable=False)
+#     end_time = db.Column(db.Time, nullable=False)
+#     max_capacity = db.Column(db.Integer, nullable=False, default=4)
+#     is_active = db.Column(db.Boolean, default=True)
+#     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    
+#     # Relationships
+#     class_info = db.relationship('Class', backref='weekly_schedules')
+#     schedule_instances = db.relationship('ScheduleInstance', backref='weekly_schedule', lazy=True)
+
+# class ScheduleInstance(db.Model):
+#     """Specific date instances generated from weekly schedule"""
+#     id = db.Column(db.Integer, primary_key=True)
+#     weekly_schedule_id = db.Column(db.Integer, db.ForeignKey('weekly_schedule.id'), nullable=False)
+#     class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=False)
+#     date = db.Column(db.Date, nullable=False)
+#     start_time = db.Column(db.Time, nullable=False)
+#     end_time = db.Column(db.Time, nullable=False)
+#     max_capacity = db.Column(db.Integer, nullable=False, default=4)
+#     current_bookings = db.Column(db.Integer, nullable=False, default=0)
+#     is_active = db.Column(db.Boolean, default=True)
+#     is_cancelled = db.Column(db.Boolean, default=False)
+#     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    
+#     # Relationships
+#     class_info = db.relationship('Class', backref='schedule_instances')
+#     bookings = db.relationship('ClassBooking', backref='schedule_instance', lazy=True)
+
+# class ClassBooking(db.Model):
+#     """Customer booking for a specific schedule instance"""
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey('SrUsers.id'), nullable=False)
+#     schedule_instance_id = db.Column(db.Integer, db.ForeignKey('schedule_instance.id'), nullable=False)
+#     status = db.Column(db.String(20), default='booked')  # booked, attended, cancelled, no_show
+#     booking_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+#     attended_at = db.Column(db.DateTime, nullable=True)
+#     cancelled_at = db.Column(db.DateTime, nullable=True)
+    
+#     # Relationships
+#     user = db.relationship('SrUsers', backref='class_bookings')
+
+# =========================================================================================
 class User(db.Model):
     __tablename__ = 'SrUsers'
     
@@ -194,10 +373,13 @@ class User(db.Model):
     status = db.Column(db.String(20), default='Active')
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
-    # REMOVE THIS LINE - it's causing the conflict
-    # bookings = db.relationship('Booking', backref='user', lazy=True)
+    # Add this back - it's needed for the Booking model
+    bookings = db.relationship('Booking', backref='booking_user', lazy=True)  # Changed backref name
+    class_bookings = db.relationship('ClassBooking', backref='class_booking_user', lazy=True)  # For ClassBooking
 
 class Class(db.Model):
+    __tablename__ = 'class'  # Explicitly set table name
+    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     instructor = db.Column(db.String(100), nullable=False)
@@ -208,11 +390,15 @@ class Class(db.Model):
     image_url = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
-    schedules = db.relationship('ClassSchedule', backref='class_info', lazy=True)
-    # REMOVE THIS LINE - it's causing the conflict
-    # bookings = db.relationship('Booking', backref='class_info', lazy=True)
+    # schedules = db.relationship('ClassSchedule', backref='class_info', lazy=True)
+    # Add this back - it's needed for the Booking model
+    # bookings = db.relationship('Booking', backref='booking_class', lazy=True)  # Changed backref name
+    weekly_schedules = db.relationship('WeeklySchedule', backref='weekly_class', lazy=True)
+    # schedule_instances = db.relationship('ScheduleInstance', backref='instance_class', lazy=True)
 
 class ClassSchedule(db.Model):
+    __tablename__ = 'class_schedule'
+    
     id = db.Column(db.Integer, primary_key=True)
     class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=False)
     day_of_week = db.Column(db.String(10), nullable=False)
@@ -220,6 +406,8 @@ class ClassSchedule(db.Model):
     end_time = db.Column(db.Time, nullable=False)
 
 class Booking(db.Model):
+    __tablename__ = 'booking'
+    
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('SrUsers.id'), nullable=False)
     
@@ -246,9 +434,11 @@ class Booking(db.Model):
     confirmed_at = db.Column(db.DateTime, nullable=True)
     cancelled_at = db.Column(db.DateTime, nullable=True)
     
-    # Relationships - Define them only in one place
-    user = db.relationship('User', backref='bookings')
-    class_info = db.relationship('Class', backref='bookings')
+    # Use the backref names we defined in User and Class models
+    # No need to define relationships here since we're using backref
+    # But if you want to explicitly define them:
+    # user = db.relationship('User', backref='bookings')
+    # class_info = db.relationship('Class', backref='bookings')
 
     def to_dict(self):
         """Convert booking to dictionary for API responses"""
@@ -262,16 +452,16 @@ class Booking(db.Model):
             'payment_method': self.payment_method,
             'payment_status': self.payment_status,
             'created_at': self.created_at.isoformat(),
-            'user_name': self.user.name if self.user else None
+            'user_name': self.booking_user.name if self.booking_user else None  # Changed to booking_user
         }
         
         if self.booking_type == 'class':
             data.update({
                 'class_id': self.class_id,
-                'class_name': self.class_info.name if self.class_info else None,
+                'class_name': self.booking_class.name if self.booking_class else None,  # Changed to booking_class
                 'booking_date': self.booking_date.isoformat() if self.booking_date else None,
                 'booking_time': self.booking_time.strftime('%H:%M') if self.booking_time else None,
-                'instructor': self.class_info.instructor if self.class_info else None
+                'instructor': self.booking_class.instructor if self.booking_class else None  # Changed to booking_class
             })
         elif self.booking_type == 'membership':
             data.update({
@@ -282,35 +472,103 @@ class Booking(db.Model):
             
         return data
 
-class PackageConfig(db.Model):
+# ... [PackageConfig, Contact, ChatHistory models remain the same] ...
+
+# In your models section, update the relationships:
+
+class WeeklySchedule(db.Model):
+    __tablename__ = 'weekly_schedule'
+    
+    """Weekly class schedule set by admin"""
     id = db.Column(db.Integer, primary_key=True)
-    package_id = db.Column(db.String(50), unique=True, nullable=False)  # 'intro-1', 'private-3'
-    name = db.Column(db.String(100), nullable=False)  # '1 Session', '3 Sessions'
-    category = db.Column(db.String(50), nullable=False)  # 'Intro Pack', 'PRIVATE'
-    price = db.Column(db.Integer, nullable=False)  # Amount in GMD
-    sessions = db.Column(db.Integer, nullable=False)  # Number of sessions
-    validity_days = db.Column(db.Integer, nullable=False)  # Validity in days
+    class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=False)
+    day_of_week = db.Column(db.String(10), nullable=False)  # Monday, Tuesday, etc.
+    start_time = db.Column(db.Time, nullable=False)
+    end_time = db.Column(db.Time, nullable=False)
+    max_capacity = db.Column(db.Integer, nullable=False, default=4)
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    
+    # # Relationships - Use unique backref names
+    # class_ref = db.relationship('Class', backref='weekly_schedule_refs')
+    # class_info = db.relationship('Class', backref='weekly_schedules')
+    # schedule_instances = db.relationship('ScheduleInstance', backref='parent_schedule', lazy=True)
 
-class Contact(db.Model):
+class ScheduleInstance(db.Model):
+    __tablename__ = 'schedule_instance'
+    
+    """Specific date instances generated from weekly schedule"""
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(120), nullable=False)
-    phone = db.Column(db.String(20), default='')
-    subject = db.Column(db.String(100), default='', nullable=True)
-    message = db.Column(db.Text, nullable=False)
-    status = db.Column(db.String(20), default='New')
+    weekly_schedule_id = db.Column(db.Integer, db.ForeignKey('weekly_schedule.id'), nullable=False)
+    class_id = db.Column(db.Integer, db.ForeignKey('class.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    start_time = db.Column(db.Time, nullable=False)
+    end_time = db.Column(db.Time, nullable=False)
+    max_capacity = db.Column(db.Integer, nullable=False, default=4)
+    current_bookings = db.Column(db.Integer, nullable=False, default=0)
+    is_active = db.Column(db.Boolean, default=True)
+    is_cancelled = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    
+    # Relationships - Use unique backref names
+    # class_ref = db.relationship('Class', backref='instance_refs')
+    # # parent_schedule is defined by backref from WeeklySchedule
+    # bookings = db.relationship('ClassBooking', backref='instance_booking', lazy=True)
 
-class ChatHistory(db.Model):
+    class_info = db.relationship('Class', backref='schedule_instances')
+    weekly_schedule = db.relationship('WeeklySchedule', backref='instances')
+    bookings = db.relationship('ClassBooking', backref='schedule_instance')
+
+class ClassBooking(db.Model):
+    __tablename__ = 'class_booking'
+    
+    """Customer booking for a specific schedule instance"""
     id = db.Column(db.Integer, primary_key=True)
-    session_id = db.Column(db.String(100), nullable=False)
-    user_message = db.Column(db.Text, nullable=False)
-    bot_response = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('SrUsers.id'), nullable=False)
+    schedule_instance_id = db.Column(db.Integer, db.ForeignKey('schedule_instance.id'), nullable=False)
+    status = db.Column(db.String(20), default='booked')  # booked, attended, cancelled, no_show
+    booking_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    attended_at = db.Column(db.DateTime, nullable=True)
+    cancelled_at = db.Column(db.DateTime, nullable=True)
+    
+    # Relationships
+    # user = db.relationship('User', backref='user_class_bookings')
+    # instance_booking is defined by backref from ScheduleInstance
+
+# class ClassBooking(db.Model):
+#     __tablename__ = 'class_booking'
+    
+#     """Customer booking for a specific schedule instance"""
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey('SrUsers.id'), nullable=False)
+#     schedule_instance_id = db.Column(db.Integer, db.ForeignKey('schedule_instance.id'), nullable=False)
+#     status = db.Column(db.String(20), default='booked')  # booked, attended, cancelled, no_show
+#     booking_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+#     attended_at = db.Column(db.DateTime, nullable=True)
+#     cancelled_at = db.Column(db.DateTime, nullable=True)
+    
+#     # Use the backref name we defined in User model
+#     user = db.relationship('User', backref='class_bookings')
+#     # schedule_instance = db.relationship('ScheduleInstance', backref='bookings')
+
+
+class UserMembership(db.Model):
+    __tablename__ = 'user_membership'
+    
+    """User's active membership packages"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('SrUsers.id'), nullable=False)
+    package_type = db.Column(db.String(50), nullable=False)
+    total_sessions = db.Column(db.Integer, nullable=False)
+    used_sessions = db.Column(db.Integer, nullable=False, default=0)
+    remaining_sessions = db.Column(db.Integer, nullable=False)
+    purchase_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    valid_until = db.Column(db.DateTime, nullable=False)
+    is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-
-
+    
+    # Relationship
+    # user = db.relationship('User', backref='memberships')
 
 # ===========================================================================================
 
@@ -1274,6 +1532,552 @@ def assign_class_to_member(member_id):
         db.session.rollback()
         logger.error('Assign class error: %s', str(e))
         return jsonify({'message': str(e)}), 500
+
+
+# ==================================================
+
+@app.route('/api/admin/weekly-schedule/<int:schedule_id>/instances', methods=['POST'])
+@jwt_required()
+def generate_schedule_instances_endpoint(schedule_id):
+    """Admin manually generates schedule instances"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'message': 'Admin access required'}), 403
+        
+        data = request.get_json()
+        days_ahead = data.get('days_ahead', 30)
+        
+        generated = generate_schedule_instances(schedule_id, days_ahead)
+        
+        return jsonify({
+            'message': f'Generated {generated} schedule instances',
+            'schedule_id': schedule_id,
+            'instances_generated': generated
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error('Generate instances error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+
+def generate_schedule_instances(schedule_id, days_ahead=30):
+    """Generate schedule instances from weekly schedule"""
+    schedule = WeeklySchedule.query.get(schedule_id)
+    if not schedule or not schedule.is_active:
+        return 0
+    
+    day_mapping = {
+        'Monday': 0,
+        'Tuesday': 1,
+        'Wednesday': 2,
+        'Thursday': 3,
+        'Friday': 4,
+        'Saturday': 5,
+        'Sunday': 6
+    }
+    
+    target_weekday = day_mapping.get(schedule.day_of_week)
+    if target_weekday is None:
+        return 0
+    
+    today = datetime.now().date()
+    end_date = today + timedelta(days=days_ahead)
+    
+    generated = 0
+    
+    # Generate instances for each occurrence of the day within the date range
+    current_date = today
+    while current_date <= end_date:
+        if current_date.weekday() == target_weekday:
+            # Check if instance already exists
+            existing_instance = ScheduleInstance.query.filter_by(
+                weekly_schedule_id=schedule_id,
+                date=current_date
+            ).first()
+            
+            if not existing_instance:
+                # Create new instance
+                instance = ScheduleInstance(
+                    weekly_schedule_id=schedule_id,
+                    class_id=schedule.class_id,
+                    date=current_date,
+                    start_time=schedule.start_time,
+                    end_time=schedule.end_time,
+                    max_capacity=schedule.max_capacity
+                )
+                db.session.add(instance)
+                generated += 1
+        
+        current_date += timedelta(days=1)
+    
+    if generated > 0:
+        db.session.commit()
+    
+    return generated
+
+@app.route('/api/admin/weekly-schedule', methods=['GET'])
+@jwt_required()
+def get_weekly_schedules():
+    """Get all weekly schedules for admin"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'error': 'Unauthorized'}), 403
+        
+        # Get all weekly schedules with class info
+        schedules = WeeklySchedule.query.all()
+        
+        result = []
+        for schedule in schedules:
+            # Get class info
+            class_item = Class.query.get(schedule.class_id)
+            class_name = class_item.name if class_item else "Unknown Class"
+            
+            # Count upcoming instances for this schedule
+            upcoming_count = ScheduleInstance.query.filter(
+                ScheduleInstance.weekly_schedule_id == schedule.id,
+                ScheduleInstance.date >= datetime.now().date(),
+                ScheduleInstance.is_cancelled == False
+            ).count()
+            
+            result.append({
+                'id': schedule.id,
+                'class_id': schedule.class_id,
+                'class_name': class_name,
+                'day_of_week': schedule.day_of_week,
+                'start_time': schedule.start_time.strftime('%H:%M') if schedule.start_time else None,
+                'end_time': schedule.end_time.strftime('%H:%M') if schedule.end_time else None,
+                'max_capacity': schedule.max_capacity,
+                'is_active': schedule.is_active,
+                'created_at': schedule.created_at.isoformat() if schedule.created_at else None,
+                'upcoming_instances': upcoming_count
+            })
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        print(f"Get weekly schedules error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/admin/schedule-instances', methods=['GET'])
+@jwt_required()
+def get_schedule_instances():
+    """Get all schedule instances with filters"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'error': 'Unauthorized'}), 403
+        
+        # Get filter parameters
+        class_id = request.args.get('class_id')
+        date_from = request.args.get('date_from')
+        date_to = request.args.get('date_to')
+        status = request.args.get('status', 'upcoming')  # upcoming, past, cancelled
+        
+        # Build query
+        query = ScheduleInstance.query
+        
+        # Apply filters
+        if class_id:
+            query = query.filter(ScheduleInstance.class_id == class_id)
+        
+        if date_from:
+            query = query.filter(ScheduleInstance.date >= date_from)
+        
+        if date_to:
+            query = query.filter(ScheduleInstance.date <= date_to)
+        
+        today = datetime.now().date()
+        if status == 'upcoming':
+            query = query.filter(
+                ScheduleInstance.date >= today, 
+                ScheduleInstance.is_cancelled == False
+            )
+        elif status == 'past':
+            query = query.filter(ScheduleInstance.date < today)
+        elif status == 'cancelled':
+            query = query.filter(ScheduleInstance.is_cancelled == True)
+        
+        # Order by date and time
+        instances = query.order_by(ScheduleInstance.date, ScheduleInstance.start_time).all()
+        
+        result = []
+        for instance in instances:
+            # Get class info
+            class_item = Class.query.get(instance.class_id)
+            class_name = class_item.name if class_item else "Unknown Class"
+            
+            # Get weekly schedule info
+            weekly_schedule = WeeklySchedule.query.get(instance.weekly_schedule_id)
+            day_of_week = weekly_schedule.day_of_week if weekly_schedule else None
+            
+            # Get booked users for this instance
+            bookings = ClassBooking.query.filter_by(schedule_instance_id=instance.id).all()
+            booked_users = []
+            for booking in bookings:
+                user_obj = User.query.get(booking.user_id)
+                if user_obj:
+                    booked_users.append({
+                        'id': user_obj.id,
+                        'name': user_obj.name,
+                        'email': user_obj.email
+                    })
+            
+            result.append({
+                'id': instance.id,
+                'class_id': instance.class_id,
+                'class_name': class_name,
+                'schedule_id': instance.weekly_schedule_id,
+                'day_of_week': day_of_week,
+                'date': instance.date.isoformat() if instance.date else None,
+                'start_time': instance.start_time.strftime('%H:%M') if instance.start_time else None,
+                'end_time': instance.end_time.strftime('%H:%M') if instance.end_time else None,
+                'max_capacity': instance.max_capacity,
+                'current_bookings': instance.current_bookings,
+                'available_spots': instance.max_capacity - instance.current_bookings,
+                'is_cancelled': instance.is_cancelled,
+                'instructor': class_item.instructor if class_item else None,
+                'booked_users': booked_users,
+                'created_at': instance.created_at.isoformat() if instance.created_at else None
+            })
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        print(f"Get schedule instances error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/admin/schedule-instances/<int:instance_id>/cancel', methods=['POST'])
+@jwt_required()
+def cancel_schedule_instance(instance_id):
+    """Admin cancels a specific schedule instance"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'message': 'Admin access required'}), 403
+        
+        instance = ScheduleInstance.query.get(instance_id)
+        if not instance:
+            return jsonify({'message': 'Schedule instance not found'}), 404
+        
+        # Check if instance is in the future
+        instance_datetime = datetime.combine(instance.date, instance.start_time)
+        if instance_datetime < datetime.now():
+            return jsonify({'message': 'Cannot cancel past schedule instances'}), 400
+        
+        # Mark instance as cancelled
+        instance.is_cancelled = True
+        
+        # Get all bookings for this instance
+        bookings = ClassBooking.query.filter_by(
+            schedule_instance_id=instance_id,
+            status='booked'
+        ).all()
+        
+        # Refund sessions to users and notify them
+        for booking in bookings:
+            booking.status = 'cancelled_by_admin'
+            booking.cancelled_at = datetime.now(timezone.utc)
+            
+            # Refund session to user's membership
+            active_membership = UserMembership.query.filter_by(
+                user_id=booking.user_id,
+                is_active=True
+            ).first()
+            
+            if active_membership:
+                active_membership.used_sessions -= 1
+                active_membership.remaining_sessions += 1
+                # Reactivate if needed
+                if not active_membership.is_active and active_membership.remaining_sessions > 0:
+                    active_membership.is_active = True
+            
+            # Notify user via SMS
+            user = User.query.get(booking.user_id)
+            if user and user.phone:
+                message = f"""❌ Class Cancelled by Admin
+    
+Class: {instance.class_info.name}
+Date: {instance.date.strftime('%Y-%m-%d')}
+Time: {instance.start_time.strftime('%I:%M %p')}
+    
+This class has been cancelled by admin. Your session has been refunded to your account.
+You now have {active_membership.remaining_sessions if active_membership else 0} sessions remaining.
+    
+We apologize for any inconvenience."""
+                send_sms(user.phone, message)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': f'Schedule instance cancelled. {len(bookings)} users notified and refunded.',
+            'cancelled_bookings': len(bookings)
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error('Cancel schedule instance error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+
+# =========================================================
+@app.route('/api/admin/weekly-schedule/<int:schedule_id>/toggle', methods=['PUT'])
+@jwt_required()
+def toggle_weekly_schedule(schedule_id):
+    """Toggle schedule active status"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'message': 'Admin access required'}), 403
+        
+        schedule = WeeklySchedule.query.get(schedule_id)
+        if not schedule:
+            return jsonify({'message': 'Schedule not found'}), 404
+        
+        schedule.is_active = not schedule.is_active
+        db.session.commit()
+        
+        return jsonify({
+            'message': f'Schedule {"activated" if schedule.is_active else "deactivated"} successfully',
+            'is_active': schedule.is_active
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error('Toggle schedule error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/admin/weekly-schedule/<int:schedule_id>', methods=['DELETE'])
+@jwt_required()
+def delete_weekly_schedule(schedule_id):
+    """Delete a weekly schedule"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'message': 'Admin access required'}), 403
+        
+        schedule = WeeklySchedule.query.get(schedule_id)
+        if not schedule:
+            return jsonify({'message': 'Schedule not found'}), 404
+        
+        # Check if there are any future instances
+        future_instances = ScheduleInstance.query.filter(
+            ScheduleInstance.weekly_schedule_id == schedule_id,
+            ScheduleInstance.date >= datetime.now().date()
+        ).count()
+        
+        if future_instances > 0:
+            return jsonify({
+                'message': f'Cannot delete schedule with {future_instances} future instances. Cancel them first.',
+                'future_instances': future_instances
+            }), 400
+        
+        db.session.delete(schedule)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Schedule deleted successfully'
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error('Delete schedule error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/admin/schedule-instances/<int:instance_id>/update-capacity', methods=['PUT'])
+@jwt_required()
+def update_schedule_instance_capacity(instance_id):
+    """Update capacity for a specific schedule instance"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'message': 'Admin access required'}), 403
+        
+        data = request.get_json()
+        new_capacity = data.get('max_capacity')
+        
+        if not new_capacity or new_capacity < 1:
+            return jsonify({'message': 'Invalid capacity value'}), 400
+        
+        instance = ScheduleInstance.query.get(instance_id)
+        if not instance:
+            return jsonify({'message': 'Schedule instance not found'}), 404
+        
+        # Check if new capacity is less than current bookings
+        if new_capacity < instance.current_bookings:
+            return jsonify({
+                'message': f'Cannot reduce capacity below current bookings ({instance.current_bookings})'
+            }), 400
+        
+        instance.max_capacity = new_capacity
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Capacity updated successfully',
+            'max_capacity': instance.max_capacity,
+            'available_spots': instance.max_capacity - instance.current_bookings
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error('Update capacity error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/admin/schedule-instances/<int:instance_id>/status', methods=['PUT'])
+@jwt_required()
+def update_instance_status(instance_id):
+    """Update status of a schedule instance (active/cancelled)"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'message': 'Admin access required'}), 403
+        
+        data = request.get_json()
+        new_status = data.get('is_active')
+        
+        instance = ScheduleInstance.query.get(instance_id)
+        if not instance:
+            return jsonify({'message': 'Schedule instance not found'}), 404
+        
+        if new_status is not None:
+            instance.is_active = bool(new_status)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': f'Instance {"activated" if instance.is_active else "deactivated"}',
+            'is_active': instance.is_active,
+            'is_cancelled': instance.is_cancelled
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error('Update instance status error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/admin/class-attendance/<int:instance_id>', methods=['POST'])
+@jwt_required()
+def mark_class_attendance(instance_id):
+    """Mark attendance for a class instance"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'message': 'Admin access required'}), 403
+        
+        data = request.get_json()
+        booking_ids = data.get('booking_ids', [])
+        attendance_status = data.get('status', 'attended')  # attended, no_show
+        
+        # Get the schedule instance
+        instance = ScheduleInstance.query.get(instance_id)
+        if not instance:
+            return jsonify({'message': 'Class instance not found'}), 404
+        
+        # Get all bookings for this instance
+        bookings = ClassBooking.query.filter(
+            ClassBooking.schedule_instance_id == instance_id,
+            ClassBooking.status == 'booked'
+        ).all()
+        
+        updated_count = 0
+        for booking in bookings:
+            if booking.id in booking_ids and attendance_status == 'attended':
+                booking.status = 'attended'
+                booking.attended_at = datetime.now(timezone.utc)
+                updated_count += 1
+            elif booking.status == 'booked':
+                booking.status = 'no_show'
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': f'Attendance marked for {updated_count} users',
+            'total_bookings': len(bookings),
+            'attended': updated_count,
+            'no_show': len(bookings) - updated_count
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error('Mark attendance error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/admin/class-attendance/<int:instance_id>', methods=['GET'])
+@jwt_required()
+def get_class_attendance(instance_id):
+    """Get attendance list for a class instance"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'message': 'Admin access required'}), 403
+        
+        # Get the schedule instance
+        instance = ScheduleInstance.query.get(instance_id)
+        if not instance:
+            return jsonify({'message': 'Class instance not found'}), 404
+        
+        # Get all bookings for this instance
+        bookings = db.session.query(ClassBooking, User).join(
+            User, ClassBooking.user_id == User.id
+        ).filter(
+            ClassBooking.schedule_instance_id == instance_id
+        ).all()
+        
+        attendance_list = []
+        for booking, user_obj in bookings:
+            attendance_list.append({
+                'booking_id': booking.id,
+                'user_id': user_obj.id,
+                'user_name': user_obj.name,
+                'user_email': user_obj.email,
+                'user_phone': user_obj.phone,
+                'status': booking.status,
+                'booking_date': booking.booking_date.isoformat(),
+                'attended_at': booking.attended_at.isoformat() if booking.attended_at else None,
+                'cancelled_at': booking.cancelled_at.isoformat() if booking.cancelled_at else None
+            })
+        
+        # Get class info
+        class_info = Class.query.get(instance.class_id)
+        
+        return jsonify({
+            'instance_id': instance_id,
+            'class_name': class_info.name if class_info else 'Unknown Class',
+            'date': instance.date.isoformat(),
+            'start_time': instance.start_time.strftime('%H:%M'),
+            'end_time': instance.end_time.strftime('%H:%M'),
+            'instructor': class_info.instructor if class_info else '',
+            'total_capacity': instance.max_capacity,
+            'current_bookings': instance.current_bookings,
+            'attendance': attendance_list
+        }), 200
+        
+    except Exception as e:
+        logger.error('Get attendance error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+
+# =========================================================
+        
 # ============================================
 
 @app.route('/api/bookings', methods=['GET'])
@@ -1281,9 +2085,46 @@ def assign_class_to_member(member_id):
 def get_user_bookings():
     try:
         current_user_id = get_jwt_identity()
-        bookings = Booking.query.filter_by(user_id=current_user_id).order_by(Booking.created_at.desc()).all()
         
-        bookings_data = [booking.to_dict() for booking in bookings]
+        # Use explicit join to get class information
+        bookings = db.session.query(Booking, Class).outerjoin(
+            Class, Booking.class_id == Class.id
+        ).filter(
+            Booking.user_id == current_user_id
+        ).order_by(Booking.created_at.desc()).all()
+        
+        bookings_data = []
+        for booking, class_info in bookings:
+            data = {
+                'id': booking.id,
+                'user_id': booking.user_id,
+                'booking_type': booking.booking_type,
+                'reference_number': booking.reference_number,
+                'amount': booking.amount,
+                'status': booking.status,
+                'payment_method': booking.payment_method,
+                'payment_status': booking.payment_status,
+                'created_at': booking.created_at.isoformat(),
+                'user_name': booking.booking_user.name if booking.booking_user else None
+            }
+            
+            if booking.booking_type == 'class':
+                data.update({
+                    'class_id': booking.class_id,
+                    'class_name': class_info.name if class_info else None,
+                    'booking_date': booking.booking_date.isoformat() if booking.booking_date else None,
+                    'booking_time': booking.booking_time.strftime('%H:%M') if booking.booking_time else None,
+                    'instructor': class_info.instructor if class_info else None
+                })
+            elif booking.booking_type == 'membership':
+                data.update({
+                    'package_type': booking.package_type,
+                    'package_sessions': booking.package_sessions,
+                    'package_validity_days': booking.package_validity_days
+                })
+                
+            bookings_data.append(data)
+        
         return jsonify(bookings_data), 200
         
     except Exception as e:
@@ -1425,10 +2266,74 @@ def update_payment_status(booking_id):
         return jsonify({'message': str(e)}), 500
 
 # Update the approve_membership_booking endpoint to send SMS
+# @app.route('/api/admin/bookings/<int:booking_id>/approve', methods=['POST'])
+# @jwt_required()
+# def approve_membership_booking(booking_id):
+#     """Admin approves a membership booking"""
+#     try:
+#         current_user_id = get_jwt_identity()
+#         user = User.query.get(int(current_user_id))
+        
+#         if not user or not user.is_admin:
+#             return jsonify({'message': 'Admin access required'}), 403
+        
+#         booking = Booking.query.get(booking_id)
+#         if not booking:
+#             return jsonify({'message': 'Booking not found'}), 404
+            
+#         if booking.booking_type != 'membership':
+#             return jsonify({'message': 'Only membership bookings can be approved'}), 400
+            
+#         if booking.status != 'pending_admin_approval':
+#             return jsonify({'message': f'Booking is not pending approval. Current status: {booking.status}'}), 400
+        
+#         # Get customer details
+#         customer = User.query.get(booking.user_id)
+#         if not customer:
+#             return jsonify({'message': 'Customer not found'}), 404
+        
+#         # Approve the booking
+#         booking.status = 'active'
+#         booking.payment_status = 'verified'
+#         booking.confirmed_at = datetime.now(timezone.utc)
+        
+#         # Update user membership plan if needed
+#         if customer:
+#             # Extract package name for display
+#             package_name = booking.package_type.replace('-', ' ').title()
+#             customer.membership_plan = package_name
+        
+#         db.session.commit()
+        
+#         # Send approval SMS to customer
+#         try:
+#             if customer.phone:
+#                 send_approval_notification_sms(customer, booking)
+#         except Exception as sms_error:
+#             logger.error(f"Approval SMS sending failed: {sms_error}")
+#             # Don't fail the approval if SMS fails
+        
+#         return jsonify({
+#             'message': 'Membership booking approved successfully',
+#             'booking': {
+#                 'id': booking.id,
+#                 'status': booking.status,
+#                 'reference_number': booking.reference_number,
+#                 'user_name': customer.name if customer else 'Unknown'
+#             }
+#         }), 200
+        
+#     except Exception as e:
+#         db.session.rollback()
+#         logger.error('Approve membership error: %s', str(e))
+#         return jsonify({'message': str(e)}), 500
+
+
+# ===================================================================
 @app.route('/api/admin/bookings/<int:booking_id>/approve', methods=['POST'])
 @jwt_required()
 def approve_membership_booking(booking_id):
-    """Admin approves a membership booking"""
+    """Admin approves a membership booking - UPDATED TO CREATE UserMembership"""
     try:
         current_user_id = get_jwt_identity()
         user = User.query.get(int(current_user_id))
@@ -1456,11 +2361,38 @@ def approve_membership_booking(booking_id):
         booking.payment_status = 'verified'
         booking.confirmed_at = datetime.now(timezone.utc)
         
-        # Update user membership plan if needed
-        if customer:
-            # Extract package name for display
-            package_name = booking.package_type.replace('-', ' ').title()
-            customer.membership_plan = package_name
+        # Update user membership plan
+        package_name = booking.package_type.replace('-', ' ').title()
+        customer.membership_plan = package_name
+        
+        # Create UserMembership entry
+        valid_until = datetime.now(timezone.utc) + timedelta(
+            days=booking.package_validity_days or 30
+        )
+        
+        # Check if user already has an active membership
+        existing_membership = UserMembership.query.filter_by(
+            user_id=booking.user_id,
+            is_active=True
+        ).first()
+        
+        if existing_membership:
+            # Update existing membership
+            existing_membership.total_sessions += (booking.package_sessions or 0)
+            existing_membership.remaining_sessions += (booking.package_sessions or 0)
+            existing_membership.valid_until = max(existing_membership.valid_until, valid_until)
+        else:
+            # Create new membership
+            new_membership = UserMembership(
+                user_id=booking.user_id,
+                package_type=booking.package_type,
+                total_sessions=booking.package_sessions or 0,
+                used_sessions=0,
+                remaining_sessions=booking.package_sessions or 0,
+                valid_until=valid_until,
+                is_active=True
+            )
+            db.session.add(new_membership)
         
         db.session.commit()
         
@@ -1470,7 +2402,6 @@ def approve_membership_booking(booking_id):
                 send_approval_notification_sms(customer, booking)
         except Exception as sms_error:
             logger.error(f"Approval SMS sending failed: {sms_error}")
-            # Don't fail the approval if SMS fails
         
         return jsonify({
             'message': 'Membership booking approved successfully',
@@ -1486,6 +2417,7 @@ def approve_membership_booking(booking_id):
         db.session.rollback()
         logger.error('Approve membership error: %s', str(e))
         return jsonify({'message': str(e)}), 500
+#=====================================================================
 
 # Add a test SMS endpoint (optional, for debugging)
 @app.route('/api/admin/test-sms', methods=['POST'])
@@ -1795,6 +2727,965 @@ def update_booking_status(booking_id):
         logger.error('Update booking status error: %s', str(e))
         return jsonify({'message': str(e)}), 500
 
+
+# ============================================================================
+@app.route('/api/admin/weekly-schedule', methods=['POST'])
+@jwt_required()
+def create_weekly_schedule():
+    """Create a new weekly schedule"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user or not user.is_admin:
+            return jsonify({'error': 'Admin access required'}), 403
+        
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['class_id', 'day_of_week', 'start_time', 'end_time']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({'error': f'Missing required field: {field}'}), 400
+        
+        # Parse and validate class_id
+        try:
+            class_id = int(data['class_id'])
+        except ValueError:
+            return jsonify({'error': 'Invalid class ID'}), 400
+        
+        # Verify class exists
+        class_item = Class.query.get(class_id)
+        if not class_item:
+            return jsonify({'error': 'Class not found'}), 404
+        
+        # Parse times
+        try:
+            start_time = datetime.strptime(data['start_time'], '%H:%M').time()
+            end_time = datetime.strptime(data['end_time'], '%H:%M').time()
+        except ValueError:
+            return jsonify({'error': 'Invalid time format. Use HH:MM (24-hour format)'}), 400
+        
+        # Validate max_capacity
+        max_capacity = data.get('max_capacity', 4)
+        if max_capacity < 1 or max_capacity > 20:
+            return jsonify({'error': 'Max capacity must be between 1 and 20'}), 400
+        
+        # Validate day_of_week
+        valid_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        if data['day_of_week'] not in valid_days:
+            return jsonify({'error': 'Invalid day of week'}), 400
+        
+        # Check if schedule already exists for this class/day/time
+        existing_schedule = WeeklySchedule.query.filter_by(
+            class_id=class_id,
+            day_of_week=data['day_of_week'],
+            start_time=start_time
+        ).first()
+        
+        if existing_schedule:
+            return jsonify({'error': 'Schedule already exists for this class, day, and time'}), 400
+        
+        # Create weekly schedule
+        schedule = WeeklySchedule(
+            class_id=class_id,
+            day_of_week=data['day_of_week'],
+            start_time=start_time,
+            end_time=end_time,
+            max_capacity=max_capacity
+        )
+        
+        db.session.add(schedule)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Weekly schedule created successfully',
+            'schedule': {
+                'id': schedule.id,
+                'class_id': schedule.class_id,
+                'class_name': class_item.name,
+                'day_of_week': schedule.day_of_week,
+                'start_time': schedule.start_time.strftime('%H:%M'),
+                'end_time': schedule.end_time.strftime('%H:%M'),
+                'max_capacity': schedule.max_capacity,
+                'is_active': schedule.is_active,
+                'created_at': schedule.created_at.isoformat() if schedule.created_at else None
+            }
+        }), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Create weekly schedule error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/available-classes', methods=['GET', 'OPTIONS'])
+@jwt_required()
+def get_available_classes():
+    """Get available class instances for users"""
+    if request.method == 'OPTIONS':
+        return '', 200
+    
+    try:
+        current_user_id = get_jwt_identity()
+        print(f"DEBUG: User {current_user_id} fetching available classes")
+        
+        # Get query parameters
+        class_id = request.args.get('class_id')
+        date_from = request.args.get('date_from')
+        date_to = request.args.get('date_to')
+        
+        # Default: show classes from today to 30 days ahead
+        today = datetime.now().date()
+        if not date_from:
+            date_from = today
+        elif date_from:
+            try:
+                date_from = datetime.strptime(date_from, '%Y-%m-%d').date()
+            except:
+                date_from = today
+        
+        if not date_to:
+            date_to = date_from + timedelta(days=30)
+        elif date_to:
+            try:
+                date_to = datetime.strptime(date_to, '%Y-%m-%d').date()
+            except:
+                date_to = date_from + timedelta(days=30)
+        
+        print(f"DEBUG: Date range: {date_from} to {date_to}")
+        
+        # Build query with proper joins
+        query = db.session.query(ScheduleInstance, Class).join(
+            Class, ScheduleInstance.class_id == Class.id
+        ).filter(
+            ScheduleInstance.is_active == True,
+            ScheduleInstance.is_cancelled == False,
+            ScheduleInstance.date >= date_from,
+            ScheduleInstance.date <= date_to,
+            ScheduleInstance.current_bookings < ScheduleInstance.max_capacity
+        )
+        
+        if class_id:
+            try:
+                query = query.filter(ScheduleInstance.class_id == int(class_id))
+            except:
+                pass
+        
+        # Filter out past classes
+        current_time = datetime.now().time()
+        instances_with_classes = query.order_by(ScheduleInstance.date, ScheduleInstance.start_time).all()
+        
+        print(f"DEBUG: Found {len(instances_with_classes)} instances with classes")
+        
+        available_classes = []
+        for instance, class_info in instances_with_classes:
+            # Skip past instances
+            if instance.date < today or (instance.date == today and instance.start_time < current_time):
+                continue
+            
+            # Check if user has already booked this class
+            existing_booking = ClassBooking.query.filter_by(
+                user_id=current_user_id,
+                schedule_instance_id=instance.id,
+                status='booked'
+            ).first()
+            
+            if existing_booking:
+                continue
+            
+            available_classes.append({
+                'id': instance.id,
+                'class_id': instance.class_id,
+                'class_name': class_info.name,
+                'instructor': class_info.instructor,
+                'duration': class_info.duration,
+                'difficulty': class_info.difficulty,
+                'description': class_info.description,
+                'date': instance.date.isoformat(),
+                'day_of_week': instance.date.strftime('%A'),
+                'start_time': instance.start_time.strftime('%H:%M'),
+                'end_time': instance.end_time.strftime('%H:%M') if instance.end_time else None,
+                'max_capacity': instance.max_capacity,
+                'current_bookings': instance.current_bookings,
+                'available_spots': instance.max_capacity - instance.current_bookings,
+                'is_booked_by_user': False
+            })
+        
+        print(f"DEBUG: Returning {len(available_classes)} available classes")
+        return jsonify(available_classes), 200
+        
+    except Exception as e:
+        print(f"ERROR in get_available_classes: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        logger.error('Get available classes error: %s', str(e))
+        return jsonify({'message': str(e), 'error': str(e)}), 500
+
+@app.route('/api/book-class', methods=['POST'])
+@jwt_required()
+def book_class():
+    """User books a class instance - FIXED DATETIME COMPARISON"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+        
+        data = request.get_json()
+        
+        # Validate required fields
+        if 'schedule_instance_id' not in data:
+            return jsonify({'message': 'Missing schedule_instance_id'}), 400
+        
+        instance_id = data['schedule_instance_id']
+        
+        # Check if instance exists and is available
+        instance = ScheduleInstance.query.get(instance_id)
+        if not instance:
+            return jsonify({'message': 'Class instance not found'}), 404
+        
+        if not instance.is_active or instance.is_cancelled:
+            return jsonify({'message': 'This class is not available'}), 400
+        
+        if instance.current_bookings >= instance.max_capacity:
+            return jsonify({'message': 'This class is fully booked'}), 400
+        
+        # FIXED: Check if class is in the future - SIMPLIFIED
+        class_datetime = datetime.combine(instance.date, instance.start_time)
+        now = datetime.now()  # Both naive
+        
+        # Add buffer - can't book classes that have already started
+        if class_datetime <= now:
+            return jsonify({'message': 'Cannot book classes that have already started or are in the past'}), 400
+        
+        # Check if user has already booked this class
+        existing_booking = ClassBooking.query.filter_by(
+            user_id=current_user_id,
+            schedule_instance_id=instance_id
+        ).first()
+        
+        if existing_booking:
+            return jsonify({'message': 'You have already booked this class'}), 400
+        
+        # Check if user has active membership with remaining sessions
+        active_membership = UserMembership.query.filter(
+            UserMembership.user_id == current_user_id,
+            UserMembership.is_active == True,
+            UserMembership.remaining_sessions > 0
+        ).first()
+        
+        if not active_membership:
+            # Check for approved membership booking
+            approved_booking = Booking.query.filter(
+                Booking.user_id == current_user_id,
+                Booking.booking_type == 'membership',
+                Booking.status == 'active',
+                Booking.payment_status.in_(['verified', 'paid'])
+            ).first()
+            
+            if approved_booking:
+                # Create UserMembership on the fly
+                valid_until = datetime.now(timezone.utc) + timedelta(
+                    days=approved_booking.package_validity_days or 30
+                )
+                
+                active_membership = UserMembership(
+                    user_id=current_user_id,
+                    package_type=approved_booking.package_type,
+                    total_sessions=approved_booking.package_sessions or 0,
+                    used_sessions=0,
+                    remaining_sessions=approved_booking.package_sessions or 0,
+                    valid_until=valid_until,
+                    is_active=True,
+                    purchase_date=datetime.now(timezone.utc)
+                )
+                
+                db.session.add(active_membership)
+                db.session.commit()
+            else:
+                return jsonify({
+                    'message': 'You need an active membership with remaining sessions to book classes',
+                    'requires_membership': True
+                }), 400
+        
+        # FIXED: Check if membership is still valid
+        # Convert valid_until to naive datetime if it's aware
+        if active_membership.valid_until:
+            # If valid_until is aware, make it naive for comparison
+            valid_until_naive = active_membership.valid_until.replace(tzinfo=None) if active_membership.valid_until.tzinfo else active_membership.valid_until
+            
+            if valid_until_naive < now:
+                active_membership.is_active = False
+                db.session.commit()
+                return jsonify({
+                    'message': 'Your membership has expired',
+                    'requires_membership': True
+                }), 400
+        
+        # Create the class booking
+        class_booking = ClassBooking(
+            user_id=current_user_id,
+            schedule_instance_id=instance_id,
+            status='booked'
+        )
+        
+        # Update instance bookings count
+        instance.current_bookings += 1
+        
+        # Decrement user's remaining sessions
+        active_membership.used_sessions += 1
+        active_membership.remaining_sessions -= 1
+        
+        # If no sessions left, mark membership as inactive
+        if active_membership.remaining_sessions <= 0:
+            active_membership.is_active = False
+        
+        db.session.add(class_booking)
+        db.session.commit()
+        
+        # Send confirmation SMS
+        try:
+            if user.phone:
+                message = f"""✅ Class Booked Successfully!
+    
+Class: {instance.class_info.name}
+Date: {instance.date.strftime('%Y-%m-%d')} ({instance.date.strftime('%A')})
+Time: {instance.start_time.strftime('%I:%M %p')} - {instance.end_time.strftime('%I:%M %p')}
+Instructor: {instance.class_info.instructor}
+    
+Remaining Sessions: {active_membership.remaining_sessions}
+    
+Please arrive 10 minutes early.
+See you at the studio!"""
+                send_sms(user.phone, message)
+        except Exception as sms_error:
+            logger.error(f"Booking confirmation SMS failed: {sms_error}")
+        
+        return jsonify({
+            'message': 'Class booked successfully!',
+            'booking': {
+                'id': class_booking.id,
+                'class_name': instance.class_info.name,
+                'date': instance.date.isoformat(),
+                'start_time': instance.start_time.strftime('%H:%M'),
+                'end_time': instance.end_time.strftime('%H:%M'),
+                'remaining_sessions': active_membership.remaining_sessions
+            }
+        }), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error('Book class error: %s', str(e))
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            'message': f'Failed to book class: {str(e)}',
+            'error': str(e)
+        }), 500
+
+@app.route('/api/my-booked-classes', methods=['GET'])
+@jwt_required()
+def get_my_booked_classes():
+    """Get user's booked classes"""
+    try:
+        current_user_id = get_jwt_identity()
+        
+        # Get upcoming booked classes
+        upcoming_bookings = db.session.query(ClassBooking, ScheduleInstance, Class).join(
+            ScheduleInstance, ClassBooking.schedule_instance_id == ScheduleInstance.id
+        ).join(
+            Class, ScheduleInstance.class_id == Class.id
+        ).filter(
+            ClassBooking.user_id == current_user_id,
+            ClassBooking.status == 'booked',
+            ScheduleInstance.date >= datetime.now().date()
+        ).order_by(ScheduleInstance.date, ScheduleInstance.start_time).all()
+        
+        # Get past classes
+        past_bookings = db.session.query(ClassBooking, ScheduleInstance, Class).join(
+            ScheduleInstance, ClassBooking.schedule_instance_id == ScheduleInstance.id
+        ).join(
+            Class, ScheduleInstance.class_id == Class.id
+        ).filter(
+            ClassBooking.user_id == current_user_id,
+            ClassBooking.status != 'booked'
+        ).order_by(ScheduleInstance.date.desc(), ScheduleInstance.start_time.desc()).limit(20).all()
+        
+        def format_booking_data(bookings):
+            data = []
+            for booking, instance, class_info in bookings:
+                data.append({
+                    'booking_id': booking.id,
+                    'schedule_instance_id': instance.id,
+                    'class_id': class_info.id,
+                    'class_name': class_info.name,
+                    'instructor': class_info.instructor,
+                    'date': instance.date.isoformat(),
+                    'day_of_week': instance.date.strftime('%A'),
+                    'start_time': instance.start_time.strftime('%H:%M'),
+                    'end_time': instance.end_time.strftime('%H:%M'),
+                    'status': booking.status,
+                    'booking_date': booking.booking_date.isoformat(),
+                    'attended_at': booking.attended_at.isoformat() if booking.attended_at else None,
+                    'cancelled_at': booking.cancelled_at.isoformat() if booking.cancelled_at else None,
+                    'can_cancel': booking.status == 'booked' and 
+                                 datetime.combine(instance.date, instance.start_time) > datetime.now() + timedelta(hours=2)
+                })
+            return data
+        
+        # Check active membership
+        active_membership = UserMembership.query.filter_by(
+            user_id=current_user_id,
+            is_active=True
+        ).first()
+        
+        membership_info = None
+        if active_membership:
+            membership_info = {
+                'package_type': active_membership.package_type,
+                'total_sessions': active_membership.total_sessions,
+                'used_sessions': active_membership.used_sessions,
+                'remaining_sessions': active_membership.remaining_sessions,
+                'valid_until': active_membership.valid_until.isoformat(),
+                'is_active': active_membership.is_active
+            }
+        
+        return jsonify({
+            'upcoming_classes': format_booking_data(upcoming_bookings),
+            'past_classes': format_booking_data(past_bookings),
+            'membership': membership_info
+        }), 200
+        
+    except Exception as e:
+        logger.error('Get booked classes error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/cancel-booking/<int:booking_id>', methods=['POST'])
+@jwt_required()
+def cancel_booking(booking_id):
+    """User cancels a booked class"""
+    try:
+        current_user_id = get_jwt_identity()
+        
+        # Find the booking
+        booking = ClassBooking.query.get(booking_id)
+        if not booking:
+            return jsonify({'message': 'Booking not found'}), 404
+        
+        # Verify ownership
+        if booking.user_id != int(current_user_id):
+            return jsonify({'message': 'Unauthorized'}), 403
+        
+        # Check if booking is still active
+        if booking.status != 'booked':
+            return jsonify({'message': 'This booking cannot be cancelled'}), 400
+        
+        # Get the schedule instance
+        instance = ScheduleInstance.query.get(booking.schedule_instance_id)
+        if not instance:
+            return jsonify({'message': 'Class instance not found'}), 404
+        
+        # Check if class is in the future and can be cancelled (at least 2 hours before)
+        class_datetime = datetime.combine(instance.date, instance.start_time)
+        time_until_class = class_datetime - datetime.now()
+        
+        if time_until_class.total_seconds() < 7200:  # 2 hours in seconds
+            return jsonify({'message': 'Cancellation must be at least 2 hours before class time'}), 400
+        
+        # Update booking status
+        booking.status = 'cancelled'
+        booking.cancelled_at = datetime.now(timezone.utc)
+        
+        # Decrement instance bookings
+        instance.current_bookings -= 1
+        
+        # Refund session to user's membership
+        active_membership = UserMembership.query.filter_by(
+            user_id=current_user_id,
+            is_active=True
+        ).first()
+        
+        if active_membership:
+            active_membership.used_sessions -= 1
+            active_membership.remaining_sessions += 1
+            # Reactivate membership if it was deactivated due to no sessions
+            if not active_membership.is_active and active_membership.remaining_sessions > 0:
+                active_membership.is_active = True
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Booking cancelled successfully',
+            'remaining_sessions': active_membership.remaining_sessions if active_membership else 0
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error('Cancel booking error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/my-membership', methods=['GET', 'OPTIONS'])
+@jwt_required()
+def get_my_membership():
+    """Get current user's membership info - UPDATED TO CHECK BOOKINGS TOO"""
+    if request.method == 'OPTIONS':
+        return '', 200
+    
+    try:
+        current_user_id = get_jwt_identity()
+        
+        # FIRST: Check for active membership in UserMembership table
+        active_membership = UserMembership.query.filter_by(
+            user_id=current_user_id,
+            is_active=True
+        ).first()
+        
+        if active_membership:
+            return jsonify({
+                'membership': {
+                    'id': active_membership.id,
+                    'package_type': active_membership.package_type,
+                    'total_sessions': active_membership.total_sessions,
+                    'used_sessions': active_membership.used_sessions,
+                    'remaining_sessions': active_membership.remaining_sessions,
+                    'valid_until': active_membership.valid_until.isoformat() if active_membership.valid_until else None,
+                    'is_active': active_membership.is_active,
+                    'created_at': active_membership.created_at.isoformat() if active_membership.created_at else None
+                }
+            }), 200
+        
+        # SECOND: Check for approved membership bookings
+        approved_membership_booking = Booking.query.filter(
+            Booking.user_id == current_user_id,
+            Booking.booking_type == 'membership',
+            Booking.status == 'active',  # Check for 'active' status
+            Booking.payment_status.in_(['verified', 'paid'])
+        ).order_by(Booking.created_at.desc()).first()
+        
+        if approved_membership_booking:
+            # Calculate remaining sessions (assuming 0 used initially)
+            total_sessions = approved_membership_booking.package_sessions or 0
+            used_sessions = 0  # You should track this somewhere
+            remaining_sessions = total_sessions - used_sessions
+            
+            # Calculate validity date
+            valid_until = approved_membership_booking.created_at + timedelta(
+                days=approved_membership_booking.package_validity_days or 30
+            )
+            
+            return jsonify({
+                'membership': {
+                    'id': approved_membership_booking.id,
+                    'package_type': approved_membership_booking.package_type,
+                    'total_sessions': total_sessions,
+                    'used_sessions': used_sessions,
+                    'remaining_sessions': remaining_sessions,
+                    'valid_until': valid_until.isoformat(),
+                    'is_active': True,
+                    'created_at': approved_membership_booking.created_at.isoformat() if approved_membership_booking.created_at else None,
+                    'source': 'booking'
+                }
+            }), 200
+        
+        # THIRD: Check for any pending/successful membership booking
+        any_membership_booking = Booking.query.filter(
+            Booking.user_id == current_user_id,
+            Booking.booking_type == 'membership',
+            Booking.status.in_(['pending_admin_approval', 'pending', 'active', 'confirmed'])
+        ).order_by(Booking.created_at.desc()).first()
+        
+        if any_membership_booking:
+            status = any_membership_booking.status
+            is_active = status in ['active', 'confirmed']
+            
+            return jsonify({
+                'membership': {
+                    'id': any_membership_booking.id,
+                    'package_type': any_membership_booking.package_type,
+                    'total_sessions': any_membership_booking.package_sessions or 0,
+                    'used_sessions': 0,
+                    'remaining_sessions': any_membership_booking.package_sessions or 0,
+                    'valid_until': None,  # Will be set when approved
+                    'is_active': is_active,
+                    'status': status,
+                    'payment_status': any_membership_booking.payment_status,
+                    'created_at': any_membership_booking.created_at.isoformat() if any_membership_booking.created_at else None,
+                    'source': 'booking_pending'
+                }
+            }), 200
+        
+        # No membership found
+        return jsonify({
+            'membership': None,
+            'message': 'No active membership found'
+        }), 200
+        
+    except Exception as e:
+        logger.error('Get membership error: %s', str(e))
+        return jsonify({'message': str(e)}), 500
+
+
+# ===================================================================
+# WEEKLY SCHEDULE ENDPOINTS FOR USERS
+# ===================================================================
+
+@app.route('/api/weekly-schedule', methods=['GET'])
+@jwt_required()
+def get_weekly_schedule_for_users():
+    """Get weekly schedule for users to view and book"""
+    try:
+        current_user_id = get_jwt_identity()
+        
+        # Get all active weekly schedules
+        schedules = WeeklySchedule.query.filter_by(is_active=True).all()
+        
+        result = []
+        for schedule in schedules:
+            # Get class info
+            class_item = Class.query.get(schedule.class_id)
+            if not class_item:
+                continue
+                
+            # Count available spots for this schedule pattern
+            # Get upcoming instances
+            upcoming_instances = ScheduleInstance.query.filter(
+                ScheduleInstance.weekly_schedule_id == schedule.id,
+                ScheduleInstance.date >= datetime.now().date(),
+                ScheduleInstance.is_active == True,
+                ScheduleInstance.is_cancelled == False
+            ).all()
+            
+            # Calculate total available spots
+            total_spots = 0
+            for instance in upcoming_instances:
+                available_spots = instance.max_capacity - instance.current_bookings
+                if available_spots > 0:
+                    total_spots += available_spots
+            
+            # Check if user already booked this recurring pattern
+            user_bookings = ClassBooking.query.join(
+                ScheduleInstance, ClassBooking.schedule_instance_id == ScheduleInstance.id
+            ).filter(
+                ClassBooking.user_id == current_user_id,
+                ScheduleInstance.weekly_schedule_id == schedule.id,
+                ClassBooking.status == 'booked'
+            ).all()
+            
+            is_booked = len(user_bookings) > 0
+            
+            result.append({
+                'id': schedule.id,
+                'class_id': schedule.class_id,
+                'class_name': class_item.name,
+                'day_of_week': schedule.day_of_week,
+                'start_time': schedule.start_time.strftime('%H:%M'),
+                'end_time': schedule.end_time.strftime('%H:%M'),
+                'instructor': class_item.instructor,
+                'location': class_item.location if hasattr(class_item, 'location') else 'Studio Reform',
+                'difficulty': class_item.difficulty,
+                'duration': class_item.duration,
+                'description': class_item.description,
+                'max_capacity': schedule.max_capacity,
+                'available_spots': total_spots,
+                'total_upcoming_instances': len(upcoming_instances),
+                'is_booked': is_booked,
+                'next_occurrences': [instance.date.isoformat() for instance in upcoming_instances[:3]] if upcoming_instances else []
+            })
+        
+        return jsonify(result), 200
+        
+    except Exception as e:
+        logger.error(f'Get weekly schedule error: {str(e)}')
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/my-weekly-bookings', methods=['GET'])
+@jwt_required()
+def get_my_weekly_bookings():
+    """Get user's recurring weekly bookings"""
+    try:
+        current_user_id = get_jwt_identity()
+        
+        # Get all schedule instances booked by user
+        user_bookings = db.session.query(
+            ClassBooking, ScheduleInstance, WeeklySchedule, Class
+        ).join(
+            ScheduleInstance, ClassBooking.schedule_instance_id == ScheduleInstance.id
+        ).join(
+            WeeklySchedule, ScheduleInstance.weekly_schedule_id == WeeklySchedule.id
+        ).join(
+            Class, WeeklySchedule.class_id == Class.id
+        ).filter(
+            ClassBooking.user_id == current_user_id,
+            ClassBooking.status == 'booked',
+            ScheduleInstance.date >= datetime.now().date()
+        ).order_by(ScheduleInstance.date, ScheduleInstance.start_time).all()
+        
+        # Group by weekly schedule pattern
+        bookings_by_pattern = {}
+        
+        for booking, instance, schedule, class_info in user_bookings:
+            pattern_key = f"{schedule.id}_{schedule.day_of_week}_{schedule.start_time}"
+            
+            if pattern_key not in bookings_by_pattern:
+                bookings_by_pattern[pattern_key] = {
+                    'id': schedule.id,
+                    'weekly_schedule_id': schedule.id,
+                    'class_name': class_info.name,
+                    'day_of_week': schedule.day_of_week,
+                    'start_time': schedule.start_time.strftime('%H:%M'),
+                    'end_time': schedule.end_time.strftime('%H:%M'),
+                    'instructor': class_info.instructor,
+                    'location': class_info.location if hasattr(class_info, 'location') else 'Studio Reform',
+                    'upcoming_instances': [],
+                    'total_bookings': 0
+                }
+            
+            bookings_by_pattern[pattern_key]['upcoming_instances'].append({
+                'instance_id': instance.id,
+                'date': instance.date.isoformat(),
+                'start_time': instance.start_time.strftime('%H:%M'),
+                'end_time': instance.end_time.strftime('%H:%M')
+            })
+            bookings_by_pattern[pattern_key]['total_bookings'] += 1
+        
+        result = list(bookings_by_pattern.values())
+        
+        return jsonify(result), 200
+        
+    except Exception as e:
+        logger.error(f'Get weekly bookings error: {str(e)}')
+        return jsonify({'message': str(e)}), 500
+
+# SIMPLIFIED VERSION - Makes start_date optional with sensible defaults
+@app.route('/api/book-weekly-class', methods=['POST'])
+@jwt_required()
+def book_weekly_class():
+    """Simplified weekly booking with sensible defaults"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+        
+        data = request.get_json()
+        
+        # Validate required fields
+        if 'weekly_schedule_id' not in data:
+            return jsonify({'message': 'Missing required field: weekly_schedule_id'}), 400
+        
+        weekly_schedule_id = data['weekly_schedule_id']
+        
+        # Get schedule
+        weekly_schedule = WeeklySchedule.query.get(weekly_schedule_id)
+        if not weekly_schedule or not weekly_schedule.is_active:
+            return jsonify({'message': 'Weekly schedule not found or inactive'}), 404
+        
+        # Check membership
+        active_membership = UserMembership.query.filter(
+            UserMembership.user_id == current_user_id,
+            UserMembership.is_active == True,
+            UserMembership.remaining_sessions > 0
+        ).first()
+        
+        if not active_membership:
+            return jsonify({
+                'message': 'You need an active membership with remaining sessions to book recurring classes',
+                'requires_membership': True
+            }), 400
+        
+        # Determine how many sessions to book
+        if 'weeks' in data:
+            weeks_to_book = min(int(data['weeks']), active_membership.remaining_sessions, 52)  # Max 1 year
+        else:
+            # Book all available sessions (max 12 weeks)
+            weeks_to_book = min(active_membership.remaining_sessions, 12)
+        
+        if weeks_to_book <= 0:
+            return jsonify({'message': 'No sessions available to book'}), 400
+        
+        # Determine start date
+        if 'start_date' in data:
+            start_date = datetime.strptime(data['start_date'], '%Y-%m-%d').date()
+        else:
+            # Start from next week
+            start_date = datetime.now().date() + timedelta(days=7)
+        
+        # Calculate end date
+        end_date = start_date + timedelta(days=(weeks_to_book * 7) - 1)
+        
+        # Day mapping
+        day_mapping = {'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3,
+                      'Friday': 4, 'Saturday': 5, 'Sunday': 6}
+        
+        target_day = day_mapping.get(weekly_schedule.day_of_week)
+        if target_day is None:
+            return jsonify({'message': 'Invalid day of week'}), 400
+        
+        # Find first occurrence after start date
+        current_date = start_date
+        days_until = (target_day - current_date.weekday()) % 7
+        if days_until > 0:
+            current_date += timedelta(days=days_until)
+        
+        # Book the sessions
+        bookings_created = 0
+        for week in range(weeks_to_book):
+            # Create or get instance
+            instance = ScheduleInstance.query.filter_by(
+                weekly_schedule_id=weekly_schedule_id,
+                date=current_date
+            ).first()
+            
+            if not instance:
+                instance = ScheduleInstance(
+                    weekly_schedule_id=weekly_schedule_id,
+                    class_id=weekly_schedule.class_id,
+                    date=current_date,
+                    start_time=weekly_schedule.start_time,
+                    end_time=weekly_schedule.end_time,
+                    max_capacity=weekly_schedule.max_capacity
+                )
+                db.session.add(instance)
+                db.session.flush()
+            
+            # Check capacity
+            if instance.current_bookings >= instance.max_capacity:
+                # Skip this date if full, continue with next week
+                current_date += timedelta(days=7)
+                continue
+            
+            # Create booking
+            booking = ClassBooking(
+                user_id=current_user_id,
+                schedule_instance_id=instance.id,
+                status='booked'
+            )
+            
+            instance.current_bookings += 1
+            active_membership.used_sessions += 1
+            active_membership.remaining_sessions -= 1
+            
+            db.session.add(booking)
+            bookings_created += 1
+            
+            # Next week
+            current_date += timedelta(days=7)
+        
+        # Update membership status
+        if active_membership.remaining_sessions <= 0:
+            active_membership.is_active = False
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': f'Booked {bookings_created} sessions successfully!',
+            'bookings_created': bookings_created,
+            'remaining_sessions': active_membership.remaining_sessions,
+            'start_date': start_date.isoformat(),
+            'end_date': end_date.isoformat()
+        }), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f'Book weekly class error: {str(e)}')
+        return jsonify({'message': str(e)}), 500
+
+@app.route('/api/cancel-weekly-booking/<int:weekly_schedule_id>', methods=['POST'])
+@jwt_required()
+def cancel_weekly_booking(weekly_schedule_id):
+    """Cancel all future bookings for a weekly schedule pattern"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(int(current_user_id))
+        
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+        
+        # Get weekly schedule
+        weekly_schedule = WeeklySchedule.query.get(weekly_schedule_id)
+        if not weekly_schedule:
+            return jsonify({'message': 'Weekly schedule not found'}), 404
+        
+        # Get all future bookings for this user and weekly schedule
+        future_bookings = db.session.query(
+            ClassBooking, ScheduleInstance
+        ).join(
+            ScheduleInstance, ClassBooking.schedule_instance_id == ScheduleInstance.id
+        ).filter(
+            ClassBooking.user_id == current_user_id,
+            ScheduleInstance.weekly_schedule_id == weekly_schedule_id,
+            ScheduleInstance.date >= datetime.now().date(),
+            ClassBooking.status == 'booked'
+        ).all()
+        
+        if not future_bookings:
+            return jsonify({'message': 'No future bookings found for this schedule'}), 404
+        
+        # Get class info for SMS
+        class_info = Class.query.get(weekly_schedule.class_id)
+        
+        # Cancel each booking and refund sessions
+        refunded_sessions = 0
+        for booking, instance in future_bookings:
+            booking.status = 'cancelled'
+            booking.cancelled_at = datetime.now(timezone.utc)
+            
+            # Decrement instance bookings
+            instance.current_bookings -= 1
+            
+            # Refund session to user membership
+            active_membership = UserMembership.query.filter_by(
+                user_id=current_user_id,
+                is_active=True
+            ).first()
+            
+            if active_membership:
+                active_membership.used_sessions -= 1
+                active_membership.remaining_sessions += 1
+                refunded_sessions += 1
+                
+                # Reactivate if needed
+                if not active_membership.is_active and active_membership.remaining_sessions > 0:
+                    active_membership.is_active = True
+        
+        db.session.commit()
+        
+        # Send cancellation SMS
+        try:
+            if user.phone:
+                message = f"""❌ Weekly Booking Cancelled
+    
+Class: {class_info.name if class_info else 'Class'}
+Day: {weekly_schedule.day_of_week}
+Time: {weekly_schedule.start_time.strftime('%I:%M %p')}
+    
+All future bookings have been cancelled.
+{refunded_sessions} session(s) refunded to your account.
+    
+Remaining Sessions: {active_membership.remaining_sessions if active_membership else 0}
+    
+We hope to see you again soon!"""
+                send_sms(user.phone, message)
+        except Exception as sms_error:
+            logger.error(f"Cancellation SMS failed: {sms_error}")
+        
+        return jsonify({
+            'message': f'Weekly booking cancelled successfully. {refunded_sessions} session(s) refunded.',
+            'cancelled_bookings': len(future_bookings),
+            'refunded_sessions': refunded_sessions,
+            'remaining_sessions': active_membership.remaining_sessions if active_membership else 0
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f'Cancel weekly booking error: {str(e)}')
+        return jsonify({'message': str(e)}), 500
+
+# ===================================================================
+# ============================================================================
+
 # Debug endpoints
 @app.route('/api/debug/token', methods=['GET'])
 @jwt_required()
@@ -1867,8 +3758,21 @@ def create_tables():
             print(f"📊 Found existing tables: {existing_tables}")
             
             # Define required tables
-            required_tables = ['srusers', 'class', 'booking', 'contact', 'class_schedule', 'chat_history', 'package_config']
+            # required_tables = ['srusers', 'class', 'booking', 'contact', 'class_schedule', 'chat_history', 'package_config']
             
+            required_tables = [
+                'srusers', 
+                'class', 
+                'booking', 
+                'contact', 
+                'class_schedule', 
+                'chat_history', 
+                'package_config',
+                'weekly_schedule',  # Add this
+                'schedule_instance', # Add this
+                'class_booking',     # Add this
+                'user_membership'    # Add this
+            ]
             # Check which tables are missing
             missing_tables = [table for table in required_tables if table not in existing_tables]
             

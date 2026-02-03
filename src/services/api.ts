@@ -258,6 +258,67 @@ export const adminAPI = {
       method: 'DELETE',
     });
   },
+
+  // Schedule Management - FIXED
+  getWeeklySchedules: async (): Promise<any[]> => {
+    return apiRequest('/admin/weekly-schedule');
+  },
+
+  getScheduleInstances: async (params?: {
+    class_id?: string;
+    date_from?: string;
+    date_to?: string;
+    status?: string;
+  }): Promise<any[]> => {
+    let url = '/admin/schedule-instances';
+    if (params) {
+      const queryParams = new URLSearchParams();
+      if (params.class_id) queryParams.append('class_id', params.class_id);
+      if (params.date_from) queryParams.append('date_from', params.date_from);
+      if (params.date_to) queryParams.append('date_to', params.date_to);
+      if (params.status) queryParams.append('status', params.status);
+      url += `?${queryParams.toString()}`;
+    }
+    return apiRequest(url);
+  },
+
+  createWeeklySchedule: async (data: {
+    class_id: number;
+    day_of_week: string;
+    start_time: string;
+    end_time: string;
+    max_capacity?: number;
+  }): Promise<any> => {
+    return apiRequest('/admin/weekly-schedule', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  generateScheduleInstances: async (scheduleId: number, daysAhead: number = 30): Promise<any> => {
+    return apiRequest(`/admin/weekly-schedule/${scheduleId}/instances`, {
+      method: 'POST',
+      body: JSON.stringify({ days_ahead: daysAhead }),
+    });
+  },
+
+  cancelScheduleInstance: async (instanceId: number): Promise<any> => {
+    return apiRequest(`/admin/schedule-instances/${instanceId}/cancel`, {
+      method: 'POST',
+    });
+  },
+
+  toggleScheduleStatus: async (scheduleId: number): Promise<any> => {
+    return apiRequest(`/admin/weekly-schedule/${scheduleId}/toggle`, {
+      method: 'PUT',
+    });
+  },
+
+  deleteSchedule: async (scheduleId: number): Promise<any> => {
+    return apiRequest(`/admin/weekly-schedule/${scheduleId}`, {
+      method: 'DELETE',
+    });
+  },
 };
 // =====================================================
 
@@ -313,3 +374,138 @@ export default {
   admin: adminAPI,
   debug: debugAPI,
 };
+
+// ================================================================
+// Add these to your existing api.ts fil
+export const scheduleAPI = {
+  // Get available classes for user to book
+  getAvailableClasses: async (params?: {
+    class_id?: string;
+    date_from?: string;
+    date_to?: string;
+  }) => {
+    let url = '/available-classes'; // Already correct
+    if (params) {
+      const queryParams = new URLSearchParams();
+      if (params.class_id) queryParams.append('class_id', params.class_id);
+      if (params.date_from) queryParams.append('date_from', params.date_from);
+      if (params.date_to) queryParams.append('date_to', params.date_to);
+      url += `?${queryParams.toString()}`;
+    }
+    return apiRequest(url);
+  },
+
+  // Get weekly schedule patterns (recurring) - NEW ENDPOINT
+  getWeeklySchedule: async () => {
+    return apiRequest('/weekly-schedule'); // This is now correct
+  },
+
+  // Book a class (single session)
+  bookClass: async (data: { schedule_instance_id: number }) => {
+    return apiRequest('/book-class', { // Already correct
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  // Book recurring weekly class - NEW ENDPOINT
+  bookWeeklyClass: async (data: {
+    weekly_schedule_id: number;
+    start_date?: string;
+    end_date?: string;
+  }) => {
+    return apiRequest('/book-weekly-class', { // This is now correct
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  // Get user's booked classes
+  getMyBookedClasses: async () => {
+    return apiRequest('/my-booked-classes'); // Already correct
+  },
+
+  // Get user's weekly bookings (recurring) - NEW ENDPOINT
+  getMyWeeklyBookings: async () => {
+    return apiRequest('/my-weekly-bookings'); // This is now correct
+  },
+
+  // Get user membership info
+  getUserMembership: async () => {
+    return apiRequest('/my-membership'); // Already correct
+  },
+
+  // Cancel a single booking
+  cancelBooking: async (bookingId: number) => {
+    return apiRequest(`/cancel-booking/${bookingId}`, { // Already correct
+      method: 'POST',
+    });
+  },
+
+  // Cancel a weekly recurring booking - NEW ENDPOINT
+  cancelWeeklyBooking: async (weeklyBookingId: number) => {
+    return apiRequest(`/cancel-weekly-booking/${weeklyBookingId}`, { // This is now correct
+      method: 'POST',
+    });
+  },
+};
+
+// Add admin schedule endpoints
+export const adminScheduleAPI = {
+  // Weekly schedule management
+  createWeeklySchedule: async (data: {
+    class_id: number;
+    day_of_week: string;
+    start_time: string;
+    end_time: string;
+    max_capacity?: number;
+  }) => {
+    return apiRequest('/admin/weekly-schedule', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  getWeeklySchedules: async () => {
+    return apiRequest('/admin/weekly-schedule');
+  },
+
+  toggleWeeklySchedule: async (scheduleId: number) => {
+    return apiRequest(`/admin/weekly-schedule/${scheduleId}/toggle`, {
+      method: 'PUT',
+    });
+  },
+
+  generateScheduleInstances: async (scheduleId: number, daysAhead: number = 30) => {
+    return apiRequest(`/admin/weekly-schedule/${scheduleId}/instances`, {
+      method: 'POST',
+      body: JSON.stringify({ days_ahead: daysAhead }),
+    });
+  },
+
+  // Schedule instances management
+  getScheduleInstances: async (params?: {
+    class_id?: string;
+    date_from?: string;
+    date_to?: string;
+    status?: string;
+  }) => {
+    let url = '/admin/schedule-instances';
+    if (params) {
+      const queryParams = new URLSearchParams();
+      if (params.class_id) queryParams.append('class_id', params.class_id);
+      if (params.date_from) queryParams.append('date_from', params.date_from);
+      if (params.date_to) queryParams.append('date_to', params.date_to);
+      if (params.status) queryParams.append('status', params.status);
+      url += `?${queryParams.toString()}`;
+    }
+    return apiRequest(url);
+  },
+
+  cancelScheduleInstance: async (instanceId: number) => {
+    return apiRequest(`/admin/schedule-instances/${instanceId}/cancel`, {
+      method: 'POST',
+    });
+  },
+};
+// ================================================================
