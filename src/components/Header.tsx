@@ -140,8 +140,14 @@ const Header: React.FC = () => {
                     <div className="px-4 py-2 border-t border-gray-200 mt-4">
                       <div className="flex items-center space-x-2 mb-3">
                         <User className="h-5 w-5 text-gray-600" />
-                        <span className="text-gray-700 font-medium">{user?.name}</span>
+                        <Link
+                        to="/Studio-Reform/profile"
+                        className="flex items-center space-x-2 text-gray-600 hover:text-[#8F9980] transition-colors header-font"
+                      >
+                        <span>Profile</span>
+                    </Link>
                       </div>
+                      
                       <button
                         onClick={() => {
                           logout();
