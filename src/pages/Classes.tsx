@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, Users, BookOpen, Star, Check, X } from 'lucide-react';
+import { Clock, Users, BookOpen, Star, Check, X, Flame } from 'lucide-react';
 import { classesAPI, bookingsAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import advanceImg from '../images/advance.png';
@@ -18,60 +18,44 @@ const Classes: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const { isAuthenticated } = useAuth();
 
-
-
   const classLevels = [
     {
       id: 1,
       level: 'all levels',
-      name: 'Root (Classical)',
-      description: 'A return to classical Pilates. Precise, grounded, and methodical — ROOT follows the traditional reformer sequence focusing on control, alignment, and flow. Ideal for anyone wanting to reconnect with the roots of the method through a structured, mindful pace.',
+      name: 'Dynamic',
+      focus: 'Full Body',
+      description: 'An intense, strength focused class with powerful, continuous movements that challenge your body and build endurance.',
       difficulty: 'All Levels',
       duration: '50 min',
       instructor: 'Studio Reform',
-      image: foundationImg
+      intensity: 3,
+      image: transitionalImg
     },
     {
       id: 2,
       level: 'all levels',
-      name: 'Reform I (Signature, Full Body)',
-      description: 'The signature Studio Reform experience. A full-body reformer flow that merges strength, elongation, and balance.',
+      name: 'Reform',
+      focus: 'Full Body',
+      description: 'Our signature full-body reformer class designed to strengthen, lengthen, and challenge the entire body through balanced, intentional movement.',
       difficulty: 'All Levels',
       duration: '50 min',
       instructor: 'Studio Reform',
+      intensity: 1,
       image: foundamentalImg
     },
     {
       id: 3,
       level: 'intermediate',
-      name: 'Reform II (Abs, Booty, Core)',
-      description: 'The sculpting phase. Focus on the ABC\'s. A focused reformer class targeting abs, booty, and core through deeper resistance and endurance sequences. Elevated energy, refined precision, intentional burn.',
+      name: 'A B C',
+      focus: 'Arms + Glutes + Core',
+      description: 'A sculpting reformer class focused on the arms, glutes, and deep core, using controlled resistance, slow pulses, and stabilizing movements to build strength and definition.',
       difficulty: 'Intermediate',
       duration: '50 min',
       instructor: 'Studio Reform',
-      image: transitionalImg
-    },
-    {
-      id: 4,
-      level: 'all levels',
-      name: 'Rhythm (Jumpboard)',
-      description: 'A dynamic reformer flow with jumpboard integration. Low-impact bursts that challenge coordination and control while maintaining form and precision. Strength in flight, grounded by grace.',
-      difficulty: 'All Levels',
-      duration: '50 min',
-      instructor: 'Studio Reform',
+      intensity: 2,
       image: advanceImg
-    },
-    {
-      id: 5,
-      level: 'all levels',
-      name: 'Repose (Stretch)',
-      description: 'A restorative reformer experience for elongation, mobility, and release. Focused on breath, flexibility, and tension relief — the Studio Reform reset. "Rest is part of reform."',
-      difficulty: 'All Levels',
-      duration: '50 min',
-      instructor: 'Studio Reform',
-      image: 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=800'
     }
-  ]
+  ];
 
   useEffect(() => {
     setClasses(classLevels);
@@ -86,98 +70,65 @@ const Classes: React.FC = () => {
     }, 5000);
   };
 
+  const IntensityIndicator = ({ level }: { level: number }) => (
+    <div className="flex items-center gap-1">
+      <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider mr-1">Intensity:</span>
+      {Array.from({ length: 3 }).map((_, i) => (
+        <span key={i} className={`text-base ${i < level ? 'opacity-100' : 'opacity-20'}`}>
+          🌶️
+        </span>
+      ))}
+    </div>
+  );
 
+  const handleBookClass = async (classItem: any) => {
+    if (!isAuthenticated) {
+      alert('Please sign in to book a class');
+      return;
+    }
 
-  // In Classes component, after successful booking
-const handleBookClass = async (classItem: any) => {
-  if (!isAuthenticated) {
-    alert('Please sign in to book a class');
-    return;
-  }
+    setBookingLoading(classItem.id);
 
-  setBookingLoading(classItem.id);
+    try {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
 
-  try {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
+      const response = await bookingsAPI.create({
+        booking_type: 'class',
+        class_id: classItem.id,
+        booking_date: tomorrow.toISOString().split('T')[0],
+        booking_time: '07:00',
+        amount: 0
+      });
 
-    const response = await bookingsAPI.create({
-      booking_type: 'class',
-      class_id: classItem.id,
-      booking_date: tomorrow.toISOString().split('T')[0],
-      booking_time: '07:00',
-      amount: 0
-    });
-
-    showSuccessMessage(
-      `Success! Your ${classItem.name} class has been booked.
+      showSuccessMessage(
+        `Success! Your ${classItem.name} class has been booked.
 Reference: ${response.reference_number}`
-    );
+      );
 
-    // Store booking data in sessionStorage - USE CORRECT STRUCTURE
-    sessionStorage.setItem('bookingData', JSON.stringify({
-      classBookingId: response.booking_id,  // Changed from bookingId
-      classReference: response.reference_number,  // Changed from referenceNumber
-      classItem: classItem,
-      timestamp: new Date().toISOString()
-    }));
+      sessionStorage.setItem('bookingData', JSON.stringify({
+        classBookingId: response.booking_id,
+        classReference: response.reference_number,
+        classItem: classItem,
+        timestamp: new Date().toISOString()
+      }));
 
-    // Navigate to membership
-    setTimeout(() => {
-      navigate('/Studio-Reform/membership');
-    }, 1000);
+      setTimeout(() => {
+        navigate('/Studio-Reform/membership');
+      }, 1000);
 
-  } catch (error: any) {
-    console.error(error);
-    alert(
-      error.response?.data?.message ||
-      error.message ||
-      'Failed to book class'
-    );
-  } finally {
-    setBookingLoading(null);
-  }
-};
+    } catch (error: any) {
+      console.error(error);
+      alert(
+        error.response?.data?.message ||
+        error.message ||
+        'Failed to book class'
+      );
+    } finally {
+      setBookingLoading(null);
+    }
+  };
 
-  
-
-  // const handleBookClass = async (classItem: any) => {
-  //   if (!isAuthenticated) {
-  //     alert('Please sign in to book a class');
-  //     return;
-  //   }
-
-  //   setBookingLoading(classItem.id);
-
-  //   try {
-  //     const tomorrow = new Date();
-  //     tomorrow.setDate(tomorrow.getDate() + 1);
-
-  //     // Create the booking
-  //     const response = await bookingsAPI.create({
-  //       booking_type: 'class',
-  //       class_id: classItem.id,
-  //       booking_date: tomorrow.toISOString().split('T')[0],
-  //       booking_time: '07:00',
-  //       amount: 0
-  //     });
-
-  //     // Show success message immediately after booking
-  //     showSuccessMessage(`Success! Your ${classItem.name} class has been booked for ${tomorrow.toISOString().split('T')[0]} at 07:00. Your reference number is: ${response.reference_number}`);
-      
-  //      setTimeout(() => {
-  //       navigate('/Studio-Reform/membership'); // or '/payment' if that’s your route
-  //       }, 1000);
-    
-  //   } catch (error: any) {
-  //     console.error(error);
-  //     alert(error.response?.data?.message || error.message || 'Failed to book class');
-  //   } finally {
-  //     setBookingLoading(null);
-  //   }
-  // };
-
-  // Success Notification Component
   const SuccessNotification = () => (
     <AnimatePresence>
       {showSuccess && (
@@ -265,10 +216,13 @@ Reference: ${response.reference_number}`
                 </div>
                 
                 <div className="p-6">
-                  <h3 className="text-2xl font-bold text-pure-black mb-2">{classItem.name}</h3>
+                  <h3 className="text-2xl font-bold text-pure-black mb-1">{classItem.name}</h3>
+                  <p className="text-sm font-semibold text-[#8F9980] uppercase tracking-wider mb-3">
+                    Focus: {classItem.focus}
+                  </p>
                   <p className="text-gray-600 mb-4">{classItem.description}</p>
                   
-                  <div className="space-y-2 mb-6">
+                  <div className="space-y-2 mb-4">
                     <div className="flex items-center text-gray-600">
                       <BookOpen className="h-4 w-4 mr-2" />
                       <span className="text-sm">Instructor: {classItem.instructor}</span>
@@ -277,26 +231,12 @@ Reference: ${response.reference_number}`
                       <Clock className="h-4 w-4 mr-2" />
                       <span className="text-sm">{classItem.duration}</span>
                     </div>
-                    {/* <div className="flex items-center text-gray-600">
-                      <Users className="h-4 w-4 mr-2" />
-                      <span className="text-sm">{classItem.enrolled || 0}/{classItem.capacity || 8} enrolled</span>
-                    </div> */}
                   </div>
-                  
-                  {/* <button 
-                    onClick={() => handleBookClass(classItem)}
-                    disabled={bookingLoading === classItem.id}
-                    className="w-full bg-[#8F9980] text-white py-2 px-4 rounded-md font-semibold hover:bg-[#7a8570] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {bookingLoading === classItem.id ? (
-                      <div className="flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Booking...
-                      </div>
-                    ) : (
-                      classItem.name.includes('Private') ? 'Schedule Session' : 'Book Class'
-                    )}
-                  </button> */}
+
+                  {/* Intensity Indicator */}
+                  <div className="mb-6">
+                    <IntensityIndicator level={classItem.intensity} />
+                  </div>
                 </div>
               </motion.div>
             ))}
