@@ -22,19 +22,19 @@ const Membership: React.FC = () => {
       category: 'Intro Pack',
       items: [
         { name: '1 Session', price: 800, displayPrice: 'D 800', validity: 'valid 1 month', id: 'intro-1' },
-        { name: '3 Sessions', price: 2200, displayPrice: 'D 2,200', validity: 'valid 6 weeks', id: 'intro-3' },
+        // { name: '3 Sessions', price: 2200, displayPrice: 'D 2,200', validity: 'valid 6 weeks', id: 'intro-3' },
         { name: '5 Sessions', price: 3500, displayPrice: 'D 3,500', validity: 'valid 2 months', id: 'intro-5' },
         { name: '10 Sessions', price: 6500, displayPrice: 'D 6,500', validity: 'valid 3 months', id: 'intro-10' },
-        { name: 'Monthly Unlimited', price: 12000, displayPrice: 'D 12,000', id: 'intro-unlimited' }
+        // { name: 'Monthly Unlimited', price: 12000, displayPrice: 'D 12,000', id: 'intro-unlimited' }
       ]
     },
     {
       category: 'PRIVATE',
       items: [
-        { name: '1 Session', price: 2500, displayPrice: 'D 2,500', validity: 'valid 1 month', id: 'private-1' },
-        { name: '3 Sessions', price: 7000, displayPrice: 'D 7,000', validity: 'valid 6 weeks', id: 'private-3' },
-        { name: '5 Sessions', price: 11000, displayPrice: 'D 11,000', validity: 'valid 2 months', id: 'private-5' },
-        { name: '10 Sessions', price: 20000, displayPrice: 'D 20,000', validity: 'valid 3 months', id: 'private-10' }
+        { name: 'SINGLE', price: 1500, displayPrice: 'D 1,500', validity: 'valid 1 month', id: 'private-1' },
+        { name: 'DUO (2 PEOPLE)', price: 2400, displayPrice: 'D 2400', validity: 'valid 1 month', id: 'private-3' },
+        { name: 'TRIO (3 PEOPLE)', price: 3000, displayPrice: 'D 3,000', validity: 'valid 1 month', id: 'private-5' },
+        // { name: '10 Sessions', price: 20000, displayPrice: 'D 20,000', validity: 'valid 3 months', id: 'private-10' }
       ]
     }
   ];

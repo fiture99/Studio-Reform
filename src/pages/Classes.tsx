@@ -271,7 +271,7 @@ Reference: ${response.reference_number}`
                       <p className="text-gray-600 text-sm">All Levels Available</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium text-[#8F9980]">7:00 AM - 8:00 PM</p>
+                      <p className="font-medium text-[#8F9980]">9:00 AM - 8:00 PM</p>
                       <p className="text-gray-600 text-sm">Multiple sessions daily</p>
                     </div>
                   </div>
@@ -281,7 +281,7 @@ Reference: ${response.reference_number}`
                       <p className="text-gray-600 text-sm">Weekend Sessions</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium text-[#8F9980]">8:00 AM - 6:00 PM</p>
+                      <p className="font-medium text-[#8F9980]">9:00 AM - 11:00 AM</p>
                       <p className="text-gray-600 text-sm">Relaxed schedule</p>
                     </div>
                   </div>
