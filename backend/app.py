@@ -110,6 +110,7 @@ CORS(app,
          "https://studio-reform.onrender.com",
          "https://studio-reform-1.onrender.com",
          "https://www.studioreform.fit",
+         
      ]}},
      supports_credentials=True)
 
@@ -3795,59 +3796,59 @@ def create_tables():
                     print("📦 Creating sample classes...")
                     sample_classes = [
                         {
-                            'name': 'Root (Classical)',
+                            'name': 'Dynamic',
                             'instructor': 'Studio Reform',
                             'duration': '50 min',
                             'difficulty': 'All Levels',
                             'capacity': 4,
-                            'description': 'A return to classical Pilates. Precise, grounded, and methodical — ROOT follows the traditional reformer sequence focusing on control, alignment, and flow.',
-                            'image_url': '../images/Foudation.png'
+                            'description': 'An intense, strength focused class with powerful, continuous movements that challenge your body and build endurance.',
+                            'image_url': '../images/transitional.png'
                         },
                         {
-                            'name': 'Reform I (Signature, Full Body)',
+                            'name': 'Reform',
                             'instructor': 'Studio Reform',
                             'duration': '50 min',
                             'difficulty': 'All Levels',
                             'capacity': 4,
-                            'description': 'The signature Studio Reform experience. A full-body reformer flow that merges strength, elongation, and balance.',
+                            'description': 'Our signature full-body reformer class designed to strengthen, lengthen, and challenge the entire body through balanced, intentional movement.',
                             'image_url': '../images/Foundamental.png'
                         },
                         {
-                            'name': 'Reform II (Abs, Booty, Core)',
+                            'name': 'A B C',
                             'instructor': 'Studio Reform',
                             'duration': '55 min',
                             'difficulty': 'Intermediate',
                             'capacity': 4,
                             'description': 'The sculpting phase. Focus on the ABC\'s. A focused reformer class targeting abs, booty, and core through deeper resistance and endurance sequences.',
-                            'image_url': '../images/transitional.png'
-                        },
-                        {
-                            'name': 'Rhythm (Jumpboard)',
-                            'instructor': 'Studio Reform',
-                            'duration': '55 min',
-                            'difficulty': 'All Levels',
-                            'capacity': 4,
-                            'description': 'A dynamic reformer flow with jumpboard integration. Low-impact bursts that challenge coordination and control while maintaining form and precision.',
                             'image_url': '../images/advance.png'
-                        },
-                        {
-                            'name': 'Repose (Stretch)',
-                            'instructor': 'Studio Reform',
-                            'duration': '50 min',
-                            'difficulty': 'All Levels',
-                            'capacity': 4,
-                            'description': 'A restorative reformer experience for elongation, mobility, and release. Focused on breath, flexibility, and tension relief.',
-                            'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg'
-                        },
-                        {
-                            'name': 'Private Session',
-                            'instructor': 'Studio Reform',
-                            'duration': '50 min',
-                            'difficulty': 'All Levels',
-                            'capacity': 1,
-                            'description': '1:1 personalized training tailored to your goals. A fully customized session that adapts to your pace, needs, and objectives.',
-                            'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg'
                         }
+                        # {
+                        #     'name': 'Rhythm (Jumpboard)',
+                        #     'instructor': 'Studio Reform',
+                        #     'duration': '55 min',
+                        #     'difficulty': 'All Levels',
+                        #     'capacity': 4,
+                        #     'description': 'A dynamic reformer flow with jumpboard integration. Low-impact bursts that challenge coordination and control while maintaining form and precision.',
+                        #     'image_url': '../images/advance.png'
+                        # },
+                        # {
+                        #     'name': 'Repose (Stretch)',
+                        #     'instructor': 'Studio Reform',
+                        #     'duration': '50 min',
+                        #     'difficulty': 'All Levels',
+                        #     'capacity': 4,
+                        #     'description': 'A restorative reformer experience for elongation, mobility, and release. Focused on breath, flexibility, and tension relief.',
+                        #     'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg'
+                        # },
+                        # {
+                        #     'name': 'Private Session',
+                        #     'instructor': 'Studio Reform',
+                        #     'duration': '50 min',
+                        #     'difficulty': 'All Levels',
+                        #     'capacity': 1,
+                        #     'description': '1:1 personalized training tailored to your goals. A fully customized session that adapts to your pace, needs, and objectives.',
+                        #     'image_url': 'https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg'
+                        # }
                     ]
                     
                     for class_data in sample_classes:
