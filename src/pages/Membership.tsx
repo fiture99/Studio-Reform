@@ -23,8 +23,8 @@ const Membership: React.FC = () => {
       items: [
         { name: '1 Session', price: 800, displayPrice: 'D 800', validity: 'valid 1 month', id: 'intro-1' },
         // { name: '3 Sessions', price: 2200, displayPrice: 'D 2,200', validity: 'valid 6 weeks', id: 'intro-3' },
-        { name: '5 Sessions', price: 3500, displayPrice: 'D 3,500', validity: 'valid 2 months', id: 'intro-5' },
-        { name: '10 Sessions', price: 6500, displayPrice: 'D 6,500', validity: 'valid 3 months', id: 'intro-10' },
+        { name: '5 Sessions', price: 3500, displayPrice: 'D 3,500', validity: 'valid 1 months', id: 'intro-5' },
+        { name: '10 Sessions', price: 6500, displayPrice: 'D 6,500', validity: 'valid 2 months', id: 'intro-10' },
         // { name: 'Monthly Unlimited', price: 12000, displayPrice: 'D 12,000', id: 'intro-unlimited' }
       ]
     },

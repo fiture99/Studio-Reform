@@ -277,7 +277,7 @@ Reference: ${response.reference_number}`
                   </div>
                   <div className="flex justify-between items-center p-4 bg-cloud-cream rounded-lg">
                     <div>
-                      <p className="font-semibold text-pure-black">Saturday - Sunday</p>
+                      <p className="font-semibold text-pure-black">Saturday</p>
                       <p className="text-gray-600 text-sm">Weekend Sessions</p>
                     </div>
                     <div className="text-right">
